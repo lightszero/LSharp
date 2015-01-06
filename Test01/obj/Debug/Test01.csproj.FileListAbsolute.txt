@@ -1,0 +1,12 @@
+E:\github\LSharp\Test01\obj\Debug\Test01.csprojResolveAssemblyReference.cache
+E:\github\LSharp\Test01\obj\Debug\Test01.Form1.resources
+E:\github\LSharp\Test01\obj\Debug\Test01.Properties.Resources.resources
+E:\github\LSharp\Test01\obj\Debug\Test01.csproj.GenerateResource.Cache
+E:\github\LSharp\Test01\bin\Debug\Test01.exe
+E:\github\LSharp\Test01\bin\Debug\Test01.pdb
+E:\github\LSharp\Test01\bin\Debug\Mono.Cecil.20.dll
+E:\github\LSharp\Test01\bin\Debug\Mono.Cecil.20.pdb
+E:\github\LSharp\Test01\obj\Debug\Test01.exe
+E:\github\LSharp\Test01\obj\Debug\Test01.pdb
+E:\github\LSharp\bin\Test01.exe
+E:\github\LSharp\bin\Test01.pdb
