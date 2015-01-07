@@ -12,12 +12,23 @@ namespace CLRSharp
     }
     public interface ICLRSharp_Environment
     {
+        string version
+        {
+            get;
+        }
         void LoadModule(System.IO.Stream dllStream);
         string[] GetAllTypes();
         Type_Common GetType(string name);
     }
     public class CLRSharp_Environment : ICLRSharp_Environment
     {
+        public string version
+        {
+            get
+            {
+                return "0.01Beta";
+            }
+        }
         Dictionary<string, Type_Common> mapType = new Dictionary<string, Type_Common>();
         Dictionary<string, Mono.Cecil.ModuleDefinition> mapModule = new Dictionary<string, Mono.Cecil.ModuleDefinition>();
         public void LoadModule(System.IO.Stream dllStream)

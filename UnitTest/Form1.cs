@@ -23,6 +23,7 @@ namespace UnitTest
             System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes);
 
             env = new CLRSharp.CLRSharp_Environment();
+            this.Text += " L# Ver:" + env.version;
             env.LoadModule(ms);
             var types = env.GetAllTypes();
             foreach (var t in types)
