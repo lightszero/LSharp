@@ -47,3 +47,4 @@ obj
 temp
 Bin
 Debug
+*.suo
