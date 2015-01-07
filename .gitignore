@@ -14,9 +14,17 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+
 # Windows shortcuts
 *.lnk
 
+bin
+obj
+temp
+Bin
+Debug
+*.suo
+*.Suo
 # =========================
 # Operating System Files
 # =========================
@@ -42,9 +50,3 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-bin
-obj
-temp
-Bin
-Debug
-*.suo

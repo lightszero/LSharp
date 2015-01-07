@@ -19,7 +19,7 @@ namespace Test01
         private void Form1_Load(object sender, EventArgs e)
         {
 
-            var bytes = System.IO.File.ReadAllBytes("t01.dll");
+            var bytes = System.IO.File.ReadAllBytes("UnitTest/UnitTestDll.dll");
             System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes);
 
             env = new CLRSharp.CLRSharp_Environment();

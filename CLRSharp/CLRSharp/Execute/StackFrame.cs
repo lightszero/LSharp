@@ -13,7 +13,7 @@ namespace CLRSharp
         object[] _params = null;
         public void SetParams(object[] _p)
         {
-            _params =_p;
+            _params = _p;
         }
         //流程控制
         public void Call(Context context, Mono.Cecil.MethodReference method)
@@ -22,11 +22,11 @@ namespace CLRSharp
             object[] _pp = new object[stackCalc.Count];
             for (int i = 0; i < _pp.Length; i++)
             {
-                _pp[_pp.Length-1-i] = stackCalc.Pop();
+                _pp[_pp.Length - 1 - i] = stackCalc.Pop();
             }
-            object returnvar =  context.Call(method, _pp);
+            object returnvar = context.Call(method, _pp);
             bool breturn = method.ReturnType.FullName != "System.Void";
-            if(breturn)
+            if (breturn)
             {
                 stackCalc.Push(returnvar);
             }
@@ -313,6 +313,111 @@ namespace CLRSharp
 
             _pos = _pos.Next;
         }
+        //转换
+        public void Conv_I1()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((byte)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_U1()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((sbyte)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_I2()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((Int16)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_U2()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((UInt16)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_I4()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((Int32)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_U4()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((UInt32)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_I8()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((Int64)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_U8()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((UInt64)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_I()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((Int64)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_U()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((UInt64)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_R4()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((float)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_R8()
+        {
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((double)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_R_Un()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+            stackCalc.Push((float)num1);
+            _pos = _pos.Next;
+        }
+
+
 
     }
 }

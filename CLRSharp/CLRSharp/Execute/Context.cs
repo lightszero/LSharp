@@ -21,7 +21,7 @@ namespace CLRSharp
         {
             StackFrame stack = new StackFrame();
             stacks.Push(stack);
-            stack.SetParams( _params);
+            stack.SetParams(_params);
             RunCode(stack, func.Body.Instructions);
 
             return null;
@@ -33,6 +33,15 @@ namespace CLRSharp
             if (typesys == null)
             {
                 System.Type t = System.Type.GetType(name);
+                if (t == null)
+                {
+                    foreach (var rm in method.Module.AssemblyReferences)
+                    {
+                        t = System.Type.GetType(name + "," + rm.Name);
+                        if (t != null) break;
+                    }
+
+                }
                 typesys = new Type_Common(t);
             }
             TypeList list = new TypeList();
@@ -239,7 +248,7 @@ namespace CLRSharp
                         stack.Unbox_Any();
                         break;
 
-                        //加载参数
+                    //加载参数
                     case Code.Ldarg:
                         stack.Ldarg((int)code.Operand);
                         break;
@@ -257,6 +266,46 @@ namespace CLRSharp
                         break;
                     case Code.Ldarg_3:
                         stack.Ldarg(3);
+                        break;
+                        //转换
+                    case Code.Conv_I1:
+                        stack.Conv_I1();
+                        break;
+                    case Code.Conv_U1:
+                        stack.Conv_U1();
+                        break;
+                    case Code.Conv_I2:
+                        stack.Conv_I2();
+                        break;
+                    case Code.Conv_U2:
+                        stack.Conv_U2();
+                        break;
+                    case Code.Conv_I4:
+                        stack.Conv_I4();
+                        break;
+                    case Code.Conv_U4:
+                        stack.Conv_U4();
+                        break;
+                    case Code.Conv_I8:
+                        stack.Conv_I8();
+                        break;
+                    case Code.Conv_U8:
+                        stack.Conv_U8();
+                        break;
+                    case Code.Conv_I:
+                        stack.Conv_I();
+                        break;
+                    case Code.Conv_U:
+                        stack.Conv_U();
+                        break;
+                    case Code.Conv_R4:
+                        stack.Conv_R4();
+                        break;
+                    case Code.Conv_R8:
+                        stack.Conv_R8();
+                        break;
+                    case Code.Conv_R_Un:
+                        stack.Conv_R_Un();
                         break;
                     default:
                         throw new Exception("未实现的OpCode:" + code.OpCode.Code);
