@@ -26,7 +26,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.01Beta";
+                return "0.01Alpha";
             }
         }
         Dictionary<string, Type_Common> mapType = new Dictionary<string, Type_Common>();
