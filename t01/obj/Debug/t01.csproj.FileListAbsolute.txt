@@ -1,7 +1,0 @@
-E:\github\LSharp\t01\bin\Debug\t01.dll
-E:\github\LSharp\t01\bin\Debug\t01.pdb
-E:\github\LSharp\t01\obj\Debug\t01.csprojResolveAssemblyReference.cache
-E:\github\LSharp\t01\obj\Debug\t01.dll
-E:\github\LSharp\t01\obj\Debug\t01.pdb
-E:\github\LSharp\bin\t01.dll
-E:\github\LSharp\bin\t01.pdb

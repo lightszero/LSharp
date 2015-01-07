@@ -1,7 +1,0 @@
-E:\github\LSharp\Mono.Cecil.20\obj\Debug\Mono.Cecil.20.csprojResolveAssemblyReference.cache
-E:\github\LSharp\Mono.Cecil.20\bin\Debug\Mono.Cecil.20.dll
-E:\github\LSharp\Mono.Cecil.20\bin\Debug\Mono.Cecil.20.pdb
-E:\github\LSharp\Mono.Cecil.20\obj\Debug\Mono.Cecil.20.dll
-E:\github\LSharp\Mono.Cecil.20\obj\Debug\Mono.Cecil.20.pdb
-E:\github\LSharp\bin\Mono.Cecil.20.dll
-E:\github\LSharp\bin\Mono.Cecil.20.pdb
