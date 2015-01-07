@@ -15,14 +15,25 @@ namespace Test01
         {
             InitializeComponent();
         }
-
+        CLRSharp.CLRSharp_Environment env;
         private void Form1_Load(object sender, EventArgs e)
         {
+
             var bytes = System.IO.File.ReadAllBytes("t01.dll");
             System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes);
-            var module = Mono.Cecil.ModuleDefinition.ReadModule(ms);
 
-            FillTree(module, treeView1.Nodes);
+            env = new CLRSharp.CLRSharp_Environment();
+            env.LoadModule(ms);
+            var types = env.GetAllTypes();
+            foreach (var t in types)
+            {
+                if (env.GetType(t) != null && env.GetType(t).type_CLRSharp != null)
+                {
+                    TreeNode node = new TreeNode(t);
+                    treeView1.Nodes.Add(node);
+                    FillTree_Type(env.GetType(t).type_CLRSharp, node.Nodes);
+                }
+            }
             treeView1.ExpandAll();
         }
 
@@ -61,8 +72,9 @@ namespace Test01
             foreach (var m in type.Methods)
             {
                 TreeNode mm = new TreeNode(m.Name);
+                mm.Tag = m;
                 Methods.Nodes.Add(mm);
-                if(m.HasParameters)
+                if (m.HasParameters)
                 {
                     TreeNode param = new TreeNode("Param");
                     mm.Nodes.Add(param);
@@ -76,7 +88,7 @@ namespace Test01
                 }
             }
         }
-        void FillTree_Type_Method_Body(Mono.Cecil.Cil.MethodBody body,TreeNodeCollection nodecoll)
+        void FillTree_Type_Method_Body(Mono.Cecil.Cil.MethodBody body, TreeNodeCollection nodecoll)
         {
             foreach (var m in body.Instructions)
             {
@@ -86,15 +98,30 @@ namespace Test01
         }
         void FillTree_Type_Method_Param(Mono.Collections.Generic.Collection<Mono.Cecil.ParameterDefinition> _params, TreeNodeCollection nodecoll)
         {
-            foreach(var p in _params)
+            foreach (var p in _params)
             {
-                TreeNode t = new TreeNode(p.ParameterType+"|"+p.Name);
+                TreeNode t = new TreeNode(p.ParameterType + "|" + p.Name);
                 nodecoll.Add(t);
             }
         }
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            if (e.Node != null && e.Node.Tag is Mono.Cecil.MethodDefinition)
+            {
+                button1.Tag = e.Node.Tag;
+                button1.Text = (e.Node.Tag as Mono.Cecil.MethodDefinition).Name;
+            }
+        }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Mono.Cecil.MethodDefinition d =button1.Tag as Mono.Cecil.MethodDefinition;
+            if (d == null) return;
+            var type=env.GetType(d.DeclaringType.FullName);
+            var method = type.GetMethod("Do001", null);
+            CLRSharp.Context context = new CLRSharp.Context(env);
+            method.Invoke(context, null, null);
+            
         }
     }
 }

@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "t01", "t01\t01.csproj", "{F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test01", "Test01\Test01.csproj", "{24428CC3-F475-43CB-B7B1-095BDD962343}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLRSharp", "CLRSharp\CLRSharp.csproj", "{80DEA7F3-C84F-4603-8080-0BA3647588A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,6 +98,30 @@ Global
 		{24428CC3-F475-43CB-B7B1-095BDD962343}.winphone_Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24428CC3-F475-43CB-B7B1-095BDD962343}.winphone_Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24428CC3-F475-43CB-B7B1-095BDD962343}.winphone_Release|Any CPU.Build.0 = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_2_0_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_2_0_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_2_0_Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_2_0_Release|Any CPU.Build.0 = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_3_5_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_3_5_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_3_5_Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_3_5_Release|Any CPU.Build.0 = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_4_0_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_4_0_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_4_0_Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.net_4_0_Release|Any CPU.Build.0 = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.silverlight_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.silverlight_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.silverlight_Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.silverlight_Release|Any CPU.Build.0 = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.winphone_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.winphone_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.winphone_Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80DEA7F3-C84F-4603-8080-0BA3647588A0}.winphone_Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
