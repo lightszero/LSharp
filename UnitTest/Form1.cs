@@ -39,15 +39,28 @@ namespace UnitTest
                         node.Nodes.Add(method);
                         if (m.HasParameters == false && m.Name.Contains("UnitTest") && m.IsStatic)
                         {
-                            method.BackColor = Color.Green;
+                            method.BackColor = Color.Yellow;
                         }
                     }
 
                 }
             }
+            SortTreeView();
             treeView1.ExpandAll();
         }
-
+        void SortTreeView()
+        {
+            System.Collections.Generic.SortedList<string, TreeNode> nodes = new SortedList<string, TreeNode>();
+            foreach(TreeNode t in treeView1.Nodes)
+            {
+                nodes.Add(t.Text, t);
+            }
+            treeView1.Nodes.Clear();
+            foreach (TreeNode t in nodes.Values)
+            {
+                treeView1.Nodes.Add(t);
+            }
+        }
         public void Log(string str)
         {
             this.listBox1.Items.Add(str);
@@ -131,14 +144,10 @@ namespace UnitTest
         private void button1_Click(object sender, EventArgs e)
         {
             Mono.Cecil.MethodDefinition d = this.treeView2.Tag as Mono.Cecil.MethodDefinition;
-            if (d == null) return;
-            var type = env.GetType(d.DeclaringType.FullName);
-            var method = type.GetMethod(d.Name, null);
-            CLRSharp.Context context = new CLRSharp.Context(env);
             try
             {
-                method.Invoke(context, null, null);
-                Log("----RunOK----");
+                object obj = RunTest(d);
+                Log("----RunOK----" + obj);
             }
             catch (Exception err)
             {
@@ -150,6 +159,52 @@ namespace UnitTest
         private void button2_Click(object sender, EventArgs e)
         {
             listBox1.Items.Clear();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Mono.Cecil.MethodDefinition d = this.treeView2.Tag as Mono.Cecil.MethodDefinition;
+            object obj = RunTest(d);
+            Log("----RunOK----" + obj);
+
+        }
+        object RunTest(Mono.Cecil.MethodDefinition d)
+        {
+            if (d == null) throw new Exception("null method call");
+            var type = env.GetType(d.DeclaringType.FullName);
+            var method = type.GetMethod(d.Name, null);
+            CLRSharp.Context context = new CLRSharp.Context(env);
+            return method.Invoke(context, null, null);
+        }
+        private void button4_Click(object sender, EventArgs e)
+        {
+            int testcount = 0;
+            int succcount = 0;
+            foreach (TreeNode t in treeView1.Nodes)
+            {
+                foreach (TreeNode method in t.Nodes)
+                {
+                    Mono.Cecil.MethodDefinition m = method.Tag as Mono.Cecil.MethodDefinition;
+                    if (m.HasParameters == false && m.Name.Contains("UnitTest") && m.IsStatic)
+                    {
+                        testcount++;
+                        try
+                        {
+                            object obj = RunTest(m);
+                            method.BackColor = Color.YellowGreen;
+                            succcount++;
+                            Log("----TestOK----" + m.ToString());
+                        }
+                        catch (Exception err)
+                        {
+                            method.BackColor = Color.Red;
+                            Log("----Test Fail----" + m.ToString());
+                        }
+                    }
+                }
+
+            }
+            Log("----Test Succ(" + succcount + "/" + testcount + ")----");
         }
     }
 }

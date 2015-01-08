@@ -15,16 +15,34 @@ namespace CLRSharp
         {
             _params = _p;
         }
+        public object Return()
+        {
+            if (this.stackCalc.Count == 0) return null;
+            else return stackCalc.Pop();
+        }
         //流程控制
         public void Call(Context context, Mono.Cecil.MethodReference method)
         {
-
-            object[] _pp = new object[stackCalc.Count];
-            for (int i = 0; i < _pp.Length; i++)
+            object[] _pp = null;
+            object _this = null;
+            if (method.HasThis)
             {
-                _pp[_pp.Length - 1 - i] = stackCalc.Pop();
+                _pp = new object[stackCalc.Count - 1];
+                for (int i = 0; i < _pp.Length; i++)
+                {
+                    _pp[_pp.Length - 1 - i] = stackCalc.Pop();
+                }
+                _this = stackCalc.Pop();
             }
-            object returnvar = context.Call(method, _pp);
+            else
+            {
+                _pp = new object[stackCalc.Count];
+                for (int i = 0; i < _pp.Length; i++)
+                {
+                    _pp[_pp.Length - 1 - i] = stackCalc.Pop();
+                }
+            }
+            object returnvar = context.Call(method, _this, _pp);
             bool breturn = method.ReturnType.FullName != "System.Void";
             if (breturn)
             {
@@ -32,6 +50,7 @@ namespace CLRSharp
             }
             _pos = _pos.Next;
         }
+        //栈操作
         public void Nop()
         {
             _pos = _pos.Next;
@@ -46,6 +65,7 @@ namespace CLRSharp
             stackCalc.Pop();
             _pos = _pos.Next;
         }
+        //流程控制
         public void Ret()
         {
             _pos = _pos.Next;
@@ -68,8 +88,9 @@ namespace CLRSharp
         }
         public void Brtrue(Mono.Cecil.Cil.Instruction pos)
         {
-            bool b = (bool)stackCalc.Pop();
-            if (b)
+            decimal b=Convert.ToDecimal(stackCalc.Pop());
+            //bool b = (bool)stackCalc.Pop();
+            if (b>0)
             {
                 _pos = pos;
             }
@@ -80,7 +101,184 @@ namespace CLRSharp
         }
         public void Brfalse(Mono.Cecil.Cil.Instruction pos)
         {
-            bool b = (bool)stackCalc.Pop();
+            decimal b = Convert.ToDecimal(stackCalc.Pop());
+            if (b<=0)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        //条件跳转
+        public void Beq(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 == num2;
+            if (!b)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        public void Bne(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 != num2;
+            if (!b)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        public void Bne_Un(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 != num2;
+            if (!b)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        public void Bge(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 >= num2;
+            if (!b)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        public void Bge_Un(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 >= num2;
+            if (!b)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        public void Bgt(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 > num2;
+            if (!b)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        public void Bgt_Un(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 > num2;
+            if (!b)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        public void Ble(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 <= num2;
+            if (!b)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        public void Ble_Un(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 <= num2;
+            if (!b)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        public void Blt(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 < num2;
+            if (!b)
+            {
+                _pos = pos;
+            }
+            else
+            {
+                _pos = _pos.Next;
+            }
+        }
+        public void Blt_Un(Mono.Cecil.Cil.Instruction pos)
+        {
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            decimal num1 = Convert.ToDecimal(n1);
+            decimal num2 = Convert.ToDecimal(n2);
+            bool b = num1 < num2;
             if (!b)
             {
                 _pos = pos;
@@ -134,10 +332,48 @@ namespace CLRSharp
             stackCalc.Push(slotVar[pos]);
             _pos = _pos.Next;
         }
-        class RefObj
+        public enum RefType
         {
-            public RefObj(int pos)
+            loc,
+            arg,
+
+        }
+        public class RefObj
+        {
+            public StackFrame frame;
+            public int pos;
+            public RefType type;
+            public RefObj(StackFrame frame, int pos, RefType type)
             {
+                this.frame = frame;
+                this.pos = pos;
+                this.type = type;
+            }
+            public void Set(object obj)
+            {
+                if (type == RefType.arg)
+                {
+                    frame._params[pos] = obj;
+                }
+                else
+                {
+                    while (frame.slotVar.Count <= pos)
+                    {
+                        frame.slotVar.Add(null);
+                    }
+                    frame.slotVar[pos] = obj;
+                }
+            }
+            public object Get()
+            {
+                if (type == RefType.arg)
+                {
+                    return frame._params[pos];
+                }
+                else
+                {
+                    return frame.slotVar[pos];
+                }
 
             }
 
@@ -145,7 +381,7 @@ namespace CLRSharp
         //拿出变量槽的引用
         public void Ldloca(int pos)
         {
-            stackCalc.Push(new RefObj(pos));
+            stackCalc.Push(new RefObj(this, pos, RefType.loc));
             _pos = _pos.Next;
         }
 
@@ -163,7 +399,7 @@ namespace CLRSharp
         }
         public void Ldarga(int pos)
         {
-            stackCalc.Push(new RefObj(pos));
+            stackCalc.Push(new RefObj(this, pos, RefType.arg));
             _pos = _pos.Next;
         }
         //逻辑计算

@@ -35,7 +35,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="ExpTest_20.cs" />
+    <Compile Include="Test0.cs" />
+    <Compile Include="ExpTest_10.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

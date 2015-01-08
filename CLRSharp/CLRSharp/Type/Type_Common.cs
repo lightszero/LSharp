@@ -95,6 +95,12 @@ namespace CLRSharp
         {
             if (type_System != null)
             {
+                
+                if(funcname==".ctor")
+                {
+                    var con = type_System.GetConstructor(types.ToArraySystem());
+                    return new Method_Common(con);
+                }
                 var method = type_System.GetMethod(funcname, types.ToArraySystem());
                 return new Method_Common(method);
             }
@@ -135,7 +141,7 @@ namespace CLRSharp
                 throw new Exception("not allow null method.");
             method_CLRSharp = method;
         }
-        public Method_Common(System.Reflection.MethodInfo method)
+        public Method_Common(System.Reflection.MethodBase method)
         {
             if (method == null)
                 throw new Exception("not allow null method.");
@@ -146,7 +152,7 @@ namespace CLRSharp
             get;
             private set;
         }
-        public System.Reflection.MethodInfo method_System
+        public System.Reflection.MethodBase method_System
         {
             get;
             private set;
@@ -156,7 +162,16 @@ namespace CLRSharp
         {
             if(method_System!=null)
             {
-                return method_System.Invoke(_this, _params);
+                if (method_System is System.Reflection.ConstructorInfo)
+                {
+                    StackFrame.RefObj obj = _this as StackFrame.RefObj;
+                    obj.Set((method_System as System.Reflection.ConstructorInfo).Invoke(_params));
+                    return null;
+                }
+                else
+                {
+                    return method_System.Invoke(_this, _params);
+                }
             }
             else
             {

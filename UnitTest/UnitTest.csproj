@@ -40,6 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CLScriptExt\Country.cs" />
+    <Compile Include="CLScriptExt\MyJson.cs" />
+    <Compile Include="CLScriptExt\Student.cs" />
+    <Compile Include="CLScriptExt\Vector3.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

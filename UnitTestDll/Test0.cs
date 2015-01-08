@@ -1,10 +1,11 @@
-﻿using System;
+﻿using CLScriptExt;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnitTest;
 namespace UnitTestDll
 {
-    public class Class1
+    public class Test0
     {
         //只要有一个static void UnitTest() 函数的，就是单元测试
         public static void UnitTest_01()
@@ -24,8 +25,10 @@ namespace UnitTestDll
         {
             int p = 1;
             float n = 5.0f;
-            var i =1*p+54/n+3334*p+54;
+            var i = 1 * p + 54 / n + 3334 * p + 54;
             Logger.Log("calc:" + i);
         }
+
+  
     }
 }

@@ -23,10 +23,10 @@ namespace CLRSharp
             stacks.Push(stack);
             stack.SetParams(_params);
             RunCode(stack, func.Body.Instructions);
+            return stacks.Pop().Return();
 
-            return null;
         }
-        public object Call(Mono.Cecil.MethodReference method, object[] _params)
+        public object Call(Mono.Cecil.MethodReference method,object _this, object[] _params)
         {
             string name = method.DeclaringType.FullName;
             var typesys = this.environment.GetType(name);
@@ -50,7 +50,7 @@ namespace CLRSharp
                 list.Add(new Type_Common(System.Type.GetType(p.ParameterType.FullName)));
             }
 
-            return typesys.GetMethod(method.Name, list).Invoke(this, null, _params);
+            return typesys.GetMethod(method.Name, list).Invoke(this, _this, _params);
 
         }
         void RunCode(StackFrame stack, Mono.Collections.Generic.Collection<Mono.Cecil.Cil.Instruction> codes)
@@ -89,6 +89,67 @@ namespace CLRSharp
                         break;
                     case Code.Brfalse_S:
                         stack.Brfalse(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    //比较流程控制
+                    case Code.Beq:
+                        stack.Beq(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Beq_S:
+                        stack.Beq(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Bne_Un:
+                        stack.Bne_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Bne_Un_S:
+                        stack.Bne_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Bge:
+                        stack.Bge(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Bge_S:
+                        stack.Bge(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Bge_Un:
+                        stack.Bge_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Bge_Un_S:
+                        stack.Bge_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Bgt:
+                        stack.Bgt(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Bgt_S:
+                        stack.Bgt(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Bgt_Un:
+                        stack.Bgt_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Bgt_Un_S:
+                        stack.Bge_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Ble:
+                        stack.Ble(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Ble_S:
+                        stack.Ble(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Ble_Un:
+                        stack.Ble_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Ble_Un_S:
+                        stack.Ble_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Blt:
+                        stack.Blt(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Blt_S:
+                        stack.Blt(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Blt_Un:
+                        stack.Blt_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Blt_Un_S:
+                        stack.Ble_Un(code.Operand as Mono.Cecil.Cil.Instruction);
                         break;
                     //逻辑计算
                     case Code.Ceq:
@@ -195,10 +256,10 @@ namespace CLRSharp
                         stack.Ldloc(3);
                         break;
                     case Code.Ldloca:
-                        stack.Ldloca((int)code.Operand);
+                        stack.Ldloca(((VariableDefinition)code.Operand).Index);
                         break;
                     case Code.Ldloca_S:
-                        stack.Ldloca((sbyte)code.Operand);
+                        stack.Ldloca(((VariableDefinition)code.Operand).Index);
                         break;
                     //加载字符串
                     case Code.Ldstr:
