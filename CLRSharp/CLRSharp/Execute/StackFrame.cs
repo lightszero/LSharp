@@ -88,9 +88,9 @@ namespace CLRSharp
         }
         public void Brtrue(Mono.Cecil.Cil.Instruction pos)
         {
-            decimal b=Convert.ToDecimal(stackCalc.Pop());
+            decimal b = Convert.ToDecimal(stackCalc.Pop());
             //bool b = (bool)stackCalc.Pop();
-            if (b>0)
+            if (b > 0)
             {
                 _pos = pos;
             }
@@ -102,7 +102,7 @@ namespace CLRSharp
         public void Brfalse(Mono.Cecil.Cil.Instruction pos)
         {
             decimal b = Convert.ToDecimal(stackCalc.Pop());
-            if (b<=0)
+            if (b <= 0)
             {
                 _pos = pos;
             }
@@ -653,7 +653,154 @@ namespace CLRSharp
             _pos = _pos.Next;
         }
 
+        ////数组
+        //public void NewArr(Mono.Cecil.TypeReference type)
+        //{
 
+        //    _pos = _pos.Next;
+        //}
+        //public void LdLen()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelema(object obj)
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelem_I1()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelem_U1()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+
+        //public void Ldelem_I2()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelem_U2()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelem_I4()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelem_U4()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+
+        //public void Ldelem_I8()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelem_I()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelem_R4()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelem_R8()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelem_Ref()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Ldelem_Any(object obj)
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Stelem_I()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Stelem_I1()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Stelem_I2()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Stelem_I4()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Stelem_I8()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Stelem_R4()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Stelem_R8()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+        //public void Stelem_Ref()
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+
+        //public void Stelem_Any(object obj)
+        //{
+
+        //    _pos = _pos.Next;
+        //}
+
+        //寻址类
+        public void NewObj(Context context, Mono.Cecil.MethodDefinition def)
+        {
+            _pos = _pos.Next;
+        }
+        public void NewObj(Context context, Mono.Cecil.MethodReference method)
+        {
+            object[] _pp = null;
+            if (stackCalc.Count > 0)
+            {
+                _pp = new object[stackCalc.Count];
+                for (int i = 0; i < _pp.Length; i++)
+                {
+                    _pp[_pp.Length - 1 - i] = stackCalc.Pop();
+                }
+            }
+            object returnvar = context.Call(method, null, _pp);
+
+            stackCalc.Push(returnvar);
+
+            _pos = _pos.Next;
+            //_pos = _pos.Next;
+        }
 
     }
 }

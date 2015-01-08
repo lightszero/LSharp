@@ -19,6 +19,10 @@ namespace CLRSharp
         void LoadModule(System.IO.Stream dllStream);
         string[] GetAllTypes();
         Type_Common GetType(string name);
+        ICLRSharp_Logger logger
+        {
+            get;
+        }
     }
     public class CLRSharp_Environment : ICLRSharp_Environment
     {
@@ -26,15 +30,34 @@ namespace CLRSharp
         {
             get
             {
-                return "0.02Alpha";
+                return "0.03Alpha";
             }
         }
+        public ICLRSharp_Logger logger
+        {
+            get;
+            private set;
+        }
+        public CLRSharp_Environment(ICLRSharp_Logger logger)
+        {
+            this.logger = logger;
+            logger.Log_Warning("CLR# Ver:" + version + " Inited.");
+        }
         Dictionary<string, Type_Common> mapType = new Dictionary<string, Type_Common>();
-        Dictionary<string, Mono.Cecil.ModuleDefinition> mapModule = new Dictionary<string, Mono.Cecil.ModuleDefinition>();
+        //public Dictionary<string, Mono.Cecil.ModuleDefinition> mapModule = new Dictionary<string, Mono.Cecil.ModuleDefinition>();
         public void LoadModule(System.IO.Stream dllStream)
         {
+            LoadModule(dllStream, null);
+
+        }
+        public void LoadModule(System.IO.Stream dllStream,System.IO.Stream pdbStream)
+        {
             var module = Mono.Cecil.ModuleDefinition.ReadModule(dllStream);
-            mapModule[module.Name] = module;
+            if (pdbStream != null)
+            {
+                module.ReadSymbols(new Mono.Cecil.Pdb.PdbReaderProvider().GetSymbolReader(module,pdbStream));
+            }
+            //mapModule[module.Name] = module;
             if (module.HasTypes)
             {
                 foreach (var t in module.Types)

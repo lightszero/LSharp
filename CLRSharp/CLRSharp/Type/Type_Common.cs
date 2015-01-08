@@ -165,8 +165,10 @@ namespace CLRSharp
                 if (method_System is System.Reflection.ConstructorInfo)
                 {
                     StackFrame.RefObj obj = _this as StackFrame.RefObj;
-                    obj.Set((method_System as System.Reflection.ConstructorInfo).Invoke(_params));
-                    return null;
+                    var newobj = (method_System as System.Reflection.ConstructorInfo).Invoke(_params);
+                    if(obj!=null)
+                        obj.Set(newobj);
+                    return newobj;
                 }
                 else
                 {

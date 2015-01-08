@@ -35,6 +35,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExpTest_50.cs" />
+    <Compile Include="ExpTest_60.cs" />
+    <Compile Include="ExpTest_70.cs" />
+    <Compile Include="ExpTest_40.cs" />
+    <Compile Include="ExpTest_30.cs" />
     <Compile Include="ExpTest_20.cs" />
     <Compile Include="Test0.cs" />
     <Compile Include="ExpTest_10.cs" />

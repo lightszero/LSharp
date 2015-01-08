@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CLScriptExt
 {
-    class P1
+    public class P1
     {
         public static void t1()
         {
@@ -17,7 +17,7 @@ namespace CLScriptExt
             set;
         }
     }
-    class P2 : P1
+    public class P2 : P1
     {
         public static void TestS<T>()
         {
@@ -39,7 +39,7 @@ namespace CLScriptExt
     }
 
 
-    class Student : P2
+    public class Student : P2
     {
         public void Test(string str,int i=0)
         {

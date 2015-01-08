@@ -20,11 +20,13 @@ namespace UnitTest
         private void Form1_Load(object sender, EventArgs e)
         {
             var bytes = System.IO.File.ReadAllBytes("UnitTestDll.dll");
+            var bytespdb = System.IO.File.ReadAllBytes("UnitTestDll.pdb");
             System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes);
+            System.IO.MemoryStream mspdb = new System.IO.MemoryStream(bytespdb);
 
-            env = new CLRSharp.CLRSharp_Environment();
+            env = new CLRSharp.CLRSharp_Environment(this);
             this.Text += " L# Ver:" + env.version;
-            env.LoadModule(ms);
+            env.LoadModule(ms, mspdb);
             var types = env.GetAllTypes();
             foreach (var t in types)
             {
@@ -51,7 +53,7 @@ namespace UnitTest
         void SortTreeView()
         {
             System.Collections.Generic.SortedList<string, TreeNode> nodes = new SortedList<string, TreeNode>();
-            foreach(TreeNode t in treeView1.Nodes)
+            foreach (TreeNode t in treeView1.Nodes)
             {
                 nodes.Add(t.Text, t);
             }
@@ -78,6 +80,7 @@ namespace UnitTest
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            ClearCodeFile();
             if (e.Node.Tag is Mono.Cecil.MethodDefinition)
             {
 
@@ -87,6 +90,7 @@ namespace UnitTest
             {
                 treeView2.Nodes.Clear();
                 treeView2.Tag = null;
+
             }
         }
         void FillTree_Method(Mono.Cecil.MethodDefinition method)
@@ -132,15 +136,63 @@ namespace UnitTest
                 }
                 TreeNode code = new TreeNode("Code");
                 body.Nodes.Add(code);
-                foreach (var i in method.Body.Instructions)
+                foreach (Mono.Cecil.Cil.Instruction i in method.Body.Instructions)
                 {
-                    TreeNode op = new TreeNode(i.ToString());
+                    string line = i.ToString();
+
+                    //i.Offset
+                    if (i.SequencePoint != null)
+                    {
+                        LoadCodeFile(i.SequencePoint.Document.Url);
+                        line += " |(" + i.SequencePoint.StartLine + "," + i.SequencePoint.StartColumn + ")";
+
+                        if (codes[i.SequencePoint.Document.Url] != null)
+                        {
+                            int lines = i.SequencePoint.StartLine;
+                            if (lines - 1 < codes[i.SequencePoint.Document.Url].Length)
+                                line += "| " + codes[i.SequencePoint.Document.Url][i.SequencePoint.StartLine - 1];
+                        }
+                    }
+                    TreeNode op = new TreeNode(line);
+                    op.Tag = i;
                     code.Nodes.Add(op);
                 }
             }
             treeView2.ExpandAll();
         }
+        Dictionary<string, string[]> codes = new Dictionary<string, string[]>();
+        void LoadCodeFile(string filename)
+        {
+            if (codes.ContainsKey(filename))
+            {
+                return;
+            }
 
+            TreeNode file = new TreeNode(filename);
+            treeViewCode.Nodes.Add(file);
+            codes[filename] = null;
+            try
+            {
+                codes[filename] = System.IO.File.ReadAllLines(filename);
+
+                for (int i = 0; i < codes[filename].Length; i++)
+                {
+                    TreeNode line = new TreeNode((i + 1).ToString("D04") + "| " + codes[filename][i]);
+                    file.Nodes.Add(line);
+                }
+
+            }
+            catch (Exception err)
+            {
+
+            }
+            treeViewCode.ExpandAll();
+        }
+        void ClearCodeFile()
+        {
+            treeViewCode.Nodes.Clear();
+            codes.Clear();
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             Mono.Cecil.MethodDefinition d = this.treeView2.Tag as Mono.Cecil.MethodDefinition;
@@ -168,12 +220,13 @@ namespace UnitTest
             Log("----RunOK----" + obj);
 
         }
-        object RunTest(Mono.Cecil.MethodDefinition d)
+        object RunTest(Mono.Cecil.MethodDefinition d,bool LogStep=false)
         {
             if (d == null) throw new Exception("null method call");
             var type = env.GetType(d.DeclaringType.FullName);
             var method = type.GetMethod(d.Name, null);
-            CLRSharp.Context context = new CLRSharp.Context(env);
+            int debug = LogStep ? 9 : 0;
+            CLRSharp.Context context = new CLRSharp.Context(env, debug);
             return method.Invoke(context, null, null);
         }
         private void button4_Click(object sender, EventArgs e)
@@ -205,6 +258,48 @@ namespace UnitTest
 
             }
             Log("----Test Succ(" + succcount + "/" + testcount + ")----");
+        }
+
+        private void treeView2_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node.Tag is Mono.Cecil.Cil.Instruction)
+            {
+                Mono.Cecil.Cil.Instruction i = e.Node.Tag as Mono.Cecil.Cil.Instruction;
+                if (i.SequencePoint != null)
+                    foreach (TreeNode n in treeViewCode.Nodes)
+                    {
+                        if (n.Text == i.SequencePoint.Document.Url)
+                        {
+                            treeViewCode.SelectedNode = n.Nodes[i.SequencePoint.StartLine - 1];
+                            treeViewCode.SelectedNode.BackColor = Color.LightBlue;
+                        }
+                    }
+            }
+        }
+        TreeNode lastLine = null;
+        private void treeViewCode_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (lastLine != null)
+                lastLine.BackColor = Color.Transparent;
+            if (e.Node != null)
+                e.Node.BackColor = Color.LightBlue;
+
+            lastLine = e.Node;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Mono.Cecil.MethodDefinition d = this.treeView2.Tag as Mono.Cecil.MethodDefinition;
+            try
+            {
+                object obj = RunTest(d,true);
+                Log("----RunOK----" + obj);
+            }
+            catch (Exception err)
+            {
+                Log("----RunErr----");
+                Log_Error(err.ToString());
+            }
         }
     }
 }
