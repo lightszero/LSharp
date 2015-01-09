@@ -941,8 +941,23 @@ namespace CLRSharp
         }
 
         //寻址类
-        public void NewObj(ThreadContext context, Mono.Cecil.MethodDefinition def)
+        public void NewObj(ThreadContext context, Mono.Cecil.MethodDefinition method)
         {
+            MethodParamList list = new MethodParamList(context.environment, method);
+            object[] _pp = null;
+            if (method.Parameters.Count > 0)
+            {
+               _pp = new object[list.Count];
+                for (int i = 0; i < _pp.Length; i++)
+                {
+                    _pp[_pp.Length - 1 - i] = stackCalc.Pop();
+                }
+            }
+            var typesys = context.environment.GetType(method.DeclaringType.FullName, method.Module);
+            object returnvar = typesys.GetMethod(method.Name, list).Invoke(context, null, _pp);
+
+            stackCalc.Push(returnvar);
+
             _pos = _pos.Next;
         }
         public void NewObj(ThreadContext context, Mono.Cecil.MethodReference method)
