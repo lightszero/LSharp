@@ -31,7 +31,7 @@ namespace UnitTest
             foreach (var t in types)
             {
                 var tclr = env.GetType(t, null) as CLRSharp.Type_Common_CLRSharp;
-                if (t != null && tclr.type_CLRSharp.HasMethods)
+                if (tclr != null && tclr.type_CLRSharp.HasMethods)
                 {
                     TreeNode node = new TreeNode(t);
                     treeView1.Nodes.Add(node);
@@ -45,8 +45,18 @@ namespace UnitTest
                             method.BackColor = Color.Yellow;
                         }
                     }
-
+                    if (tclr.type_CLRSharp.HasNestedTypes)
+                    {
+                        TreeNode nt = new TreeNode("NestedTypes");
+                        node.Nodes.Add(nt);
+                        foreach(var ttt in tclr.type_CLRSharp.NestedTypes)
+                        {
+                            TreeNode snt = new TreeNode(ttt.Name);
+                            nt.Nodes.Add(snt);
+                        }
+                    }
                 }
+
             }
             SortTreeView();
             treeView1.ExpandAll();
@@ -239,6 +249,7 @@ namespace UnitTest
                 foreach (TreeNode method in t.Nodes)
                 {
                     Mono.Cecil.MethodDefinition m = method.Tag as Mono.Cecil.MethodDefinition;
+                    if (m == null) continue;
                     if (m.HasParameters == false && m.Name.Contains("UnitTest") && m.IsStatic)
                     {
                         testcount++;
