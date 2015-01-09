@@ -26,7 +26,7 @@ namespace CLRSharp
                 return _OneParam_Int;
             }
         }
-        public MethodParamList(CLRSharp_Environment env, Mono.Cecil.MethodReference method)
+        public MethodParamList(ICLRSharp_Environment env, Mono.Cecil.MethodReference method)
         {
             if (method.HasParameters)
             {
@@ -59,7 +59,7 @@ namespace CLRSharp
                 }
             }
         }
-        public MethodParamList(CLRSharp_Environment env, Mono.Cecil.GenericInstanceMethod method)
+        public MethodParamList(ICLRSharp_Environment env, Mono.Cecil.GenericInstanceMethod method)
         {
             foreach (var p in method.GenericArguments)
             {

@@ -16,7 +16,7 @@ namespace UnitTest
             InitializeComponent();
             g_this = this;
         }
-        CLRSharp.CLRSharp_Environment env;
+        CLRSharp.ICLRSharp_Environment env;
         private void Form1_Load(object sender, EventArgs e)
         {
             var bytes = System.IO.File.ReadAllBytes("UnitTestDll.dll");

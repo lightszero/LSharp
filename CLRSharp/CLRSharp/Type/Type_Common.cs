@@ -39,6 +39,8 @@ namespace CLRSharp
         IField GetField(string name);
 
         bool IsInst(object obj);
+
+        ICLRType GetNestType(ICLRSharp_Environment env,string fullname);
     }
     public interface IMethod
     {

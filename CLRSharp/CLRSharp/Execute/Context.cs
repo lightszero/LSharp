@@ -11,7 +11,7 @@ namespace CLRSharp
     /// </summary>
     public class ThreadContext
     {
-        public CLRSharp_Environment environment
+        public ICLRSharp_Environment environment
         {
             get;
             private set;
@@ -21,12 +21,12 @@ namespace CLRSharp
             get;
             private set;
         }
-        public ThreadContext(CLRSharp_Environment env)
+        public ThreadContext(ICLRSharp_Environment env)
         {
             this.environment = env;
             DebugLevel = 0;
         }
-        public ThreadContext(CLRSharp_Environment env, int DebugLevel)
+        public ThreadContext(ICLRSharp_Environment env, int DebugLevel)
         {
             this.environment = env;
             this.DebugLevel = DebugLevel;
@@ -36,9 +36,19 @@ namespace CLRSharp
         {
             StackFrame stack = new StackFrame();
             stacks.Push(stack);
-            stack.SetParams(_params);
-            RunCode(stack, func.Body.Instructions);
-            return stacks.Pop().Return();
+            if (func.Name == ".ctor")
+            {
+                 StackFrame.RefObj pthis=new StackFrame.RefObj(stack, 0, StackFrame.RefType.arg);
+                stack.SetParams(new object[] {pthis  });
+                RunCode(stack, func.Body.Instructions);
+                return pthis;
+            }
+            else
+            {
+                   RunCode(stack, func.Body.Instructions);
+                return stacks.Pop().Return();
+            }
+
 
         }
 

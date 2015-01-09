@@ -81,6 +81,12 @@ namespace CLRSharp
             return TypeForSystem.IsInstanceOfType(obj);
 
         }
+
+
+        public ICLRType GetNestType(ICLRSharp_Environment env, string fullname)
+        {
+            throw new NotImplementedException();
+        }
     }
     class Field_Common_System : IField
     {

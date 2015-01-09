@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.04Alpha";
+                return "0.06Alpha";
             }
         }
         public ICLRSharp_Logger logger
@@ -59,6 +59,16 @@ namespace CLRSharp
             bool b = mapType.TryGetValue(fullname, out type);
             if (!b)
             {
+                if (fullname.Contains("<>"))//匿名类型
+                {
+                    string[] subts = fullname.Split('/');
+                    ICLRType ft = GetType(subts[0],module);
+                    for(int i=1;i<subts.Length;i++)
+                    {
+                        ft = ft.GetNestType(this,subts[i]);
+                    }
+                    return ft;
+                }
                 string fullnameT = fullname.Replace('/', '+');
 
                 if (fullnameT.Contains("<"))
@@ -69,7 +79,11 @@ namespace CLRSharp
                     for (int i = 0; i < fullname.Length; i++)
                     {
                         string checkname = null;
-                        if (fullname[i] == '<')
+                        if (fullname[i] == '/')
+                        {
+
+                        }
+                        else if (fullname[i] == '<')
                         {
                             depth++;
                             if (depth == 1)//
@@ -141,6 +155,10 @@ namespace CLRSharp
                 mapType[fullname] = type;
             }
             return type;
+        }
+        public void RegType(ICLRType type)
+        {
+            mapType[type.FullName] = type;
         }
     }
 }

@@ -54,13 +54,13 @@ namespace CLRSharp
                             }
                         }
                         if (match)
-                            return new Method_Common_CLRSharp(m);
+                            return new Method_Common_CLRSharp(this,m);
                     }
                 }
             }
             return null;
         }
-        public IMethod GetMethodT(string funcname,MethodParamList ttypes, MethodParamList types)
+        public IMethod GetMethodT(string funcname, MethodParamList ttypes, MethodParamList types)
         {
             return null;
         }
@@ -80,13 +80,31 @@ namespace CLRSharp
             return false;
 
         }
+
+
+        public ICLRType GetNestType(ICLRSharp_Environment env, string fullname)
+        {
+            foreach (var stype in type_CLRSharp.NestedTypes)
+            {
+                if (stype.Name == fullname)
+                {
+                    var itype = new Type_Common_CLRSharp(stype);
+                    env.RegType(itype);
+                    return itype;
+                }
+            }
+            return null;
+        }
     }
     public class Method_Common_CLRSharp : IMethod
     {
-        public Method_Common_CLRSharp(Mono.Cecil.MethodDefinition method)
+        Type_Common_CLRSharp type;
+        public Method_Common_CLRSharp(Type_Common_CLRSharp type, Mono.Cecil.MethodDefinition method)
         {
+
             if (method == null)
                 throw new Exception("not allow null method.");
+            this.type = type;
             method_CLRSharp = method;
         }
         public bool isStatic
@@ -100,10 +118,25 @@ namespace CLRSharp
 
         public object Invoke(ThreadContext context, object _this, object[] _params)
         {
+            if (method_CLRSharp.Name == ".ctor")
+            {
+                SInstance inst = new SInstance(type);
+                context.ExecuteFunc(method_CLRSharp, inst, _params);
+                return inst;
+            }
             return context.ExecuteFunc(method_CLRSharp, _this, _params);
         }
     }
+    public class SInstance
+    {
+        Type_Common_CLRSharp type;
+        public SInstance(Type_Common_CLRSharp type)
+        {
+            this.type = type;
+        }
+        public Dictionary<string, object> Fields = new Dictionary<string, object>();
 
+    }
     public class Field_Common_CLRSharp : IField
     {
         public Mono.Cecil.FieldDefinition field;
@@ -114,12 +147,14 @@ namespace CLRSharp
 
         public void Set(object _this, object value)
         {
-            throw new NotImplementedException();
+            SInstance sins = _this as SInstance;
+            sins.Fields[field.Name] = value;
         }
 
         public object Get(object _this)
         {
-            throw new NotImplementedException();
+            SInstance sins = _this as SInstance;
+            return sins.Fields[field.Name];
         }
 
         public bool isStatic

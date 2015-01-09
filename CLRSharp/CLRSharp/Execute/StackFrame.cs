@@ -462,7 +462,10 @@ namespace CLRSharp
         //加载参数(还得处理static，il静态非静态不一样，成员参数0是this)
         public void Ldarg(int pos)
         {
-            stackCalc.Push(_params[pos]);
+            object p = null;
+            if (_params != null)
+                p = _params[pos];
+            stackCalc.Push(p);
             _pos = _pos.Next;
         }
         public void Ldarga(int pos)
