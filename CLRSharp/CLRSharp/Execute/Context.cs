@@ -369,6 +369,69 @@ namespace CLRSharp
                     case Code.Conv_R_Un:
                         stack.Conv_R_Un();
                         break;
+                    case Code.Conv_Ovf_I1:
+                        stack.Conv_Ovf_I1();
+                        break;
+                    case Code.Conv_Ovf_U1:
+                        stack.Conv_Ovf_U1();
+                        break;
+                    case Code.Conv_Ovf_I2:
+                        stack.Conv_Ovf_I2();
+                        break;
+                    case Code.Conv_Ovf_U2:
+                        stack.Conv_Ovf_U2();
+                        break;
+                    case Code.Conv_Ovf_I4:
+                        stack.Conv_Ovf_I4();
+                        break;
+                    case Code.Conv_Ovf_U4:
+                        stack.Conv_Ovf_U4();
+                        break;
+                              
+                    case Code.Conv_Ovf_I8:
+                        stack.Conv_Ovf_I8();
+                        break;
+                    case Code.Conv_Ovf_U8:
+                        stack.Conv_Ovf_U8();
+                        break;
+                    case Code.Conv_Ovf_I:
+                        stack.Conv_Ovf_I();
+                        break;
+                    case Code.Conv_Ovf_U:
+                        stack.Conv_Ovf_U();
+                        break;
+                    case Code.Conv_Ovf_I1_Un:
+                        stack.Conv_Ovf_I1_Un();
+                        break;
+
+                    case Code.Conv_Ovf_U1_Un:
+                        stack.Conv_Ovf_U1_Un();
+                        break;
+                    case Code.Conv_Ovf_I2_Un:
+                        stack.Conv_Ovf_I2_Un();
+                        break;
+                    case Code.Conv_Ovf_U2_Un:
+                        stack.Conv_Ovf_U2_Un();
+                        break;
+                    case Code.Conv_Ovf_I4_Un:
+                        stack.Conv_Ovf_I4_Un();
+                        break;
+                    case Code.Conv_Ovf_U4_Un:
+                        stack.Conv_Ovf_U4_Un();
+                        break;
+
+                    case Code.Conv_Ovf_I8_Un:
+                        stack.Conv_Ovf_I8_Un();
+                        break;
+                    case Code.Conv_Ovf_U8_Un:
+                        stack.Conv_Ovf_U8_Un();
+                        break;
+                    case Code.Conv_Ovf_I_Un:
+                        stack.Conv_Ovf_I_Un();
+                        break;
+                    case Code.Conv_Ovf_U_Un:
+                        stack.Conv_Ovf_U_Un();
+                        break;
                     //数组
                     case Code.Newarr:
                         stack.NewArr(this, (Mono.Cecil.TypeReference)code.Operand);

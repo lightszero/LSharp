@@ -28,7 +28,13 @@ namespace CLRSharp
         {
             get { return type_CLRSharp.FullName; }
         }
-
+        public string FullNameWithAssembly
+        {
+            get
+            {
+                return type_CLRSharp.FullName + "," + type_CLRSharp.Module.Name;
+            }
+        }
         public IMethod GetMethod(string funcname, MethodParamList types)
         {
             if (type_CLRSharp.HasMethods)

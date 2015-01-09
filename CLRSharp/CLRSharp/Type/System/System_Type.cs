@@ -11,9 +11,10 @@ namespace CLRSharp
             get;
             private set;
         }
-        public Type_Common_System(System.Type type)
+        public Type_Common_System(System.Type type,string aname)
         {
             this.TypeForSystem = type;
+            FullNameWithAssembly=aname;
         }
         public string Name
         {
@@ -24,7 +25,18 @@ namespace CLRSharp
         {
             get { return TypeForSystem.FullName; }
         }
+        public string FullNameWithAssembly
+        {
+            get;
+            private set;
 
+            //{
+            //    string aname = TypeForSystem.AssemblyQualifiedName;
+            //    int i = aname.IndexOf(',');
+            //    i = aname.IndexOf(',', i + 1);
+            //    return aname.Substring(0, i);
+            //}
+        }
         public IMethod GetMethod(string funcname, MethodParamList types)
         {
             if (funcname == ".ctor")

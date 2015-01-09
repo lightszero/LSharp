@@ -21,7 +21,7 @@ namespace CLRSharp
                 if (_OneParam_Int==null)
                 {
                     _OneParam_Int = new MethodParamList();
-                    _OneParam_Int.Add(new CLRSharp.Type_Common_System(typeof(int)));
+                    _OneParam_Int.Add(new CLRSharp.Type_Common_System(typeof(int), typeof(int).FullName));
                 }
                 return _OneParam_Int;
             }

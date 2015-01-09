@@ -16,6 +16,10 @@ namespace CLRSharp
         {
             get;
         }
+        string FullNameWithAssembly
+        {
+            get;
+        }
         System.Type TypeForSystem
         {
             get;

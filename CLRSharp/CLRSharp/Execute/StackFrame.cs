@@ -697,7 +697,7 @@ namespace CLRSharp
 
             decimal num1 = Convert.ToDecimal(stackCalc.Pop());
 
-            stackCalc.Push((Int64)num1);
+            stackCalc.Push((Int32)num1);
             _pos = _pos.Next;
         }
         public void Conv_U()
@@ -705,7 +705,7 @@ namespace CLRSharp
 
             decimal num1 = Convert.ToDecimal(stackCalc.Pop());
 
-            stackCalc.Push((UInt64)num1);
+            stackCalc.Push((UInt32)num1);
             _pos = _pos.Next;
         }
         public void Conv_R4()
@@ -754,59 +754,81 @@ namespace CLRSharp
         }
         public void Ldelem_I1()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
         public void Ldelem_U1()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
 
         public void Ldelem_I2()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
         public void Ldelem_U2()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
         public void Ldelem_I4()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
         public void Ldelem_U4()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
 
         public void Ldelem_I8()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
         public void Ldelem_I()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
         public void Ldelem_R4()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
         public void Ldelem_R8()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
         public void Ldelem_Ref()
         {
-            throw new NotImplementedException();
+            int index = (int)stackCalc.Pop();
+            Array array = stackCalc.Pop() as Array;
+            stackCalc.Push(array.GetValue(index));
             _pos = _pos.Next;
         }
         public void Ldelem_Any(object obj)
@@ -835,11 +857,11 @@ namespace CLRSharp
             var value = Convert.ToDecimal(stackCalc.Pop());
             var index = (int)stackCalc.Pop();
             var array = stackCalc.Pop();
-            if(array is char[] )
+            if (array is char[])
             {
                 (array as char[])[index] = (char)value;
             }
-            else if(array is Int16[])
+            else if (array is Int16[])
             {
                 (array as Int16[])[index] = (Int16)value;
             }
@@ -848,10 +870,10 @@ namespace CLRSharp
         }
         public void Stelem_I4()
         {
-            var value = (Int32)stackCalc.Pop();
+            var value = Convert.ToDecimal(stackCalc.Pop());
             var index = (int)stackCalc.Pop();
             var array = stackCalc.Pop() as Int32[];
-            array[index] = value;
+            array[index] = (Int32)value;
             _pos = _pos.Next;
         }
         public void Stelem_I8()
@@ -904,9 +926,9 @@ namespace CLRSharp
         public void NewObj(ThreadContext context, Mono.Cecil.MethodReference method)
         {
             object[] _pp = null;
-            if (stackCalc.Count > 0)
+            if (method.Parameters.Count > 0)
             {
-                _pp = new object[stackCalc.Count];
+                _pp = new object[method.Parameters.Count];
                 for (int i = 0; i < _pp.Length; i++)
                 {
                     _pp[_pp.Length - 1 - i] = stackCalc.Pop();
@@ -932,7 +954,7 @@ namespace CLRSharp
 
             var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
             var ff = type.GetField(field.Name);
-            if(obj is RefObj)
+            if (obj is RefObj)
             {
                 obj = (obj as RefObj).Get();
             }
@@ -976,7 +998,7 @@ namespace CLRSharp
             var obj = stackCalc.Pop();
             var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
             var ff = type.GetField(field.Name);
-            if(obj is RefObj)
+            if (obj is RefObj)
             {
                 obj = (obj as RefObj).Get();
             }
@@ -996,6 +1018,118 @@ namespace CLRSharp
         {
             Type t = obj.GetType();
             _pos = _pos.Next;
+        }
+        public void Conv_Ovf_I1()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((sbyte)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_Ovf_U1()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((byte)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_Ovf_I2()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((Int16)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_Ovf_U2()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((UInt16)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_Ovf_I4()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((Int32)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_Ovf_U4()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((UInt32)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_Ovf_I8()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((Int64)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_Ovf_U8()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((UInt64)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_Ovf_I()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((Int32)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_Ovf_U()
+        {
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((UInt32)num1);
+            _pos = _pos.Next;
+        }
+        public void Conv_Ovf_I1_Un()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Conv_Ovf_U1_Un()
+        {
+            throw new NotImplementedException();
+        }
+        public void Conv_Ovf_I2_Un()
+        {
+            throw new NotImplementedException();
+        }
+        public void Conv_Ovf_U2_Un()
+        {
+            throw new NotImplementedException();
+        }
+        public void Conv_Ovf_I4_Un()
+        {
+            throw new NotImplementedException();
+        }
+        public void Conv_Ovf_U4_Un()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Conv_Ovf_I8_Un()
+        {
+            throw new NotImplementedException();
+        }
+        public void Conv_Ovf_U8_Un()
+        {
+            throw new NotImplementedException();
+        }
+        public void Conv_Ovf_I_Un()
+        {
+            throw new NotImplementedException();
+        }
+        public void Conv_Ovf_U_Un()
+        {
+            throw new NotImplementedException();
         }
     }
 }
