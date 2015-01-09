@@ -60,33 +60,33 @@ namespace CLRSharp
             if (!b)
             {
                 string fullnameT = fullname.Replace('/', '+');
-              
+
                 if (fullnameT.Contains("<"))
                 {
                     string outname = "";
                     int depth = 0;
                     int lastsplitpos = 0;
-                    for (int i = 0; i < fullname.Length;i++ )
+                    for (int i = 0; i < fullname.Length; i++)
                     {
                         string checkname = null;
-                        if(fullname[i]=='<')
+                        if (fullname[i] == '<')
                         {
                             depth++;
-                            if(depth==1)//
+                            if (depth == 1)//
                             {
                                 lastsplitpos = i;
                                 outname += "[";
                                 continue;
                             }
-                           
+
                         }
-                        else if(fullname[i]=='>')
+                        else if (fullname[i] == '>')
                         {
                             if (depth == 1)
                             {
-                                checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos-1);
+                                checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
                                 var subtype = GetType(checkname, module);
-                                outname +="["+ subtype.FullNameWithAssembly+"]";
+                                outname += "[" + subtype.FullNameWithAssembly + "]";
                                 lastsplitpos = i;
                             }
                             depth--;
@@ -96,17 +96,17 @@ namespace CLRSharp
                                 continue;
                             }
                         }
-                        else if(fullname[i]==',')
+                        else if (fullname[i] == ',')
                         {
                             if (depth == 1)
                             {
-                                checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos-1);
+                                checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
                                 var subtype = GetType(checkname, module);
-                                outname += "["+subtype.FullNameWithAssembly + "],";
+                                outname += "[" + subtype.FullNameWithAssembly + "],";
                                 lastsplitpos = i;
                             }
                         }
-                        if(depth==0)
+                        if (depth == 0)
                         {
                             outname += fullnameT[i];
                         }
@@ -119,7 +119,7 @@ namespace CLRSharp
                 }
 
                 System.Type t = System.Type.GetType(fullnameT);
-                
+
                 if (t == null && module != null && module.HasAssemblyReferences)
                 {
 
@@ -136,7 +136,7 @@ namespace CLRSharp
                 }
                 if (t != null)
                 {
-                    type = new Type_Common_System(t,fullnameT);
+                    type = new Type_Common_System(t, fullnameT);
                 }
                 mapType[fullname] = type;
             }

@@ -11,10 +11,10 @@ namespace CLRSharp
             get;
             private set;
         }
-        public Type_Common_System(System.Type type,string aname)
+        public Type_Common_System(System.Type type, string aname)
         {
             this.TypeForSystem = type;
-            FullNameWithAssembly=aname;
+            FullNameWithAssembly = aname;
         }
         public string Name
         {

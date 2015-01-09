@@ -38,7 +38,7 @@ namespace CLRSharp
     }
     public interface IField
     {
-        void Set(object _this,object value);
+        void Set(object _this, object value);
         object Get(object _this);
         bool isStatic
         {

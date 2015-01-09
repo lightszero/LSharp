@@ -32,7 +32,7 @@ namespace CLRSharp
         {
             get
             {
-                return type_CLRSharp.FullName + "," + type_CLRSharp.Module.Name;
+                return type_CLRSharp.FullName;// +"," + type_CLRSharp.Module.Name;
             }
         }
         public IMethod GetMethod(string funcname, MethodParamList types)
