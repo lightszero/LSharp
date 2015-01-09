@@ -47,14 +47,44 @@ namespace CLRSharp
             var method = TypeForSystem.GetMethod(funcname, types.ToArraySystem());
             return new Method_Common_System(method);
         }
+        public IMethod GetMethodT(string funcname, MethodParamList ttypes, MethodParamList types)
+        {
+            //这个实现还不完全
+            //有个别重构下，判定比这个要复杂
+            System.Reflection.MethodInfo _method = null;
+            var ms = TypeForSystem.GetMethods();
+            foreach (var m in ms)
+            {
+                if (m.Name == funcname && m.IsGenericMethodDefinition)
+                {
+                    var ts = m.GetGenericArguments();
+                    var ps = m.GetParameters();
+                    if (ts.Length == ttypes.Count && ps.Length == types.Count)
+                    {
+                        _method = m;
+                        break;
+                    }
+
+                }
+            }
+
+            // _method = TypeForSystem.GetMethod(funcname, types.ToArraySystem());
+
+            return new Method_Common_System(_method.MakeGenericMethod(ttypes.ToArraySystem()));
+        }
         public IField GetField(string name)
         {
             return new Field_Common_System(TypeForSystem.GetField(name));
         }
+        public bool IsInst(object obj)
+        {
+            return TypeForSystem.IsInstanceOfType(obj);
+
+        }
     }
     class Field_Common_System : IField
     {
-        System.Reflection.FieldInfo info;
+        public System.Reflection.FieldInfo info;
         public Field_Common_System(System.Reflection.FieldInfo field)
         {
             info = field;

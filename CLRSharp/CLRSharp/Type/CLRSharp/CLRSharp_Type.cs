@@ -60,6 +60,10 @@ namespace CLRSharp
             }
             return null;
         }
+        public IMethod GetMethodT(string funcname,MethodParamList ttypes, MethodParamList types)
+        {
+            return null;
+        }
         public IField GetField(string name)
         {
             foreach (var f in type_CLRSharp.Fields)
@@ -70,6 +74,11 @@ namespace CLRSharp
                 }
             }
             return null;
+        }
+        public bool IsInst(object obj)
+        {
+            return false;
+
         }
     }
     public class Method_Common_CLRSharp : IMethod

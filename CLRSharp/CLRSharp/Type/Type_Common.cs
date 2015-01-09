@@ -26,7 +26,19 @@ namespace CLRSharp
         }
         //funcname==".ctor" 表示构造函数
         IMethod GetMethod(string funcname, MethodParamList types);
+
+        /// <summary>
+        /// 获取模板函数
+        /// </summary>
+        /// <param name="funcname"></param>
+        /// <param name="TTypes"></param>
+        /// <param name="types"></param>
+        /// <returns></returns>
+        IMethod GetMethodT(string funcname,MethodParamList TTypes, MethodParamList types);
+
         IField GetField(string name);
+
+        bool IsInst(object obj);
     }
     public interface IMethod
     {

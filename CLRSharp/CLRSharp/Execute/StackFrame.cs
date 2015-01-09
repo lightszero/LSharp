@@ -49,14 +49,36 @@ namespace CLRSharp
 
 
             var typesys = context.environment.GetType(method.DeclaringType.FullName, method.Module);
-
+            if (typesys == null)
+                throw new Exception("type can't find:" + method.DeclaringType.FullName);
+            if (typesys.FullName.Contains("System.Runtime.CompilerServices.RuntimeHelpers") && method.FullName.Contains("InitializeArray"))
+            {
+                _pos = _pos.Next;
+                return;
+            }
             MethodParamList list = new MethodParamList(context.environment, method);
 
             if (_this is RefObj && method.Name != ".ctor")
             {
                 _this = (_this as RefObj).Get();
             }
-            object returnvar = typesys.GetMethod(method.Name, list).Invoke(context, _this, _pp);
+            string methodname = method.Name;
+            IMethod _method = null;
+            if (method.IsGenericInstance)
+            {
+                Mono.Cecil.GenericInstanceMethod gmethod = method as Mono.Cecil.GenericInstanceMethod;
+                MethodParamList _plist = new MethodParamList(context.environment, gmethod);
+                _method = typesys.GetMethodT(methodname, _plist, list);
+            }
+            else
+            {
+                _method = typesys.GetMethod(methodname, list);
+            }
+
+            if (_method == null)
+                throw new Exception("type can't find:" + method.FullName);
+
+            object returnvar = _method.Invoke(context, _this, _pp);
             bool breturn = method.ReturnType.FullName != "System.Void";
             if (breturn)
             {
@@ -1014,11 +1036,31 @@ namespace CLRSharp
             ff.Set(null, value);
             _pos = _pos.Next;
         }
-        public void Constrained(object obj)
+        public void Constrained(ThreadContext context, Mono.Cecil.TypeReference obj)
         {
-            Type t = obj.GetType();
+
             _pos = _pos.Next;
         }
+        public void Isinst(ThreadContext context, Mono.Cecil.TypeReference obj)
+        {
+            var value = stackCalc.Pop();
+            var _type = context.environment.GetType(obj.FullName, obj.Module);
+            if (_type.IsInst(value))
+                stackCalc.Push(value);
+            else
+                stackCalc.Push(null);
+            _pos = _pos.Next;
+        }
+        public void Ldtoken(ThreadContext context, Mono.Cecil.FieldDefinition obj)
+        {
+            string fname=obj.FullName;
+            string tfname = obj.FieldType.FullName;
+            var _type = context.environment.GetType(obj.DeclaringType.FullName, obj.Module);
+            var field = _type.GetField(obj.Name);
+            stackCalc.Push(field);
+            _pos = _pos.Next;
+        }
+
         public void Conv_Ovf_I1()
         {
             decimal num1 = Convert.ToDecimal(stackCalc.Pop());

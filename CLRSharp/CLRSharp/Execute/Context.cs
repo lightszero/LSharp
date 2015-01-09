@@ -387,7 +387,7 @@ namespace CLRSharp
                     case Code.Conv_Ovf_U4:
                         stack.Conv_Ovf_U4();
                         break;
-                              
+
                     case Code.Conv_Ovf_I8:
                         stack.Conv_Ovf_I8();
                         break;
@@ -542,8 +542,82 @@ namespace CLRSharp
 
 
                     case Code.Constrained:
-                        stack.Constrained(code.Operand);
+                        stack.Constrained(this, code.Operand as Mono.Cecil.TypeReference);
                         break;
+
+                    case Code.Isinst:
+                        stack.Isinst(this, code.Operand as Mono.Cecil.TypeReference);
+                        break;
+                    case Code.Ldtoken:
+                        stack.Ldtoken(this, code.Operand as Mono.Cecil.FieldDefinition);
+                           break;
+                    ///下面是还没有处理的指令
+                    case Code.Break:
+                    case Code.Ldarga_S:
+                    case Code.Starg_S:
+                    case Code.Ldnull:
+                    case Code.Jmp:
+                    case Code.Calli:
+                    case Code.Switch:
+                    case Code.Ldind_I1:
+                    case Code.Ldind_U1:
+                    case Code.Ldind_I2:
+                    case Code.Ldind_U2:
+                    case Code.Ldind_I4:
+                    case Code.Ldind_U4:
+                    case Code.Ldind_I8:
+                    case Code.Ldind_I:
+                    case Code.Ldind_R4:
+                    case Code.Ldind_R8:
+                    case Code.Ldind_Ref:
+                    case Code.Stind_Ref:
+                    case Code.Stind_I1:
+                    case Code.Stind_I2:
+                    case Code.Stind_I4:
+                    case Code.Stind_I8:
+                    case Code.Stind_R4:
+                    case Code.Stind_R8:
+                    case Code.And:
+                    case Code.Or:
+                    case Code.Xor:
+                    case Code.Shl:
+                    case Code.Shr:
+                    case Code.Shr_Un:
+                    case Code.Not:
+                    case Code.Cpobj:
+                    case Code.Ldobj:
+                    case Code.Castclass:
+                    case Code.Throw:
+                    case Code.Stobj:
+                    case Code.Refanyval:
+                    case Code.Mkrefany:
+
+                    case Code.Add_Ovf:
+                    case Code.Add_Ovf_Un:
+                    case Code.Mul_Ovf:
+                    case Code.Mul_Ovf_Un:
+                    case Code.Sub_Ovf:
+                    case Code.Sub_Ovf_Un:
+                    case Code.Endfinally:
+                    case Code.Stind_I:
+                    case Code.Arglist:
+                    case Code.Ldftn:
+                    case Code.Ldvirtftn:
+                    case Code.Ldarga:
+                    case Code.Starg:
+                    case Code.Localloc:
+                    case Code.Endfilter:
+                    case Code.Unaligned:
+                    case Code.Volatile:
+                    case Code.Tail:
+                    case Code.Initobj:
+                    case Code.Cpblk:
+                    case Code.Initblk:
+                    case Code.No:
+                    case Code.Rethrow:
+                    case Code.Sizeof:
+                    case Code.Refanytype:
+                    case Code.Readonly:
                     default:
                         throw new Exception("未实现的OpCode:" + code.OpCode.Code);
                 }

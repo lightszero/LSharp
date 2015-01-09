@@ -18,7 +18,7 @@ namespace CLRSharp
         {
             get
             {
-                if (_OneParam_Int==null)
+                if (_OneParam_Int == null)
                 {
                     _OneParam_Int = new MethodParamList();
                     _OneParam_Int.Add(new CLRSharp.Type_Common_System(typeof(int), typeof(int).FullName));
@@ -30,21 +30,51 @@ namespace CLRSharp
         {
             if (method.HasParameters)
             {
+                Mono.Cecil.GenericInstanceType _typegen = null;
+                MethodParamList _methodgen = null;
                 foreach (var p in method.Parameters)
                 {
                     string paramname = p.ParameterType.FullName;
                     if (p.ParameterType.IsGenericParameter)
                     {
-
-                        var typegen = method.DeclaringType as Mono.Cecil.GenericInstanceType;
-                        if (p.ParameterType.Name[0] == '!')
+                        if (p.ParameterType.Name.Contains("!!"))
                         {
-                            int index = int.Parse(p.ParameterType.Name.Substring(1));
-                            paramname = typegen.GenericArguments[index].FullName;
+                             if (_methodgen == null)
+                             {
+                                 _methodgen = new MethodParamList(env,method as Mono.Cecil.GenericInstanceMethod);
+                             }
+                             int index = int.Parse(p.ParameterType.Name.Substring(2));
+                             paramname = _methodgen[index].FullName;
                         }
+                        else if (p.ParameterType.Name.Contains("!"))
+                        {
+                            if (_typegen == null)
+                                _typegen = method.DeclaringType as Mono.Cecil.GenericInstanceType;
+                            int index = int.Parse(p.ParameterType.Name.Substring(1));
+                            paramname = _typegen.GenericArguments[index].FullName;
+                        }
+
                     }
                     this.Add(env.GetType(paramname, method.Module));
                 }
+            }
+        }
+        public MethodParamList(CLRSharp_Environment env, Mono.Cecil.GenericInstanceMethod method)
+        {
+            foreach (var p in method.GenericArguments)
+            {
+                string paramname = p.FullName;
+                if (p.IsGenericParameter)
+                {
+
+                    var typegen = method.DeclaringType as Mono.Cecil.GenericInstanceType;
+                    if (p.Name[0] == '!')
+                    {
+                        int index = int.Parse(p.Name.Substring(1));
+                        paramname = typegen.GenericArguments[index].FullName;
+                    }
+                }
+                this.Add(env.GetType(paramname, method.Module));
             }
         }
         public override int GetHashCode()

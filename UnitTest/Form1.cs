@@ -53,8 +53,18 @@ namespace UnitTest
                         {
                             TreeNode snt = new TreeNode(ttt.Name);
                             nt.Nodes.Add(snt);
+                            if(ttt.HasMethods)
+                            {
+                                foreach (var m in ttt.Methods)
+                                {
+                                    TreeNode method = new TreeNode(m.Name);
+                                    method.Tag = m;
+                                    snt.Nodes.Add(method);
+                                }
+                            }
                         }
                     }
+
                 }
 
             }
