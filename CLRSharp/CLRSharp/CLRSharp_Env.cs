@@ -4,33 +4,14 @@ using System.Text;
 
 namespace CLRSharp
 {
-    public interface ICLRSharp_Logger
-    {
-        void Log(string str);
-        void Log_Warning(string str);
-        void Log_Error(string str);
-    }
-    public interface ICLRSharp_Environment
-    {
-        string version
-        {
-            get;
-        }
-        void LoadModule(System.IO.Stream dllStream);
-        string[] GetAllTypes();
-        Type_Common GetType(string name);
-        ICLRSharp_Logger logger
-        {
-            get;
-        }
-    }
+
     public class CLRSharp_Environment : ICLRSharp_Environment
     {
         public string version
         {
             get
             {
-                return "0.03Alpha";
+                return "0.04Alpha";
             }
         }
         public ICLRSharp_Logger logger
@@ -43,26 +24,22 @@ namespace CLRSharp
             this.logger = logger;
             logger.Log_Warning("CLR# Ver:" + version + " Inited.");
         }
-        Dictionary<string, Type_Common> mapType = new Dictionary<string, Type_Common>();
+        Dictionary<string, ICLRType> mapType = new Dictionary<string, ICLRType>();
         //public Dictionary<string, Mono.Cecil.ModuleDefinition> mapModule = new Dictionary<string, Mono.Cecil.ModuleDefinition>();
-        public void LoadModule(System.IO.Stream dllStream)
-        {
-            LoadModule(dllStream, null);
 
-        }
-        public void LoadModule(System.IO.Stream dllStream,System.IO.Stream pdbStream)
+        public void LoadModule(System.IO.Stream dllStream, System.IO.Stream pdbStream)
         {
             var module = Mono.Cecil.ModuleDefinition.ReadModule(dllStream);
             if (pdbStream != null)
             {
-                module.ReadSymbols(new Mono.Cecil.Pdb.PdbReaderProvider().GetSymbolReader(module,pdbStream));
+                module.ReadSymbols(new Mono.Cecil.Pdb.PdbReaderProvider().GetSymbolReader(module, pdbStream));
             }
             //mapModule[module.Name] = module;
             if (module.HasTypes)
             {
                 foreach (var t in module.Types)
                 {
-                    mapType[t.FullName] = new Type_Common(t);
+                    mapType[t.FullName] = new Type_Common_CLRSharp(t);
                 }
             }
 
@@ -75,10 +52,38 @@ namespace CLRSharp
         }
         //得到类型的时候应该得到模块内Type或者真实Type
         //一个统一的Type,然后根据具体情况调用两边
-        public Type_Common GetType(string name)
+
+        public ICLRType GetType(string fullname, Mono.Cecil.ModuleDefinition module)
         {
-            Type_Common type = null;
-            mapType.TryGetValue(name, out type);
+            ICLRType type = null;
+            bool b = mapType.TryGetValue(fullname, out type);
+            if (!b)
+            {
+                string fullnameT = fullname;
+                if (fullname.Contains("<"))
+                {
+                    fullnameT = fullname.Replace('<', '[');
+                    fullnameT = fullnameT.Replace('>', ']');
+                    fullnameT = fullnameT.Replace('/', '+');
+
+                }
+                System.Type t = System.Type.GetType(fullnameT);
+                if (t == null && module != null && module.HasAssemblyReferences)
+                {
+
+                    foreach (var rm in module.AssemblyReferences)
+                    {
+                        t = System.Type.GetType(fullnameT + "," + rm.Name);
+                        if (t != null) break;
+                    }
+
+                }
+                if (t != null)
+                {
+                    type = new Type_Common_System(t);
+                }
+                mapType[fullname] = type;
+            }
             return type;
         }
     }

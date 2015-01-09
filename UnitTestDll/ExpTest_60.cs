@@ -7,17 +7,6 @@ namespace UnitTestDll
 {
     public class ExpTest_60
     {
-        public static object UnitTest_6000()
-        {
-            //6003 object
-            //static
-
-            Vector3 vec = new Vector3(1, 0, 0) * 0.5f;
-
-
-            return vec;
-
-        }
         //只要有一个静态函数包含UnitTest名称的，就作为单元测试
         public static object UnitTest_6001()
         {

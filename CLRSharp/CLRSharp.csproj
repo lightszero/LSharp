@@ -38,10 +38,12 @@
     <Compile Include="CLRSharp\CLRSharp_Env.cs" />
     <Compile Include="CLRSharp\Execute\Context.cs" />
     <Compile Include="CLRSharp\Execute\StackFrame.cs" />
-    <Compile Include="CLRSharp\Type\System_Type.cs" />
+    <Compile Include="CLRSharp\Interface\EnvAndLog.cs" />
+    <Compile Include="CLRSharp\Type\System\System_Type.cs" />
     <Compile Include="CLRSharp\Type\Type_Common.cs" />
+    <Compile Include="CLRSharp\Type\Type_List.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CLRSharp\Type\CLRSharp_Type.cs" />
+    <Compile Include="CLRSharp\Type\CLRSharp\CLRSharp_Type.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mono.Cecil.20\Mono.Cecil.20.csproj">

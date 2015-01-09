@@ -21,7 +21,7 @@ namespace UnitTestDll
             int a = (int)(Math.Pow(1.4f, 5) * 5f);
 
             Vector3 v3 = new Vector3((252.0f / 255.0f), (207.0f / 255.0f), (20.0f / 255.0f));
-
+            Logger.Log("v3=" + v3);
             return (2 + 55) * 3434;
 
         }

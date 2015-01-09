@@ -30,11 +30,12 @@ namespace UnitTest
             var types = env.GetAllTypes();
             foreach (var t in types)
             {
-                if (env.GetType(t) != null && env.GetType(t).type_CLRSharp != null && env.GetType(t).type_CLRSharp.HasMethods)
+                var tclr = env.GetType(t, null) as CLRSharp.Type_Common_CLRSharp;
+                if (t != null && tclr.type_CLRSharp.HasMethods)
                 {
                     TreeNode node = new TreeNode(t);
                     treeView1.Nodes.Add(node);
-                    foreach (var m in env.GetType(t).type_CLRSharp.Methods)
+                    foreach (var m in tclr.type_CLRSharp.Methods)
                     {
                         TreeNode method = new TreeNode(m.Name);
                         method.Tag = m;
@@ -220,13 +221,13 @@ namespace UnitTest
             Log("----RunOK----" + obj);
 
         }
-        object RunTest(Mono.Cecil.MethodDefinition d,bool LogStep=false)
+        object RunTest(Mono.Cecil.MethodDefinition d, bool LogStep = false)
         {
             if (d == null) throw new Exception("null method call");
-            var type = env.GetType(d.DeclaringType.FullName);
+            var type = env.GetType(d.DeclaringType.FullName, null);
             var method = type.GetMethod(d.Name, null);
             int debug = LogStep ? 9 : 0;
-            CLRSharp.Context context = new CLRSharp.Context(env, debug);
+            CLRSharp.ThreadContext context = new CLRSharp.ThreadContext(env, debug);
             return method.Invoke(context, null, null);
         }
         private void button4_Click(object sender, EventArgs e)
@@ -292,7 +293,7 @@ namespace UnitTest
             Mono.Cecil.MethodDefinition d = this.treeView2.Tag as Mono.Cecil.MethodDefinition;
             try
             {
-                object obj = RunTest(d,true);
+                object obj = RunTest(d, true);
                 Log("----RunOK----" + obj);
             }
             catch (Exception err)

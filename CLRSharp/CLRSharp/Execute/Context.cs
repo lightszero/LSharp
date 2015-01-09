@@ -5,7 +5,11 @@ using System.Text;
 
 namespace CLRSharp
 {
-    public class Context
+    /// <summary>
+    /// 线程上下文
+    /// 一个线程上下文表示一次调用，直到结束
+    /// </summary>
+    public class ThreadContext
     {
         public CLRSharp_Environment environment
         {
@@ -17,12 +21,12 @@ namespace CLRSharp
             get;
             private set;
         }
-        public Context(CLRSharp_Environment env)
+        public ThreadContext(CLRSharp_Environment env)
         {
             this.environment = env;
             DebugLevel = 0;
         }
-        public Context(CLRSharp_Environment env,int DebugLevel)
+        public ThreadContext(CLRSharp_Environment env, int DebugLevel)
         {
             this.environment = env;
             this.DebugLevel = DebugLevel;
@@ -37,73 +41,8 @@ namespace CLRSharp
             return stacks.Pop().Return();
 
         }
-        Type_Common GetType(Mono.Cecil.MethodReference method)
-        {
-            string name = method.DeclaringType.FullName;
-            if(name.Contains("<"))
-            {
-                name=name.Replace('<', '[');
-                name = name.Replace('>', ']');
 
-            }
-            var typesys = this.environment.GetType(name);
-            if (typesys == null)
-            {
-                System.Type t = System.Type.GetType(name);
-                if (t == null)
-                {
-                    foreach (var rm in method.Module.AssemblyReferences)
-                    {
-                        t = System.Type.GetType(name + "," + rm.Name);
-                        if (t != null) break;
-                    }
 
-                }
-                typesys = new Type_Common(t);
-            }
-            return typesys;
-        }
-        Type_Common GetType(Mono.Cecil.MethodReference method,Mono.Cecil.ParameterReference p)
-        {
-            string name = p.ParameterType.FullName;
-            if (name.Contains("<"))
-            {
-                name = name.Replace('<', '[');
-                name = name.Replace('>', ']');
-
-            }
-            var typesys = this.environment.GetType(name);
-            if (typesys == null)
-            {
-                System.Type t = System.Type.GetType(name);
-                if (t == null)
-                {
-                    foreach (var rm in method.Module.AssemblyReferences)
-                    {
-                        t = System.Type.GetType(name + "," + rm.Name);
-                        if (t != null) break;
-                    }
-
-                }
-                typesys = new Type_Common(t);
-            }
-            return typesys;
-        }
-        public object Call(Mono.Cecil.MethodReference method, object _this, object[] _params)
-        {
-       
-            var typesys = GetType(method);
-         
-            TypeList list = new TypeList();
-            foreach (var p in method.Parameters)
-            {
-
-                list.Add(GetType(method,p));
-            }
-
-            return typesys.GetMethod(method.Name, list).Invoke(this, _this, _params);
-
-        }
         void RunCode(StackFrame stack, Mono.Collections.Generic.Collection<Mono.Cecil.Cil.Instruction> codes)
         {
             stack._pos = codes[0];
@@ -144,6 +83,13 @@ namespace CLRSharp
                         break;
                     case Code.Brfalse_S:
                         stack.Brfalse(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Leave:
+                        stack.Leave(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Leave_S:
+                        stack.Ret();
+                        stack.Leave(code.Operand as Mono.Cecil.Cil.Instruction);
                         break;
                     //比较流程控制
                     case Code.Beq:
@@ -423,86 +369,117 @@ namespace CLRSharp
                     case Code.Conv_R_Un:
                         stack.Conv_R_Un();
                         break;
-                    //    //数组
-                    //case Code.Newarr:
-                    //    stack.NewArr((Mono.Cecil.TypeReference)code.Operand);
-                    //    break;
-                    //case Code.Ldlen:
-                    //    stack.LdLen();
-                    //    break;
-                    //case Code.Ldelema:
-                    //    stack.Ldelema((Mono.Cecil.TypeReference)code.Operand);
-                    //    break;
-                    //case Code.Ldelem_I1:
-                    //    stack.Ldelem_I1();
-                    //    break;
-                    //case Code.Ldelem_U1:
-                    //    stack.Ldelem_U1();
-                    //    break;
-                    //case Code.Ldelem_I2:
-                    //    stack.Ldelem_I2();
-                    //    break;
-                    //case Code.Ldelem_U2:
-                    //    stack.Ldelem_U2();
-                    //    break;
-                    //case Code.Ldelem_I4:
-                    //    stack.Ldelem_I4();
-                    //    break;
-                    //case Code.Ldelem_U4:
-                    //    stack.Ldelem_U4();
-                    //    break;
-                    //case Code.Ldelem_I8:
-                    //    stack.Ldelem_I8();
-                    //    break;
-                    //case Code.Ldelem_I:
-                    //    stack.Ldelem_I();
-                    //    break;
-                    //case Code.Ldelem_R4:
-                    //    stack.Ldelem_R4();
-                    //    break;
-                    //case Code.Ldelem_R8:
-                    //    stack.Ldelem_R8();
-                    //    break;
-                    //case Code.Ldelem_Ref:
-                    //    stack.Ldelem_Ref();
-                    //    break;
-                    //case Code.Ldelem_Any:
-                    //    stack.Ldelem_Any((Mono.Cecil.TypeReference)code.Operand);
-                    //    break;
+                    //数组
+                    case Code.Newarr:
+                        stack.NewArr(this, (Mono.Cecil.TypeReference)code.Operand);
+                        break;
+                    case Code.Ldlen:
+                        stack.LdLen();
+                        break;
+                    case Code.Ldelema:
+                        stack.Ldelema((Mono.Cecil.TypeReference)code.Operand);
+                        break;
+                    case Code.Ldelem_I1:
+                        stack.Ldelem_I1();
+                        break;
+                    case Code.Ldelem_U1:
+                        stack.Ldelem_U1();
+                        break;
+                    case Code.Ldelem_I2:
+                        stack.Ldelem_I2();
+                        break;
+                    case Code.Ldelem_U2:
+                        stack.Ldelem_U2();
+                        break;
+                    case Code.Ldelem_I4:
+                        stack.Ldelem_I4();
+                        break;
+                    case Code.Ldelem_U4:
+                        stack.Ldelem_U4();
+                        break;
+                    case Code.Ldelem_I8:
+                        stack.Ldelem_I8();
+                        break;
+                    case Code.Ldelem_I:
+                        stack.Ldelem_I();
+                        break;
+                    case Code.Ldelem_R4:
+                        stack.Ldelem_R4();
+                        break;
+                    case Code.Ldelem_R8:
+                        stack.Ldelem_R8();
+                        break;
+                    case Code.Ldelem_Ref:
+                        stack.Ldelem_Ref();
+                        break;
+                    case Code.Ldelem_Any:
+                        stack.Ldelem_Any((Mono.Cecil.TypeReference)code.Operand);
+                        break;
 
-                    //case Code.Stelem_I:
-                    //    stack.Stelem_I();
-                    //    break;
-                    //case Code.Stelem_I1:
-                    //    stack.Stelem_I1();
-                    //    break;
-                    //case Code.Stelem_I2:
-                    //    stack.Stelem_I2();
-                    //    break;
-                    //case Code.Stelem_I4:
-                    //    stack.Stelem_I4();
-                    //    break;
-                    //case Code.Stelem_I8:
-                    //    stack.Stelem_I8();
-                    //    break;
-                    //case Code.Stelem_R4:
-                    //    stack.Stelem_R4();
-                    //    break;
-                    //case Code.Stelem_R8:
-                    //    stack.Stelem_R8();
-                    //    break;
-                    //case Code.Stelem_Ref:
-                    //    stack.Stelem_Ref();
-                    //    break;
-                    //case Code.Stelem_Any:
-                    //    stack.Stelem_Any((Mono.Cecil.TypeReference)code.Operand);
-                    //    break;
+                    case Code.Stelem_I:
+                        stack.Stelem_I();
+                        break;
+                    case Code.Stelem_I1:
+                        stack.Stelem_I1();
+                        break;
+                    case Code.Stelem_I2:
+                        stack.Stelem_I2();
+                        break;
+                    case Code.Stelem_I4:
+                        stack.Stelem_I4();
+                        break;
+                    case Code.Stelem_I8:
+                        stack.Stelem_I8();
+                        break;
+                    case Code.Stelem_R4:
+                        stack.Stelem_R4();
+                        break;
+                    case Code.Stelem_R8:
+                        stack.Stelem_R8();
+                        break;
+                    case Code.Stelem_Ref:
+                        stack.Stelem_Ref();
+                        break;
+                    case Code.Stelem_Any:
+                        stack.Stelem_Any((Mono.Cecil.TypeReference)code.Operand);
+                        break;
 
                     case Code.Newobj:
                         if (code.Operand is Mono.Cecil.MethodDefinition)
-                            stack.NewObj(this,code.Operand as Mono.Cecil.MethodDefinition);
+                            stack.NewObj(this, code.Operand as Mono.Cecil.MethodDefinition);
                         else
-                            stack.NewObj(this,code.Operand as Mono.Cecil.MethodReference);
+                            stack.NewObj(this, code.Operand as Mono.Cecil.MethodReference);
+                        break;
+
+                    case Code.Dup:
+                        stack.Dup();
+                        break;
+                    case Code.Pop:
+                        stack.Pop();
+                        break;
+
+                    case Code.Ldfld:
+                        stack.Ldfld(this, code.Operand as Mono.Cecil.FieldReference);
+                        break;
+                    case Code.Ldflda:
+                        stack.Ldflda(this, code.Operand as Mono.Cecil.FieldReference);
+                        break;
+                    case Code.Ldsfld:
+                        stack.Ldsfld(this, code.Operand as Mono.Cecil.FieldReference);
+                        break;
+                    case Code.Ldsflda:
+                        stack.Ldsflda(this, code.Operand as Mono.Cecil.FieldReference);
+                        break;
+                    case Code.Stfld:
+                        stack.Stfld(this, code.Operand as Mono.Cecil.FieldReference);
+                        break;
+                    case Code.Stsfld:
+                        stack.Stsfld(this, code.Operand as Mono.Cecil.FieldReference);
+                        break;
+
+
+                    case Code.Constrained:
+                        stack.Constrained(code.Operand);
                         break;
                     default:
                         throw new Exception("未实现的OpCode:" + code.OpCode.Code);

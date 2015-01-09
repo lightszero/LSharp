@@ -4,6 +4,11 @@ using System.Text;
 
 namespace CLRSharp
 {
+    /// <summary>
+    /// 堆栈帧
+    /// 一个堆栈帧，包含一个计算栈，一个临时变量槽，一个参数槽
+    /// 模拟虚拟机上的堆栈帧
+    /// </summary>
     class StackFrame
     {
         public Mono.Cecil.Cil.Instruction _pos = null;
@@ -21,32 +26,45 @@ namespace CLRSharp
             else return stackCalc.Pop();
         }
         //流程控制
-        public void Call(Context context, Mono.Cecil.MethodReference method)
+        public void Call(ThreadContext context, Mono.Cecil.MethodReference method)
         {
+
+
             object[] _pp = null;
             object _this = null;
+
+            if (method.HasParameters)
+            {
+                _pp = new object[method.Parameters.Count];
+                for (int i = 0; i < _pp.Length; i++)
+                {
+                    _pp[_pp.Length - 1 - i] = stackCalc.Pop();
+                }
+            }
             if (method.HasThis)
             {
-                _pp = new object[stackCalc.Count - 1];
-                for (int i = 0; i < _pp.Length; i++)
-                {
-                    _pp[_pp.Length - 1 - i] = stackCalc.Pop();
-                }
+
                 _this = stackCalc.Pop();
             }
-            else
+
+
+            var typesys = context.environment.GetType(method.DeclaringType.FullName, method.Module);
+
+            MethodParamList list = new MethodParamList(context.environment, method);
+
+            if (_this is RefObj && method.Name != ".ctor")
             {
-                _pp = new object[stackCalc.Count];
-                for (int i = 0; i < _pp.Length; i++)
-                {
-                    _pp[_pp.Length - 1 - i] = stackCalc.Pop();
-                }
+                _this = (_this as RefObj).Get();
             }
-            object returnvar = context.Call(method, _this, _pp);
+            object returnvar = typesys.GetMethod(method.Name, list).Invoke(context, _this, _pp);
             bool breturn = method.ReturnType.FullName != "System.Void";
             if (breturn)
             {
                 stackCalc.Push(returnvar);
+            }
+            else if (_this is RefObj && method.Name == ".ctor")
+            {
+                (_this as RefObj).Set(returnvar);
             }
             _pos = _pos.Next;
         }
@@ -84,6 +102,11 @@ namespace CLRSharp
         }
         public void Br(Mono.Cecil.Cil.Instruction pos)
         {
+            _pos = pos;
+        }
+        public void Leave(Mono.Cecil.Cil.Instruction pos)
+        {
+            stackCalc.Clear();
             _pos = pos;
         }
         public void Brtrue(Mono.Cecil.Cil.Instruction pos)
@@ -334,20 +357,30 @@ namespace CLRSharp
         }
         public enum RefType
         {
-            loc,
-            arg,
-
+            loc,//本地变量槽
+            arg,//参数槽
+            field//成员变量
         }
         public class RefObj
         {
             public StackFrame frame;
             public int pos;
             public RefType type;
+            //public ICLRType _clrtype;
+            public IField _field;
+            public object _this;
             public RefObj(StackFrame frame, int pos, RefType type)
             {
                 this.frame = frame;
                 this.pos = pos;
                 this.type = type;
+            }
+            public RefObj(IField field, object _this)
+            {
+                this.type = RefType.field;
+                //this._clrtype = type;
+                this._field = field;
+                this._this = _this;
             }
             public void Set(object obj)
             {
@@ -355,7 +388,7 @@ namespace CLRSharp
                 {
                     frame._params[pos] = obj;
                 }
-                else
+                else if (type == RefType.loc)
                 {
                     while (frame.slotVar.Count <= pos)
                     {
@@ -363,6 +396,11 @@ namespace CLRSharp
                     }
                     frame.slotVar[pos] = obj;
                 }
+                else if (type == RefType.field)
+                {
+                    _field.Set(_this, obj);
+                }
+
             }
             public object Get()
             {
@@ -370,11 +408,19 @@ namespace CLRSharp
                 {
                     return frame._params[pos];
                 }
-                else
+                else if (type == RefType.loc)
                 {
+                    while (frame.slotVar.Count <= pos)
+                    {
+                        frame.slotVar.Add(null);
+                    }
                     return frame.slotVar[pos];
                 }
-
+                else if (type == RefType.field)
+                {
+                    return _field.Get(_this);
+                }
+                return null;
             }
 
         }
@@ -473,7 +519,39 @@ namespace CLRSharp
             object n1 = stackCalc.Pop();
             decimal num1 = Convert.ToDecimal(n1);
             decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 + num2);
+            decimal outd = num1 + num2;
+            if (n1 is sbyte)
+            {
+                stackCalc.Push((sbyte)outd);
+            }
+            else if (n1 is byte)
+            {
+                stackCalc.Push((byte)outd);
+            }
+            else if (n1 is Int16)
+            {
+                stackCalc.Push((int)outd);
+            }
+            else if (n1 is UInt16)
+            {
+                stackCalc.Push((UInt16)outd);
+            }
+            else if (n1 is int)
+            {
+                stackCalc.Push((int)outd);
+            }
+            else if (n1 is uint)
+            {
+                stackCalc.Push((int)outd);
+            }
+            else if (n1 is float)
+            {
+                stackCalc.Push((float)outd);
+            }
+            else if (n1 is double)
+            {
+                stackCalc.Push((double)outd);
+            }
             _pos = _pos.Next;
         }
         public void Sub()
@@ -654,136 +732,176 @@ namespace CLRSharp
         }
 
         ////数组
-        //public void NewArr(Mono.Cecil.TypeReference type)
-        //{
+        public void NewArr(ThreadContext context, Mono.Cecil.TypeReference type)
+        {
+            string typename = type.FullName + "[]";
+            var _type = context.environment.GetType(typename, type.Module);
+            MethodParamList tlist = MethodParamList.OneParam_Int;
+            var m = _type.GetMethod(".ctor", tlist);
+            var array = m.Invoke(context, null, new object[] { stackCalc.Pop() });
+            stackCalc.Push(array);
+            _pos = _pos.Next;
+        }
+        public void LdLen()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelema(object obj)
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelem_I1()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelem_U1()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
 
-        //    _pos = _pos.Next;
-        //}
-        //public void LdLen()
-        //{
+        public void Ldelem_I2()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelem_U2()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelem_I4()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelem_U4()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
 
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelema(object obj)
-        //{
+        public void Ldelem_I8()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelem_I()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelem_R4()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelem_R8()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelem_Ref()
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Ldelem_Any(object obj)
+        {
+            throw new NotImplementedException();
+            _pos = _pos.Next;
+        }
+        public void Stelem_I()
+        {
+            var value = (Int32)stackCalc.Pop();
+            var index = (int)stackCalc.Pop();
+            var array = stackCalc.Pop() as Int32[];
+            array[index] = value;
+            _pos = _pos.Next;
+        }
+        public void Stelem_I1()
+        {
+            var value = (sbyte)stackCalc.Pop();
+            var index = (int)stackCalc.Pop();
+            var array = stackCalc.Pop() as sbyte[];
+            array[index] = value;
+            _pos = _pos.Next;
+        }
+        public void Stelem_I2()
+        {
+            var value = Convert.ToDecimal(stackCalc.Pop());
+            var index = (int)stackCalc.Pop();
+            var array = stackCalc.Pop();
+            if(array is char[] )
+            {
+                (array as char[])[index] = (char)value;
+            }
+            else if(array is Int16[])
+            {
+                (array as Int16[])[index] = (Int16)value;
+            }
 
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelem_I1()
-        //{
+            _pos = _pos.Next;
+        }
+        public void Stelem_I4()
+        {
+            var value = (Int32)stackCalc.Pop();
+            var index = (int)stackCalc.Pop();
+            var array = stackCalc.Pop() as Int32[];
+            array[index] = value;
+            _pos = _pos.Next;
+        }
+        public void Stelem_I8()
+        {
+            var value = (Int64)stackCalc.Pop();
+            var index = (int)stackCalc.Pop();
+            var array = stackCalc.Pop() as Int64[];
+            array[index] = value;
+            _pos = _pos.Next;
+        }
+        public void Stelem_R4()
+        {
+            var value = (float)stackCalc.Pop();
+            var index = (int)stackCalc.Pop();
+            var array = stackCalc.Pop() as float[];
+            array[index] = value;
+            _pos = _pos.Next;
+        }
+        public void Stelem_R8()
+        {
+            var value = (double)stackCalc.Pop();
+            var index = (int)stackCalc.Pop();
+            var array = stackCalc.Pop() as double[];
+            array[index] = value;
+            _pos = _pos.Next;
+        }
+        public void Stelem_Ref()
+        {
+            var value = stackCalc.Pop();
+            var index = (int)stackCalc.Pop();
+            var array = stackCalc.Pop() as Object[];
+            array[index] = value;
+            _pos = _pos.Next;
+        }
 
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelem_U1()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-
-        //public void Ldelem_I2()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelem_U2()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelem_I4()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelem_U4()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-
-        //public void Ldelem_I8()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelem_I()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelem_R4()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelem_R8()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelem_Ref()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Ldelem_Any(object obj)
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Stelem_I()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Stelem_I1()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Stelem_I2()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Stelem_I4()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Stelem_I8()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Stelem_R4()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Stelem_R8()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-        //public void Stelem_Ref()
-        //{
-
-        //    _pos = _pos.Next;
-        //}
-
-        //public void Stelem_Any(object obj)
-        //{
-
-        //    _pos = _pos.Next;
-        //}
+        public void Stelem_Any(object obj)
+        {
+            var value = stackCalc.Pop();
+            var index = (int)stackCalc.Pop();
+            var array = stackCalc.Pop() as Object[];
+            array[index] = value;
+            _pos = _pos.Next;
+        }
 
         //寻址类
-        public void NewObj(Context context, Mono.Cecil.MethodDefinition def)
+        public void NewObj(ThreadContext context, Mono.Cecil.MethodDefinition def)
         {
             _pos = _pos.Next;
         }
-        public void NewObj(Context context, Mono.Cecil.MethodReference method)
+        public void NewObj(ThreadContext context, Mono.Cecil.MethodReference method)
         {
             object[] _pp = null;
             if (stackCalc.Count > 0)
@@ -794,13 +912,90 @@ namespace CLRSharp
                     _pp[_pp.Length - 1 - i] = stackCalc.Pop();
                 }
             }
-            object returnvar = context.Call(method, null, _pp);
+            var typesys = context.environment.GetType(method.DeclaringType.FullName, method.Module);
+
+            MethodParamList list = new MethodParamList(context.environment, method);
+
+            object returnvar = typesys.GetMethod(method.Name, list).Invoke(context, null, _pp);
 
             stackCalc.Push(returnvar);
 
-            _pos = _pos.Next;
-            //_pos = _pos.Next;
-        }
 
+
+
+            _pos = _pos.Next;
+
+        }
+        public void Ldfld(ThreadContext context, Mono.Cecil.FieldReference field)
+        {
+            var obj = stackCalc.Pop();
+
+            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            var ff = type.GetField(field.Name);
+            if(obj is RefObj)
+            {
+                obj = (obj as RefObj).Get();
+            }
+            var value = ff.Get(obj);
+            stackCalc.Push(value);
+            //System.Type t =obj.GetType();
+            _pos = _pos.Next;
+        }
+        public void Ldflda(ThreadContext context, Mono.Cecil.FieldReference field)
+        {
+            var obj = stackCalc.Pop();
+
+            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            var ff = type.GetField(field.Name);
+
+            stackCalc.Push(new RefObj(ff, obj));
+
+            _pos = _pos.Next;
+        }
+        public void Ldsfld(ThreadContext context, Mono.Cecil.FieldReference field)
+        {
+            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            var ff = type.GetField(field.Name);
+            var value = ff.Get(null);
+            stackCalc.Push(value);
+            //System.Type t =obj.GetType();
+            _pos = _pos.Next;
+        }
+        public void Ldsflda(ThreadContext context, Mono.Cecil.FieldReference field)
+        {
+            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            var ff = type.GetField(field.Name);
+
+            stackCalc.Push(new RefObj(ff, null));
+
+            _pos = _pos.Next;
+        }
+        public void Stfld(ThreadContext context, Mono.Cecil.FieldReference field)
+        {
+            var value = stackCalc.Pop();
+            var obj = stackCalc.Pop();
+            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            var ff = type.GetField(field.Name);
+            if(obj is RefObj)
+            {
+                obj = (obj as RefObj).Get();
+            }
+            ff.Set(obj, value);
+            _pos = _pos.Next;
+        }
+        public void Stsfld(ThreadContext context, Mono.Cecil.FieldReference field)
+        {
+            var value = stackCalc.Pop();
+            //var obj = stackCalc.Pop();
+            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            var ff = type.GetField(field.Name);
+            ff.Set(null, value);
+            _pos = _pos.Next;
+        }
+        public void Constrained(object obj)
+        {
+            Type t = obj.GetType();
+            _pos = _pos.Next;
+        }
     }
 }
