@@ -1,178 +1,224 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-//namespace CLRSharp
-//{
-//    public class Delegate_Helper
-//    {
+namespace CLRSharp
+{
+    /// <summary>
+    /// 委托绑定
+    /// </summary>
+    public class Delegate_Binder
+    {
+        static Dictionary<Type, IDelegate_BindTool> mapBind = new Dictionary<Type, IDelegate_BindTool>();
+        public static void RegBind(Type deletype,IDelegate_BindTool bindtool)
+        {
+            mapBind[deletype] = bindtool;
+        }
+        public static Delegate MakeDelegate(Type deletype, ThreadContext context, CLRSharp_Instance __this, IMethod __method)
+        {
+            IDelegate_BindTool btool = null;
+            if(mapBind.TryGetValue(deletype,out btool))
+            {
+                return btool.CreateDele(deletype, context, __this, __method);
+            }
+            var method = deletype.GetMethod("Invoke");
+            if (__method.isStatic)
+            {
+                __this = null;
+            }
+            var pp = method.GetParameters();
 
-//        delegate void Action();
-//        delegate void Action<T1>(T1 p1);
-//        delegate void Action<T1, T2>(T1 p1, T2 p2);
-//        delegate void Action<T1, T2, T3>(T1 p1, T2 p2, T3 p3);
-//        delegate void Action<T1, T2, T3, T4>(T1 p1, T2 p2, T3 p3, T4 p4);
-//        delegate TRet RetAction<TRet>();
-//        delegate TRet RetAction<TRet, T1>(T1 p1);
-//        delegate TRet RetAction<TRet, T1, T2>(T1 p1, T2 p2);
-//        delegate TRet RetAction<TRet, T1, T2, T3>(T1 p1, T2 p2, T3 p3);
-//        delegate TRet RetAction<TRet, T1, T2, T3, T4>(T1 p1, T2 p2, T3 p3, T4 p4);
-//        public static Delegate MakeDelegate(Type deletype, ThreadContext context, CLRSharp_Instance __this,IMethod __method)
-//        {
-//            var method = deletype.GetMethod("Invoke");
-//            if(__method.isStatic)
-//            {
-//                __this = null;
-//            }
-//            var pp = method.GetParameters();
-//            if (method.ReturnType == typeof(void))
-//            {
-//                if (pp.Length == 0)
-//                {
-//                    return CreateDele(deletype, context, __this, __method);
-//                }
-//                else if (pp.Length == 1)
-//                {
+            if (method.ReturnType == typeof(void))
+            {
+                if (pp.Length == 0)
+                {
+                    var gtype = typeof(Delegate_BindTool).MakeGenericType(new Type[] { });
+                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
+                }
+                else if (pp.Length == 1)
+                {
+                    var gtype = typeof(Delegate_BindTool<>).MakeGenericType(new Type[] { pp[0].ParameterType });
+                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
+                }
+                else if (pp.Length == 2)
+                {
+                    var gtype = typeof(Delegate_BindTool<,>).MakeGenericType(new Type[] { pp[0].ParameterType, pp[1].ParameterType });
+                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
+                }
+                else if (pp.Length == 3)
+                {
+                    var gtype = typeof(Delegate_BindTool<,,>).MakeGenericType(new Type[] { pp[0].ParameterType, pp[1].ParameterType, pp[2].ParameterType });
+                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
+                }
+                else if (pp.Length == 4)
+                {
+                    var gtype = typeof(Delegate_BindTool<,,,>).MakeGenericType(new Type[] { pp[0].ParameterType, pp[1].ParameterType, pp[2].ParameterType, pp[3].ParameterType });
+                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
+                }
+                else
+                {
+                    throw new Exception("还没有支持这么多参数的委托");
+                }
+            }
+            else
+            {
+                if (pp.Length == 0)
+                {
+                    var gtype = typeof(Delegate_BindTool_Ret<>).MakeGenericType(new Type[] { method.ReturnType });
+                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
 
-//                    var gtype = typeof(Delegate_BindTool<>).MakeGenericType(new Type[] { pp[0].ParameterType });
-                  
-//                    return gtype.GetConstructors()[0].Invoke(new object[] { type, keyword }) as RegHelper_Type;
-//                }
-//                else if (pp.Length == 2)
-//                {
-//                    var gtype = typeof(RegHelper_DeleAction<,>).MakeGenericType(new Type[] { pp[0].ParameterType, pp[1].ParameterType });
-//                    return (gtype.GetConstructors()[0].Invoke(new object[] { type, keyword }) as RegHelper_Type);
-//                }
-//                else if (pp.Length == 3)
-//                {
-//                    var gtype = typeof(RegHelper_DeleAction<,,>).MakeGenericType(new Type[] { pp[0].ParameterType, pp[1].ParameterType, pp[2].ParameterType });
-//                    return (gtype.GetConstructors()[0].Invoke(new object[] { type, keyword }) as RegHelper_Type);
-//                }
-//                else
-//                {
-//                    throw new Exception("还没有支持这么多参数的委托");
-//                }
-//            }
-//            else
-//            {
-//                Type gtype = null;
-//                if (pp.Length == 0)
-//                {
-//                    gtype = typeof(RegHelper_DeleNonVoidAction<>).MakeGenericType(new Type[] { method.ReturnType });
-//                }
-//                else if (pp.Length == 1)
-//                {
-//                    gtype = typeof(RegHelper_DeleNonVoidAction<,>).MakeGenericType(new Type[] { method.ReturnType, pp[0].ParameterType });
-//                }
-//                else if (pp.Length == 2)
-//                {
-//                    gtype = typeof(RegHelper_DeleNonVoidAction<,,>).MakeGenericType(new Type[] { method.ReturnType, pp[0].ParameterType, pp[1].ParameterType });
-//                }
-//                else if (pp.Length == 3)
-//                {
-//                    gtype = typeof(RegHelper_DeleNonVoidAction<,,,>).MakeGenericType(new Type[] { method.ReturnType, pp[0].ParameterType, pp[1].ParameterType, pp[2].ParameterType });
-//                }
-//                else
-//                {
-//                    throw new Exception("还没有支持这么多参数的委托");
-//                }
-//                return (gtype.GetConstructors()[0].Invoke(new object[] { type, keyword }) as RegHelper_Type);
-
-//            }
-
-//        }
-
-//        public static Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            Action act = () =>
-//                {
-//                    _method.Invoke(context, _this, null);
-//                };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-
-//        public static Delegate CreateDele<T1>(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            Action<T1> act = (p1) =>
-//            {
-//                _method.Invoke(context, _this, new object[] { p1 });
-//            };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-//        public static Delegate CreateDele<T1, T2>(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            Action<T1, T2> act = (p1, p2) =>
-//            {
-//                _method.Invoke(context, _this, new object[] { p1, p2 });
-//            };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-//        public static Delegate CreateDele<T1, T2, T3>(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            Action<T1, T2, T3> act = (p1, p2, p3) =>
-//            {
-//                _method.Invoke(context, _this, new object[] { p1, p2, p3 });
-//            };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-//        public static Delegate CreateDele<T1, T2, T3, T4>(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            Action<T1, T2, T3, T4> act = (p1, p2, p3, p4) =>
-//            {
-//                _method.Invoke(context, _this, new object[] { p1, p2, p3, p4 });
-//            };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-//        public static Delegate CreateRetDele<TRet>(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            RetAction<TRet> act = () =>
-//            {
-//                return (TRet)_method.Invoke(context, _this, null);
-//            };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-//        public static Delegate CreateRetDele<TRet, T1>(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            RetAction<TRet, T1> act = (p1) =>
-//            {
-//                return (TRet)_method.Invoke(context, _this, new object[] { p1 });
-//            };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-//        public static Delegate CreateRetDele<TRet, T1, T2>(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            RetAction<TRet, T1, T2> act = (p1, p2) =>
-//            {
-//                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2 });
-//            };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-//        public static Delegate CreateRetDele<TRet, T1, T2, T3>(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            RetAction<TRet, T1, T2, T3> act = (p1, p2, p3) =>
-//            {
-//                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2, p3 });
-//            };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-//        public static Delegate CreateRetDele<TRet, T1, T2, T3, T4>(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            RetAction<TRet, T1, T2, T3, T4> act = (p1, p2, p3, p4) =>
-//            {
-//                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2, p3, p4 });
-//            };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-//    }
-//    public class Delegate_BindTool<T1>
-//    {
-//        public static Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
-//        {
-//            Action<T1> act = (p1) =>
-//            {
-//                _method.Invoke(context, _this, new object[] { p1 });
-//            };
-//            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
-//        }
-//    }
-//}
+                }
+                else if (pp.Length == 1)
+                {
+                    var gtype = typeof(Delegate_BindTool_Ret<,>).MakeGenericType(new Type[] { method.ReturnType, pp[0].ParameterType });
+                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
+                }
+                else if (pp.Length == 2)
+                {
+                    var gtype = typeof(Delegate_BindTool_Ret<,,>).MakeGenericType(new Type[] { method.ReturnType, pp[0].ParameterType, pp[1].ParameterType });
+                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
+                }
+                else if (pp.Length == 3)
+                {
+                    var gtype = typeof(Delegate_BindTool_Ret<,,,>).MakeGenericType(new Type[] { method.ReturnType, pp[0].ParameterType, pp[1].ParameterType, pp[2].ParameterType });
+                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
+                }
+                else if (pp.Length == 4)
+                {
+                    var gtype = typeof(Delegate_BindTool_Ret<,,,>).MakeGenericType(new Type[] { method.ReturnType, pp[0].ParameterType, pp[1].ParameterType, pp[2].ParameterType, pp[3].ParameterType });
+                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
+                }
+                else
+                {
+                    throw new Exception("还没有支持这么多参数的委托");
+                }
+            }
+            mapBind[deletype] = btool;
+            return btool.CreateDele(deletype, context, __this, __method);
+        }
+    }
+    public interface IDelegate_BindTool
+    {
+        Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method);
+    }
+    public class Delegate_BindTool : IDelegate_BindTool
+    {
+        delegate void Action();
+        public Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
+        {
+            Action act = () =>
+            {
+                _method.Invoke(context, _this, new object[] { });
+            };
+            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
+        }
+    }
+    public class Delegate_BindTool<T1> : IDelegate_BindTool
+    {
+        delegate void Action(T1 p1);
+        public Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
+        {
+            Action act = (p1) =>
+            {
+                _method.Invoke(context, _this, new object[] { p1 });
+            };
+            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
+        }
+    }
+    public class Delegate_BindTool<T1, T2> : IDelegate_BindTool
+    {
+        delegate void Action(T1 p1, T2 p2);
+        public Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
+        {
+            Action act = (p1, p2) =>
+            {
+                _method.Invoke(context, _this, new object[] { p1, p2 });
+            };
+            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
+        }
+    }
+    public class Delegate_BindTool<T1, T2, T3> : IDelegate_BindTool
+    {
+        delegate void Action(T1 p1, T2 p2, T3 p3);
+        public Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
+        {
+            Action act = (p1, p2, p3) =>
+            {
+                _method.Invoke(context, _this, new object[] { p1, p2, p3 });
+            };
+            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
+        }
+    }
+    public class Delegate_BindTool<T1, T2, T3, T4> : IDelegate_BindTool
+    {
+        delegate void Action(T1 p1, T2 p2, T3 p3, T4 p4);
+        public Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
+        {
+            Action act = (p1, p2, p3, p4) =>
+            {
+                _method.Invoke(context, _this, new object[] { p1, p2, p3, p4 });
+            };
+            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
+        }
+    }
+    public class Delegate_BindTool_Ret<TRet> : IDelegate_BindTool
+    {
+        delegate TRet Action();
+        public Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
+        {
+            Action act = () =>
+            {
+                return (TRet)_method.Invoke(context, _this, new object[] { });
+            };
+            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
+        }
+    }
+    public class Delegate_BindTool_Ret<TRet, T1> : IDelegate_BindTool
+    {
+        delegate TRet Action(T1 p1);
+        public Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
+        {
+            Action act = (T1 p1) =>
+            {
+                return (TRet)_method.Invoke(context, _this, new object[] { p1 });
+            };
+            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
+        }
+    }
+    public class Delegate_BindTool_Ret<TRet, T1, T2> : IDelegate_BindTool
+    {
+        delegate TRet Action(T1 p1, T2 p2);
+        public Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
+        {
+            Action act = (T1 p1, T2 p2) =>
+            {
+                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2 });
+            };
+            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
+        }
+    }
+    public class Delegate_BindTool_Ret<TRet, T1, T2, T3> : IDelegate_BindTool
+    {
+        delegate TRet Action(T1 p1, T2 p2, T3 p3);
+        public Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
+        {
+            Action act = (T1 p1, T2 p2, T3 p3) =>
+            {
+                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2, p3 });
+            };
+            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
+        }
+    }
+    public class Delegate_BindTool_Ret<TRet, T1, T2, T3, T4> : IDelegate_BindTool
+    {
+        delegate TRet Action(T1 p1, T2 p2, T3 p3, T4 p4);
+        public Delegate CreateDele(Type deletype, ThreadContext context, CLRSharp_Instance _this, IMethod _method)
+        {
+            Action act = (T1 p1, T2 p2, T3 p3, T4 p4) =>
+            {
+                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2, p3, p4 });
+            };
+            return Delegate.CreateDelegate(deletype, act.Target, act.Method);
+        }
+    }
+}
