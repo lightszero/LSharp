@@ -39,16 +39,12 @@ namespace UnitTestDll
             int c = (int)(1 + 5.0f + 2);
             int d = (int)(1 + 5.0f);
             Logger.Log(b + "," + c + "," + d);
-            //Form1.onact+=(aaa)=>
-            //{
-            //     Logger.Log( "hi noname");
-            //};
-            //Form1.Try();
+
             Action<int> callnoname = (abc) =>
             {
-                //d is closeure
+
                 Logger.Log("nonamecall abc=" + abc + "d=" + d);
-                //throw "abc";
+
             };
             callnoname(44565);
             return;

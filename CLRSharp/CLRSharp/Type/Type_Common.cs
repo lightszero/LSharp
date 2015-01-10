@@ -8,6 +8,10 @@ namespace CLRSharp
     //还是CLRSharp的抽象，均可通过ICLRType进行调用
     public interface ICLRType
     {
+        ICLRSharp_Environment env
+        {
+            get;
+        }
         string Name
         {
             get;
@@ -42,10 +46,45 @@ namespace CLRSharp
 
         ICLRType GetNestType(ICLRSharp_Environment env,string fullname);
     }
+    public interface ICLRType_Sharp:ICLRType
+    {
+        CLRSharp_Instance staticInstance
+        {
+            get;
+        }
+    }
+    public interface ICLRType_System:ICLRType
+    {
+        Delegate CreateDelegate(Type deletype,object _this,IMethod_System _method);
+    }
     public interface IMethod
     {
         object Invoke(ThreadContext context, object _this, object[] _params);
         bool isStatic
+        {
+            get;
+        }
+        string Name
+        {
+            get;
+        }
+
+        ICLRType DeclaringType
+        {
+            get;
+        }
+        ICLRType ReturnType
+        {
+            get;
+        }
+        MethodParamList ParamList
+        {
+            get;
+        }
+    }
+    public interface IMethod_System:IMethod
+    {
+        System.Reflection.MethodBase method_System
         {
             get;
         }

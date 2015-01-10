@@ -14,17 +14,16 @@ namespace CLRSharp
 
         }
         static MethodParamList _OneParam_Int = null;
-        public static MethodParamList OneParam_Int
+        public static MethodParamList MakeList_OneParam_Int(ICLRSharp_Environment env)
         {
-            get
-            {
-                if (_OneParam_Int == null)
+            if (_OneParam_Int == null)
                 {
                     _OneParam_Int = new MethodParamList();
-                    _OneParam_Int.Add(new CLRSharp.Type_Common_System(typeof(int), typeof(int).FullName));
+                    _OneParam_Int.Add(env.GetType(typeof(int).FullName, null));
                 }
+
                 return _OneParam_Int;
-            }
+
         }
         public MethodParamList(ICLRSharp_Environment env, Mono.Cecil.MethodReference method)
         {
@@ -75,6 +74,14 @@ namespace CLRSharp
                     }
                 }
                 this.Add(env.GetType(paramname, method.Module));
+            }
+        }
+
+        public MethodParamList(ICLRSharp_Environment env,System.Reflection.MethodBase method)
+        {
+            foreach (var p in method.GetParameters())
+            {
+                this.Add(env.GetType(p.ParameterType));
             }
         }
         public override int GetHashCode()

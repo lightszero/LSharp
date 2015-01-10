@@ -4,15 +4,21 @@ using System.Text;
 
 namespace CLRSharp
 {
-    class Type_Common_System : ICLRType
+    class Type_Common_System : ICLRType_System
     {
         public System.Type TypeForSystem
         {
             get;
             private set;
         }
-        public Type_Common_System(System.Type type, string aname)
+        public ICLRSharp_Environment env
         {
+            get;
+            private set;
+        }
+        public Type_Common_System(ICLRSharp_Environment env, System.Type type, string aname)
+        {
+            this.env = env;
             this.TypeForSystem = type;
             FullNameWithAssembly = aname;
         }
@@ -42,10 +48,10 @@ namespace CLRSharp
             if (funcname == ".ctor")
             {
                 var con = TypeForSystem.GetConstructor(types.ToArraySystem());
-                return new Method_Common_System(con);
+                return new Method_Common_System(this, con);
             }
             var method = TypeForSystem.GetMethod(funcname, types.ToArraySystem());
-            return new Method_Common_System(method);
+            return new Method_Common_System(this, method);
         }
         public IMethod GetMethodT(string funcname, MethodParamList ttypes, MethodParamList types)
         {
@@ -70,7 +76,7 @@ namespace CLRSharp
 
             // _method = TypeForSystem.GetMethod(funcname, types.ToArraySystem());
 
-            return new Method_Common_System(_method.MakeGenericMethod(ttypes.ToArraySystem()));
+            return new Method_Common_System(this, _method.MakeGenericMethod(ttypes.ToArraySystem()));
         }
         public IField GetField(string name)
         {
@@ -86,6 +92,11 @@ namespace CLRSharp
         public ICLRType GetNestType(ICLRSharp_Environment env, string fullname)
         {
             throw new NotImplementedException();
+        }
+
+        public Delegate CreateDelegate(Type deletype,object _this, IMethod_System _method)
+        {
+            return Delegate.CreateDelegate(deletype, _this, _method.method_System as System.Reflection.MethodInfo);
         }
     }
     class Field_Common_System : IField
@@ -112,33 +123,101 @@ namespace CLRSharp
         }
     }
 
-    class Method_Common_System : IMethod
+    class Method_Common_System : IMethod_System
     {
 
-        public Method_Common_System(System.Reflection.MethodBase method)
+        public Method_Common_System(ICLRType DeclaringType, System.Reflection.MethodBase method)
         {
             if (method == null)
                 throw new Exception("not allow null method.");
             method_System = method;
+            this.DeclaringType = DeclaringType;
+            if (method is System.Reflection.MethodInfo)
+            {
+                System.Reflection.MethodInfo info = method as System.Reflection.MethodInfo;
+                ReturnType = DeclaringType.env.GetType(info.ReturnType);
+            }
+            ParamList =new MethodParamList(DeclaringType.env,method);
         }
         public bool isStatic
         {
             get { return method_System.IsStatic; }
         }
+        public string Name
+        {
+            get
+            {
+                return method_System.Name;
+            }
+        }
 
-        public System.Reflection.MethodBase method_System;
+        public ICLRType DeclaringType
+        {
+            get;
+            private set;
+
+        }
+        public ICLRType ReturnType
+        {
+            get;
+            private set;
+        }
+        public MethodParamList ParamList
+        {
+            get;
+            private set;
+        }
+        public System.Reflection.MethodBase method_System
+        {
+            get;
+            private set;
+        }
 
         public object Invoke(ThreadContext context, object _this, object[] _params)
         {
+            //委托是很特殊的存在
+            //if(this.DeclaringType.IsDelegate)
+            //{
 
+            //}
             if (method_System is System.Reflection.ConstructorInfo)
             {
+                if (method_System.DeclaringType.IsSubclassOf(typeof(Delegate)))
+                {//创建委托
+                    object src = _params[0];
+                    RefFunc fun = _params[1] as RefFunc;
+                    ICLRType_Sharp clrtype = fun._method.DeclaringType as ICLRType_Sharp;
+                    if(clrtype!=null)//onclr
+                    {
+                     
+                        CLRSharp_Instance inst = src as CLRSharp_Instance;
+                        if (fun._method.isStatic && clrtype != null)
+                            inst = clrtype.staticInstance;
+                        return inst.GetDelegate(context, method_System.DeclaringType,fun._method);
+                    }
+                    else//onsystem
+                    {
+                        ICLRType_System stype = fun._method.DeclaringType as ICLRType_System;
+                        return stype.CreateDelegate(method_System.DeclaringType,src, fun._method as IMethod_System);
+                    }
+                }
                 var newobj = (method_System as System.Reflection.ConstructorInfo).Invoke(_params);
                 return newobj;
             }
             else
             {
-                return method_System.Invoke(_this, _params);
+                if (method_System.DeclaringType.IsSubclassOf(typeof(Delegate)))//直接用Delegate.Invoke,会导致转到本机代码再回来
+                //会导致错误堆栈不方便观察
+                {
+                    //需要从Delegate转换成实际类型执行的帮助类
+                    Action<int> abc = _this as Action<int>;
+                    abc((int)_params[0]);
+                    return null;
+                }
+                else
+                {
+                    return method_System.Invoke(_this, _params);
+                }
             }
 
         }

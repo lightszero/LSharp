@@ -39,7 +39,7 @@ namespace CLRSharp
             {
                 foreach (var t in module.Types)
                 {
-                    mapType[t.FullName] = new Type_Common_CLRSharp(t);
+                    mapType[t.FullName] = new Type_Common_CLRSharp(this,t);
                 }
             }
 
@@ -62,10 +62,10 @@ namespace CLRSharp
                 if (fullname.Contains("<>"))//匿名类型
                 {
                     string[] subts = fullname.Split('/');
-                    ICLRType ft = GetType(subts[0],module);
-                    for(int i=1;i<subts.Length;i++)
+                    ICLRType ft = GetType(subts[0], module);
+                    for (int i = 1; i < subts.Length; i++)
                     {
-                        ft = ft.GetNestType(this,subts[i]);
+                        ft = ft.GetNestType(this, subts[i]);
                     }
                     return ft;
                 }
@@ -150,9 +150,21 @@ namespace CLRSharp
                 }
                 if (t != null)
                 {
-                    type = new Type_Common_System(t, fullnameT);
+                    type = new Type_Common_System(this, t, fullnameT);
                 }
                 mapType[fullname] = type;
+            }
+            return type;
+        }
+
+
+        public ICLRType GetType(System.Type systemType)
+        {
+            ICLRType type = null;
+            bool b = mapType.TryGetValue(systemType.FullName, out type);
+            if (!b)
+            {
+                type = new Type_Common_System(this, systemType, systemType.FullName);
             }
             return type;
         }

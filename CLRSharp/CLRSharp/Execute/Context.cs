@@ -38,21 +38,111 @@ namespace CLRSharp
             stacks.Push(stack);
             if (func.Name == ".ctor")
             {
-                 StackFrame.RefObj pthis=new StackFrame.RefObj(stack, 0, StackFrame.RefType.arg);
-                stack.SetParams(new object[] {pthis  });
+                StackFrame.RefObj pthis = new StackFrame.RefObj(stack, 0, StackFrame.RefType.arg);
+                stack.SetParams(new object[] { pthis });
                 RunCode(stack, func.Body.Instructions);
                 return pthis;
             }
             else
             {
-                   RunCode(stack, func.Body.Instructions);
+                object[] pp = null;
+                if(!func.IsStatic)
+                {
+                    pp =new object[_params.Length+1];
+                    pp[0] = _this;
+                    _params.CopyTo(pp, 1);
+                }
+                else
+                {
+                    pp = _params;
+                }
+                stack.SetParams(pp);
+                RunCode(stack, func.Body.Instructions);
                 return stacks.Pop().Return();
             }
 
 
         }
 
+        ICLRType GetType(object token)
+        {
 
+            Mono.Cecil.ModuleDefinition module = null;
+            string typename = null;
+            if (token is Mono.Cecil.TypeDefinition)
+            {
+                Mono.Cecil.TypeDefinition _def = (token as Mono.Cecil.TypeDefinition);
+                module = _def.Module;
+                typename = _def.FullName;
+            }
+            else if (token is Mono.Cecil.TypeReference)
+            {
+                Mono.Cecil.TypeReference _ref = (token as Mono.Cecil.TypeReference);
+                module = _ref.Module;
+                typename = _ref.FullName;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+            return environment.GetType(typename, module);
+        }
+        IMethod GetMethod(object token)
+        {
+            Mono.Cecil.ModuleDefinition module = null;
+            string methodname = null;
+            string typename = null;
+            MethodParamList genlist = null;
+            MethodParamList list = null;
+            if (token is Mono.Cecil.MethodReference)
+            {
+                Mono.Cecil.MethodReference _ref = (token as Mono.Cecil.MethodReference);
+                module = _ref.Module;
+                methodname = _ref.Name;
+                typename = _ref.DeclaringType.FullName;
+                list = new MethodParamList(environment, _ref);
+                if (_ref.IsGenericInstance)
+                {
+                    Mono.Cecil.GenericInstanceMethod gmethod = _ref as Mono.Cecil.GenericInstanceMethod;
+                    genlist = new MethodParamList(environment, gmethod);
+
+                }
+            }
+            else if (token is Mono.Cecil.MethodDefinition)
+            {
+                Mono.Cecil.MethodDefinition _def = token as Mono.Cecil.MethodDefinition;
+                module = _def.Module;
+                methodname = _def.Name;
+                typename = _def.DeclaringType.FullName;
+                list = new MethodParamList(environment, _def);
+                if (_def.IsGenericInstance)
+                {
+                    throw new NotImplementedException();
+                    //Mono.Cecil.GenericInstanceMethod gmethod = _def as Mono.Cecil.GenericInstanceMethod;
+                    //genlist = new MethodParamList(environment, gmethod);
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+            var typesys = environment.GetType(typename, module);
+            if (typesys == null)
+                throw new Exception("type can't find:" + typename);
+
+
+            IMethod _method = null;
+            if (genlist != null)
+            {
+                _method = typesys.GetMethodT(methodname, genlist, list);
+            }
+            else
+            {
+                _method = typesys.GetMethod(methodname, list);
+            }
+
+            return _method;
+        }
         void RunCode(StackFrame stack, Mono.Collections.Generic.Collection<Mono.Cecil.Cil.Instruction> codes)
         {
             stack._pos = codes[0];
@@ -278,10 +368,10 @@ namespace CLRSharp
                         break;
                     //呼叫函数
                     case Code.Call:
-                        stack.Call(this, code.Operand as Mono.Cecil.MethodReference);
+                        stack.Call(this, GetMethod(code.Operand));
                         break;
                     case Code.Callvirt:
-                        stack.Call(this, code.Operand as Mono.Cecil.MethodReference);
+                        stack.Call(this, GetMethod(code.Operand));
                         break;
                     //算术指令
                     case Code.Add:
@@ -331,7 +421,7 @@ namespace CLRSharp
                         stack.Ldarg(0);
                         break;
                     case Code.Ldarg_1:
-                        stack.Ldarg(2);
+                        stack.Ldarg(1);
                         break;
                     case Code.Ldarg_2:
                         stack.Ldarg(2);
@@ -518,10 +608,7 @@ namespace CLRSharp
                         break;
 
                     case Code.Newobj:
-                        if (code.Operand is Mono.Cecil.MethodDefinition)
-                            stack.NewObj(this, code.Operand as Mono.Cecil.MethodDefinition);
-                        else
-                            stack.NewObj(this, code.Operand as Mono.Cecil.MethodReference);
+                        stack.NewObj(this, GetMethod(code.Operand));
                         break;
 
                     case Code.Dup:
@@ -560,74 +647,206 @@ namespace CLRSharp
                         break;
                     case Code.Ldtoken:
                         stack.Ldtoken(this, code.Operand as Mono.Cecil.FieldDefinition);
-                           break;
+                        break;
+
+                    case Code.Ldftn:
+                        stack.Ldftn(this, GetMethod(code.Operand));
+                        break;
+                    case Code.Ldvirtftn:
+                        stack.Ldvirtftn(this, GetMethod(code.Operand));
+                        break;
+                    case Code.Ldarga:
+                        stack.Ldarga(this, code.Operand);
+                        break;
+                    case Code.Ldarga_S:
+                        stack.Ldarga(this, code.Operand);
+                        break;
+                    case Code.Calli:
+                        stack.Calli(this, code.Operand);
+                        break;
                     ///下面是还没有处理的指令
                     case Code.Break:
-                    case Code.Ldarga_S:
+                        stack.Break(this, code.Operand);
+                        break;
                     case Code.Starg_S:
+                        stack.Starg_S(this, code.Operand);
+                        break;
                     case Code.Ldnull:
+                        stack.Ldnull(this, code.Operand);
+                        break;
                     case Code.Jmp:
-                    case Code.Calli:
+                        stack.Jmp(this, code.Operand);
+                        break;
                     case Code.Switch:
+                        stack.Switch(this, code.Operand);
+                        break;
                     case Code.Ldind_I1:
+                        stack.Ldind_I1(this, code.Operand);
+                        break;
                     case Code.Ldind_U1:
+                        stack.Ldind_U1(this, code.Operand);
+                        break;
                     case Code.Ldind_I2:
+                        stack.Ldind_I2(this, code.Operand);
+                        break;
                     case Code.Ldind_U2:
+                        stack.Ldind_U2(this, code.Operand);
+                        break;
                     case Code.Ldind_I4:
+                        stack.Ldind_I4(this, code.Operand);
+                        break;
                     case Code.Ldind_U4:
+                        stack.Ldind_U4(this, code.Operand);
+                        break;
                     case Code.Ldind_I8:
+                        stack.Ldind_I8(this, code.Operand);
+                        break;
                     case Code.Ldind_I:
+                        stack.Ldind_I(this, code.Operand);
+                        break;
                     case Code.Ldind_R4:
+                        stack.Ldind_R4(this, code.Operand);
+                        break;
                     case Code.Ldind_R8:
+                        stack.Ldind_R8(this, code.Operand);
+                        break;
                     case Code.Ldind_Ref:
+                        stack.Ldind_Ref(this, code.Operand);
+                        break;
                     case Code.Stind_Ref:
+                        stack.Stind_Ref(this, code.Operand);
+                        break;
                     case Code.Stind_I1:
+                        stack.Stind_I1(this, code.Operand);
+                        break;
                     case Code.Stind_I2:
+                        stack.Stind_I2(this, code.Operand);
+                        break;
                     case Code.Stind_I4:
+                        stack.Stind_I4(this, code.Operand);
+                        break;
                     case Code.Stind_I8:
+                        stack.Stind_I8(this, code.Operand);
+                        break;
                     case Code.Stind_R4:
+                        stack.Stind_R4(this, code.Operand);
+                        break;
                     case Code.Stind_R8:
+                        stack.Stind_R8(this, code.Operand);
+                        break;
                     case Code.And:
+                        stack.And(this, code.Operand);
+                        break;
                     case Code.Or:
+                        stack.Or(this, code.Operand);
+                        break;
                     case Code.Xor:
+                        stack.Xor(this, code.Operand);
+                        break;
                     case Code.Shl:
+                        stack.Shl(this, code.Operand);
+                        break;
                     case Code.Shr:
+                        stack.Shr(this, code.Operand);
+                        break;
                     case Code.Shr_Un:
+                        stack.Shr_Un(this, code.Operand);
+                        break;
                     case Code.Not:
+                        stack.Not(this, code.Operand);
+                        break;
                     case Code.Cpobj:
+                        stack.Cpobj(this, code.Operand);
+                        break;
                     case Code.Ldobj:
+                        stack.Ldobj(this, code.Operand);
+                        break;
                     case Code.Castclass:
+                        stack.Castclass(this, code.Operand);
+                        break;
                     case Code.Throw:
+                        stack.Throw(this, code.Operand);
+                        break;
                     case Code.Stobj:
+                        stack.Stobj(this, code.Operand);
+                        break;
                     case Code.Refanyval:
+                        stack.Refanyval(this, code.Operand);
+                        break;
                     case Code.Mkrefany:
+                        stack.Mkrefany(this, code.Operand);
+                        break;
 
                     case Code.Add_Ovf:
+                        stack.Add_Ovf(this, code.Operand);
+                        break;
                     case Code.Add_Ovf_Un:
+                        stack.Add_Ovf_Un(this, code.Operand);
+                        break;
                     case Code.Mul_Ovf:
+                        stack.Mul_Ovf(this, code.Operand);
+                        break;
                     case Code.Mul_Ovf_Un:
+                        stack.Mul_Ovf_Un(this, code.Operand);
+                        break;
                     case Code.Sub_Ovf:
+                        stack.Sub_Ovf(this, code.Operand);
+                        break;
                     case Code.Sub_Ovf_Un:
+                        stack.Sub_Ovf_Un(this, code.Operand);
+                        break;
                     case Code.Endfinally:
+                        stack.Endfinally(this, code.Operand);
+                        break;
                     case Code.Stind_I:
+                        stack.Stind_I(this, code.Operand);
+                        break;
                     case Code.Arglist:
-                    case Code.Ldftn:
-                    case Code.Ldvirtftn:
-                    case Code.Ldarga:
+                        stack.Arglist(this, code.Operand);
+                        break;
+
                     case Code.Starg:
+                        stack.Starg(this, code.Operand);
+                        break;
                     case Code.Localloc:
+                        stack.Localloc(this, code.Operand);
+                        break;
                     case Code.Endfilter:
+                        stack.Endfilter(this, code.Operand);
+                        break;
                     case Code.Unaligned:
+                        stack.Unaligned(this, code.Operand);
+                        break;
                     case Code.Volatile:
+                        stack.Volatile(this, code.Operand);
+                        break;
                     case Code.Tail:
+                        stack.Tail(this, code.Operand);
+                        break;
                     case Code.Initobj:
+                        stack.Initobj(this, code.Operand);
+                        break;
                     case Code.Cpblk:
+                        stack.Cpblk(this, code.Operand);
+                        break;
                     case Code.Initblk:
+                        stack.Initblk(this, code.Operand);
+                        break;
                     case Code.No:
+                        stack.No(this, code.Operand);
+                        break;
                     case Code.Rethrow:
+                        stack.Rethrow(this, code.Operand);
+                        break;
                     case Code.Sizeof:
+                        stack.Sizeof(this, code.Operand);
+                        break;
                     case Code.Refanytype:
+                        stack.Refanytype(this, code.Operand);
+                        break;
                     case Code.Readonly:
+                        stack.Readonly(this, code.Operand);
+                        break;
                     default:
                         throw new Exception("未实现的OpCode:" + code.OpCode.Code);
                 }

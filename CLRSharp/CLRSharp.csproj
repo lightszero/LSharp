@@ -39,6 +39,8 @@
     <Compile Include="CLRSharp\Execute\Context.cs" />
     <Compile Include="CLRSharp\Execute\StackFrame.cs" />
     <Compile Include="CLRSharp\Interface\EnvAndLog.cs" />
+    <Compile Include="CLRSharp\Type\CLRSharp\CLRSharp_Instance.cs" />
+    <Compile Include="CLRSharp\Type\Delegate\Delegate_Helper.cs" />
     <Compile Include="CLRSharp\Type\System\System_Type.cs" />
     <Compile Include="CLRSharp\Type\Type_Common.cs" />
     <Compile Include="CLRSharp\Type\Type_List.cs" />
@@ -56,6 +58,7 @@
       <Link>readme.txt</Link>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
