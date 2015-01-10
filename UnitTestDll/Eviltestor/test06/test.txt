@@ -1,0 +1,13 @@
+﻿//这个测试测试
+
+
+Dictionary<string, object> dicNameToBlock = new Dictionary<string, object>();
+Block b = new Block("gg1", 2, 3, true, "2");
+dicNameToBlock.Add("1", b);
+
+foreach (var item in dicNameToBlock)
+{
+	Debug.Log("key="+item.Key);
+	Block bb = item.Value as Block;
+	Debug.Log("bb.name="+bb.blockName);
+}

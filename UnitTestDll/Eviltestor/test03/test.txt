@@ -1,0 +1,6 @@
+﻿//这个测试测试一些奇特的类型名
+//List<string>
+//List<List<int>>
+//List<List<List<double>>>
+
+Test03.Run();

@@ -5,7 +5,7 @@ using System.Text;
 namespace CLScriptExt
 {
 
-    class Color32
+    public class Color32
     {
         public Color32(byte r,byte g,byte b,byte a)
         {

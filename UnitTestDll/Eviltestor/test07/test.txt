@@ -1,0 +1,3 @@
+﻿//这个测试测试try catch throw
+Test07 t = new Test07();
+t.Run();

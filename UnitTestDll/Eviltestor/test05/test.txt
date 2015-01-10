@@ -1,0 +1,2 @@
+﻿//这个测试测试try catch throw
+Test05.Run();

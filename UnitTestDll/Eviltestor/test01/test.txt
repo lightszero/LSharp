@@ -1,0 +1,4 @@
+﻿//这个测试完成Helloworld.
+
+
+Script_TestConstructor tc= new Script_TestConstructor();

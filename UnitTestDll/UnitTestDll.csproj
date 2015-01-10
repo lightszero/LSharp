@@ -37,6 +37,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Eviltestor\EvilTestor.cs" />
+    <Compile Include="Eviltestor\test01\Test01.cs" />
+    <Compile Include="Eviltestor\test02\Test02.cs" />
+    <Compile Include="Eviltestor\test03\Test03.cs" />
+    <Compile Include="Eviltestor\test04\Test04.cs" />
+    <Compile Include="Eviltestor\test05\Test05.cs" />
+    <Compile Include="Eviltestor\test06\Test06.cs" />
+    <Compile Include="Eviltestor\test07\Test07.cs" />
+    <Compile Include="Eviltestor\test08\Test08.cs" />
+    <Compile Include="Eviltestor\test09\Test09.cs" />
     <Compile Include="ExpTest_50.cs" />
     <Compile Include="ExpTest_60.cs" />
     <Compile Include="ExpTest_70.cs" />
@@ -52,6 +62,17 @@
       <Project>{f9e7bf49-0203-4e18-b9d9-9effd39f3383}</Project>
       <Name>UnitTest</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Eviltestor\test01\test.txt" />
+    <Content Include="Eviltestor\test02\test.txt" />
+    <Content Include="Eviltestor\test03\test.txt" />
+    <Content Include="Eviltestor\test04\test.txt" />
+    <Content Include="Eviltestor\test05\test.txt" />
+    <Content Include="Eviltestor\test06\test.txt" />
+    <Content Include="Eviltestor\test07\test.txt" />
+    <Content Include="Eviltestor\test08\test.txt" />
+    <Content Include="Eviltestor\test09\test.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
