@@ -34,14 +34,26 @@ namespace CLRSharp
         Stack<StackFrame> stacks = new Stack<StackFrame>();
         public object ExecuteFunc(Mono.Cecil.MethodDefinition func, object _this, object[] _params)
         {
+            if(this.DebugLevel>=9)
+            {
+                environment.logger.Log("<Call>::" + func.ToString());
+
+            }
             StackFrame stack = new StackFrame();
             stacks.Push(stack);
             if (func.Name == ".ctor")
             {
-                StackFrame.RefObj pthis = new StackFrame.RefObj(stack, 0, StackFrame.RefType.arg);
-                stack.SetParams(new object[] { pthis });
+                //CLRSharp_Instance pthis = new CLRSharp_Instance(GetType(func.ReturnType) as Type_Common_CLRSharp);
+                //StackFrame.RefObj pthis = new StackFrame.RefObj(stack, 0, StackFrame.RefType.arg);
+                stack.SetParams(new object[] { _this });
                 RunCode(stack, func.Body.Instructions);
-                return pthis;
+                if (this.DebugLevel >= 9)
+                {
+                    environment.logger.Log("<CallEnd>");
+
+                }
+                var ret = stacks.Pop().Return();
+                return _this;
             }
             else
             {
@@ -58,10 +70,16 @@ namespace CLRSharp
                 }
                 stack.SetParams(pp);
                 RunCode(stack, func.Body.Instructions);
-                return stacks.Pop().Return();
+                var ret=stacks.Pop().Return();
+                if (this.DebugLevel >= 9)
+                {
+                    environment.logger.Log("<CallEnd>");
+
+                }
+                return ret;
             }
 
-
+     
         }
 
         ICLRType GetType(object token)

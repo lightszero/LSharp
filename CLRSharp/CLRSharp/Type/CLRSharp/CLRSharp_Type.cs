@@ -77,7 +77,7 @@ namespace CLRSharp
             {
                 if (f.Name == name)
                 {
-                    return new Field_Common_CLRSharp(f);
+                    return new Field_Common_CLRSharp(this, f);
                 }
             }
             return null;
@@ -112,6 +112,15 @@ namespace CLRSharp
                     _staticInstance = new CLRSharp_Instance(this);
                 return _staticInstance;
             }
+        }
+        bool _isCCtor = false;
+        public bool isCCtor()
+        {
+            return _isCCtor;
+        }
+        public void SetCCtor()
+        {
+            _isCCtor = true;
         }
     }
     public class Method_Common_CLRSharp : IMethod
@@ -172,6 +181,10 @@ namespace CLRSharp
             {
 
                 CLRSharp_Instance inst = new CLRSharp_Instance(_DeclaringType);
+                if(_DeclaringType.isCCtor()==false)//静态没构造
+                {
+                    context.environment.logger.Log("静态类型没有执行构造，需要补上。");
+                }
                 context.ExecuteFunc(method_CLRSharp, inst, _params);
                 return inst;
             }
@@ -181,22 +194,44 @@ namespace CLRSharp
 
     public class Field_Common_CLRSharp : IField
     {
+        public Type_Common_CLRSharp _DeclaringType;
         public Mono.Cecil.FieldDefinition field;
-        public Field_Common_CLRSharp(Mono.Cecil.FieldDefinition field)
+        public Field_Common_CLRSharp(Type_Common_CLRSharp type, Mono.Cecil.FieldDefinition field)
         {
             this.field = field;
+            this._DeclaringType = type;
         }
 
         public void Set(object _this, object value)
         {
-            CLRSharp_Instance sins = _this as CLRSharp_Instance;
+            CLRSharp_Instance sins = null;
+            if (_this == null)
+            {
+                sins = _DeclaringType.staticInstance;
+            }
+            else
+            {
+                sins = _this as CLRSharp_Instance;
+            }
+
+
             sins.Fields[field.Name] = value;
         }
 
         public object Get(object _this)
         {
-            CLRSharp_Instance sins = _this as CLRSharp_Instance;
-            return sins.Fields[field.Name];
+            CLRSharp_Instance sins = null;
+            if (_this == null)
+            {
+                sins = _DeclaringType.staticInstance;
+            }
+            else
+            {
+                sins = _this as CLRSharp_Instance;
+            }
+            object v = null;
+            sins.Fields.TryGetValue(field.Name, out v);
+            return v;
         }
 
         public bool isStatic

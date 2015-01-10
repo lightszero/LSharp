@@ -17,10 +17,10 @@ public class Script_TestConstructor
     public Script_TestConstructor()
     {
         Dictionary<string, object> objs = new Dictionary<string, object>();
-        Test();
-        //Debug.Log(null);
-        Test2();
-        Test3(22, 33, 44);
+        //Test();
+        ////Debug.Log(null);
+        //Test2();
+        //Test3(22, 33, 44);
         objs.Add("abb",this);
         objs2.Add(this);
         Script_TestConstructor thisislist= objs["abb"] as Script_TestConstructor;

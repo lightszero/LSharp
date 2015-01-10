@@ -1035,6 +1035,7 @@ namespace CLRSharp
         public void Stfld(ThreadContext context, Mono.Cecil.FieldReference field)
         {
             var value = stackCalc.Pop();
+            
             var obj = stackCalc.Pop();
             var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
             var ff = type.GetField(field.Name);
