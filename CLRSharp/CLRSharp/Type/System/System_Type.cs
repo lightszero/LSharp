@@ -206,15 +206,15 @@ namespace CLRSharp
             }
             else
             {
-                if (method_System.DeclaringType.IsSubclassOf(typeof(Delegate)))//直接用Delegate.Invoke,会导致转到本机代码再回来
-                //会导致错误堆栈不方便观察
-                {
-                    //需要从Delegate转换成实际类型执行的帮助类
-                    Action<int> abc = _this as Action<int>;
-                    abc((int)_params[0]);
-                    return null;
-                }
-                else
+                //if (method_System.DeclaringType.IsSubclassOf(typeof(Delegate)))//直接用Delegate.Invoke,会导致转到本机代码再回来
+                ////会导致错误堆栈不方便观察,但是也没办法直接调用，只能手写一些常用类型
+                //{
+                //    //需要从Delegate转换成实际类型执行的帮助类
+                //    Action<int> abc = _this as Action<int>;
+                //    abc((int)_params[0]);
+                //    return null;
+                //}
+                //else
                 {
                     return method_System.Invoke(_this, _params);
                 }
