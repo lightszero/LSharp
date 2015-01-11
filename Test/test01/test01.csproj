@@ -4,24 +4,26 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{80DEA7F3-C84F-4603-8080-0BA3647588A0}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{2D20B422-6BB5-4703-A57C-03800515C904}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CLRSharp</RootNamespace>
-    <AssemblyName>CLRSharp</AssemblyName>
+    <RootNamespace>test01</RootNamespace>
+    <AssemblyName>test01</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,33 +34,51 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CLRSharp\CLRSharp_Env.cs" />
-    <Compile Include="CLRSharp\Execute\Context.cs" />
-    <Compile Include="CLRSharp\Execute\StackFrame.cs" />
-    <Compile Include="CLRSharp\Interface\EnvAndLog.cs" />
-    <Compile Include="CLRSharp\Type\CLRSharp\CLRSharp_Instance.cs" />
-    <Compile Include="CLRSharp\Type\Delegate\Delegate_Helper.cs" />
-    <Compile Include="CLRSharp\Type\System\System_Type.cs" />
-    <Compile Include="CLRSharp\Type\Type_Common.cs" />
-    <Compile Include="CLRSharp\Type\Type_List.cs" />
-    <Compile Include="CLRSharp\Type\CLRSharp\CLRSharp_Type.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Mono.Cecil.20\Mono.Cecil.20.csproj">
+    <ProjectReference Include="..\..\CLRSharp\CLRSharp.csproj">
+      <Project>{80dea7f3-c84f-4603-8080-0ba3647588a0}</Project>
+      <Name>CLRSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mono.Cecil.20\Mono.Cecil.20.csproj">
       <Project>{d3785d8b-4d85-4546-8763-47fc848c13e0}</Project>
       <Name>Mono.Cecil.20</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\readme.txt">
-      <Link>readme.txt</Link>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

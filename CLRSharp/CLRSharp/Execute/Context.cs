@@ -66,9 +66,10 @@ namespace CLRSharp
             {
                 if (!func.IsStatic)
                 {
-                    _withp = new object[_params.Length + 1];
+                    _withp = new object[(_params == null) ? 1 : (_params.Length + 1)];
                     _withp[0] = _this;
-                    _params.CopyTo(_withp, 1);
+                    if (_params != null)
+                        _params.CopyTo(_withp, 1);
                 }
                 else
                 {

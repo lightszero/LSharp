@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{80DEA7F3-C84F-4603-8080-0BA3647588A0}</ProjectGuid>
+    <ProjectGuid>{71ED97F9-218B-4C59-B6CC-E7F2659E00B9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CLRSharp</RootNamespace>
-    <AssemblyName>CLRSharp</AssemblyName>
+    <RootNamespace>testdll01</RootNamespace>
+    <AssemblyName>testdll01</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -16,10 +16,11 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,30 +36,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CLRSharp\CLRSharp_Env.cs" />
-    <Compile Include="CLRSharp\Execute\Context.cs" />
-    <Compile Include="CLRSharp\Execute\StackFrame.cs" />
-    <Compile Include="CLRSharp\Interface\EnvAndLog.cs" />
-    <Compile Include="CLRSharp\Type\CLRSharp\CLRSharp_Instance.cs" />
-    <Compile Include="CLRSharp\Type\Delegate\Delegate_Helper.cs" />
-    <Compile Include="CLRSharp\Type\System\System_Type.cs" />
-    <Compile Include="CLRSharp\Type\Type_Common.cs" />
-    <Compile Include="CLRSharp\Type\Type_List.cs" />
-    <Compile Include="CLRSharp\Type\CLRSharp\CLRSharp_Type.cs" />
+    <Compile Include="Class1.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestClass.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Mono.Cecil.20\Mono.Cecil.20.csproj">
-      <Project>{d3785d8b-4d85-4546-8763-47fc848c13e0}</Project>
-      <Name>Mono.Cecil.20</Name>
+    <ProjectReference Include="..\test01\test01.csproj">
+      <Project>{2d20b422-6bb5-4703-a57c-03800515c904}</Project>
+      <Name>test01</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\readme.txt">
-      <Link>readme.txt</Link>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
