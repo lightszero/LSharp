@@ -11,6 +11,15 @@ namespace CLRSharp
     /// </summary>
     public class ThreadContext
     {
+        [ThreadStatic]
+        static ThreadContext _activeContext = null;
+        public static ThreadContext activeContext
+        {
+            get
+            {
+                return _activeContext;
+            }
+        }
         public ICLRSharp_Environment environment
         {
             get;
@@ -34,54 +43,111 @@ namespace CLRSharp
         Stack<StackFrame> stacks = new Stack<StackFrame>();
         public object ExecuteFunc(Mono.Cecil.MethodDefinition func, object _this, object[] _params)
         {
-            if(this.DebugLevel>=9)
+            _activeContext = this;
+            if (this.DebugLevel >= 9)
             {
                 environment.logger.Log("<Call>::" + func.ToString());
 
             }
-            StackFrame stack = new StackFrame();
+            StackFrame stack = new StackFrame(func.Name, func.IsStatic);
             stacks.Push(stack);
-            if (func.Name == ".ctor")
+            object[] _withp = null;
+            bool isctor = func.Name == ".ctor";
+            if (isctor)
             {
                 //CLRSharp_Instance pthis = new CLRSharp_Instance(GetType(func.ReturnType) as Type_Common_CLRSharp);
                 //StackFrame.RefObj pthis = new StackFrame.RefObj(stack, 0, StackFrame.RefType.arg);
-                stack.SetParams(new object[] { _this });
-                RunCode(stack, func.Body.Instructions);
-                if (this.DebugLevel >= 9)
-                {
-                    environment.logger.Log("<CallEnd>");
-
-                }
-                var ret = stacks.Pop().Return();
-                return _this;
+                _withp = new object[_params == null ? 1 : (_params.Length + 1)];
+                if (_params != null)
+                    _params.CopyTo(_withp, 1);
+                _withp[0] = _this;
             }
             else
             {
-                object[] pp = null;
-                if(!func.IsStatic)
+                if (!func.IsStatic)
                 {
-                    pp =new object[_params.Length+1];
-                    pp[0] = _this;
-                    _params.CopyTo(pp, 1);
+                    _withp = new object[_params.Length + 1];
+                    _withp[0] = _this;
+                    _params.CopyTo(_withp, 1);
                 }
                 else
                 {
-                    pp = _params;
+                    _withp = _params;
                 }
-                stack.SetParams(pp);
-                RunCode(stack, func.Body.Instructions);
-                var ret=stacks.Pop().Return();
-                if (this.DebugLevel >= 9)
+            }
+            stack.SetParams(_withp);
+            if (func.HasBody)
+            {
+                stack._pos = func.Body.Instructions[0];
+                if (func.Body.HasExceptionHandlers)
                 {
-                    environment.logger.Log("<CallEnd>");
-
+                    RunCodeWithTry(func, stack);
                 }
-                return ret;
+                else
+                {
+                    RunCode(stack, func.Body.Instructions);
+                }
             }
 
-     
+            if (this.DebugLevel >= 9)
+            {
+                environment.logger.Log("<CallEnd>");
+
+            }
+            var ret = stacks.Pop().Return();
+
+            return isctor ? _this : ret;
+
+            //if (func.HasBody)
+            //{
+            //    RunCode(stack, func.Body.Instructions);
+            //}
+            //var ret = stacks.Pop().Return();
+            //if (this.DebugLevel >= 9)
+            //{
+            //    environment.logger.Log("<CallEnd>");
+
+            //}
+            //return ret;
+
+
+
         }
 
+        private void RunCodeWithTry(Mono.Cecil.MethodDefinition func, StackFrame stack)
+        {
+            try
+            {
+                if (func.HasBody)
+                {
+
+                    RunCode(stack, func.Body.Instructions);
+                }
+            }
+            catch (Exception err)
+            {
+                bool bEH = false;
+                if (func.Body.HasExceptionHandlers)
+                {
+                    bEH = JumpToErr(func, stack, err);
+                }
+                if (!bEH)
+                {
+                    throw err;
+                }
+            }
+        }
+        ICLRType GetType(string fullname, Mono.Cecil.ModuleDefinition module)
+        {
+            var type = environment.GetType(fullname, module);
+            ICLRType_Sharp stype = type as ICLRType_Sharp;
+            if (stype != null && stype.NeedCCtor)
+            {
+                //执行.cctor
+                stype.InvokeCCtor(this);
+            }
+            return type;
+        }
         ICLRType GetType(object token)
         {
 
@@ -103,7 +169,7 @@ namespace CLRSharp
             {
                 throw new NotImplementedException();
             }
-            return environment.GetType(typename, module);
+            return GetType(typename, module);
         }
         IMethod GetMethod(object token)
         {
@@ -144,7 +210,7 @@ namespace CLRSharp
             {
                 throw new NotImplementedException();
             }
-            var typesys = environment.GetType(typename, module);
+            var typesys = GetType(typename, module);
             if (typesys == null)
                 throw new Exception("type can't find:" + typename);
 
@@ -161,9 +227,189 @@ namespace CLRSharp
 
             return _method;
         }
+        IMethod GetNewForArray(object token)
+        {
+            Mono.Cecil.ModuleDefinition module = null;
+            string typename = null;
+            if (token is Mono.Cecil.TypeDefinition)
+            {
+                Mono.Cecil.TypeDefinition _def = (token as Mono.Cecil.TypeDefinition);
+                module = _def.Module;
+                typename = _def.FullName;
+            }
+            else if (token is Mono.Cecil.TypeReference)
+            {
+                Mono.Cecil.TypeReference _ref = (token as Mono.Cecil.TypeReference);
+                module = _ref.Module;
+                typename = _ref.FullName;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            ICLRType _Itype = GetType(typename, module);
+            typename += "[]";
+            //var _type = context.environment.GetType(typename, type.Module);
+            var _type = GetType(typename, module);
+
+            MethodParamList tlist = MethodParamList.MakeList_OneParam_Int(environment);
+            var m = _type.GetMethod(".ctor", tlist);
+            return m;
+        }
+        IField GetField(object token)
+        {
+            if (token is Mono.Cecil.FieldDefinition)
+            {
+                Mono.Cecil.FieldDefinition field = token as Mono.Cecil.FieldDefinition;
+                var type = GetType(field.DeclaringType.FullName, field.Module);
+                return type.GetField(field.Name);
+
+            }
+            else if (token is Mono.Cecil.FieldReference)
+            {
+                Mono.Cecil.FieldReference field = token as Mono.Cecil.FieldReference;
+                var type = GetType(field.DeclaringType.FullName, field.Module);
+                return type.GetField(field.Name);
+
+            }
+            //else if(token is CLRSharp_Instance)
+            // {
+            //CLRSharp_Instance inst = token as CLRSharp_Instance;
+            //return inst.Fields[field.Name];
+            // }
+
+            else
+            {
+                throw new NotImplementedException("不可处理的token" + token.GetType().ToString());
+            }
+        }
+        object GetToken(object token)
+        {
+            if (token is Mono.Cecil.FieldDefinition || token is Mono.Cecil.FieldReference)
+            {
+
+                return GetField(token);
+
+            }
+
+            else if (token is Mono.Cecil.TypeDefinition || token is Mono.Cecil.TypeReference)
+            {
+                return GetType(token);
+            }
+            else
+            {
+                throw new NotImplementedException("不可处理的token" + token.GetType().ToString());
+            }
+        }
+        int GetParamPos(object token)
+        {
+            if (token is byte)
+            {
+                return (byte)token;
+            }
+            else if (token is sbyte)
+            {
+                return (sbyte)token;
+            }
+            else if (token is int)
+            {
+                return (int)token;
+            }
+            else if (token is Mono.Cecil.ParameterReference)
+            {
+                int i = (token as Mono.Cecil.ParameterReference).Index;
+                if (this.stacks.Peek().Name == ".ctor" || this.stacks.Peek().IsStatic == false)
+                {
+                    i++;
+                }
+                return i;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+        int GetBaseCount(Type _now, Type _base)
+        {
+            if (_now == _base)
+                return 0;
+            if (_now.IsSubclassOf(_base) == false)
+            {
+                return -1;
+            }
+            return GetBaseCount(_now.BaseType, _base) + 1;
+        }
+        bool JumpToErr(Mono.Cecil.MethodDefinition method, StackFrame frame, Exception err)
+        {
+            var posnow = frame._pos;
+            List<Mono.Cecil.Cil.ExceptionHandler> ehs = new List<ExceptionHandler>();
+            Mono.Cecil.Cil.ExceptionHandler ehNear = null;
+            int ehNearB = -1;
+            foreach (var eh in method.Body.ExceptionHandlers)
+            {
+                if (eh.HandlerType == ExceptionHandlerType.Catch)
+                {
+                    Type ehtype = GetType(eh.CatchType).TypeForSystem;
+                    if (ehtype == err.GetType() || err.GetType().IsSubclassOf(ehtype))
+                    //if(GetType(eh.CatchType)== environment.GetType(err.GetType()))
+                    {
+                        if (eh.TryStart.Offset <= posnow.Offset && eh.TryEnd.Offset >= posnow.Offset)
+                        {
+                            if (ehNear == null)
+                            {
+                                ehNear = eh;//第一个
+                                ehNearB = GetBaseCount(ehtype, err.GetType());
+                            }
+                            else
+                            {
+                                if (eh.TryStart.Offset > ehNear.TryStart.Offset || eh.TryEnd.Offset < ehNear.TryEnd.Offset)//范围更小
+                                {
+                                    ehNear = eh;
+                                    ehNearB = GetBaseCount(ehtype, err.GetType());
+                                }
+                                else if (eh.TryStart.Offset == ehNear.TryStart.Offset || eh.TryEnd.Offset == ehNear.TryEnd.Offset)//范围相等
+                                {
+                                    if (ehtype == err.GetType())//类型一致，没有比这个更牛的了
+                                    {
+                                        ehNear = eh;
+                                        ehNearB = GetBaseCount(ehtype, err.GetType());
+                                    }
+                                    else if (GetType(ehNear.CatchType).TypeForSystem == err.GetType())//上次找到的就是第一，不用比了
+                                    {
+                                        continue;
+                                    }
+                                    else //比较上次找到的类型，和这次找到的类型的亲缘性；
+                                    {
+                                        int newehNearB = GetBaseCount(ehtype, err.GetType());
+                                        if (newehNearB == -1) continue;
+                                        if (newehNearB < ehNearB)
+                                        {
+                                            ehNear = eh;
+                                            ehNearB = newehNearB;
+                                        }
+                                    }
+                                }
+                            }
+                            ehs.Add(eh);
+                        }
+                    }
+
+                }
+            }
+            if (ehNear != null)
+            {
+                frame.Ldobj(this, err);
+                frame._pos = ehNear.HandlerStart;
+                RunCodeWithTry(method, frame);
+                return true;
+            }
+            return false;
+        }
+
         void RunCode(StackFrame stack, Mono.Collections.Generic.Collection<Mono.Cecil.Cil.Instruction> codes)
         {
-            stack._pos = codes[0];
+
             while (true)
             {
                 var code = stack._pos;
@@ -183,6 +429,13 @@ namespace CLRSharp
                     case Code.Ret:
                         stack.Ret();
                         return;
+                    case Code.Leave:
+                        stack.Leave(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
+                    case Code.Leave_S:
+                        //stack.Ret();
+                        stack.Leave(code.Operand as Mono.Cecil.Cil.Instruction);
+                        break;
                     //流程控制之goto
                     case Code.Br:
                         stack.Br(code.Operand as Mono.Cecil.Cil.Instruction);
@@ -202,13 +455,7 @@ namespace CLRSharp
                     case Code.Brfalse_S:
                         stack.Brfalse(code.Operand as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Leave:
-                        stack.Leave(code.Operand as Mono.Cecil.Cil.Instruction);
-                        break;
-                    case Code.Leave_S:
-                        stack.Ret();
-                        stack.Leave(code.Operand as Mono.Cecil.Cil.Instruction);
-                        break;
+
                     //比较流程控制
                     case Code.Beq:
                         stack.Beq(code.Operand as Mono.Cecil.Cil.Instruction);
@@ -433,7 +680,7 @@ namespace CLRSharp
                         stack.Ldarg((int)code.Operand);
                         break;
                     case Code.Ldarg_S:
-                        stack.Ldarg((byte)code.Operand);
+                        stack.Ldarg(GetParamPos(code.Operand));
                         break;
                     case Code.Ldarg_0:
                         stack.Ldarg(0);
@@ -552,7 +799,7 @@ namespace CLRSharp
                         break;
                     //数组
                     case Code.Newarr:
-                        stack.NewArr(this, (Mono.Cecil.TypeReference)code.Operand);
+                        stack.NewArr(this, GetNewForArray(code.Operand));
                         break;
                     case Code.Ldlen:
                         stack.LdLen();
@@ -637,22 +884,22 @@ namespace CLRSharp
                         break;
 
                     case Code.Ldfld:
-                        stack.Ldfld(this, code.Operand as Mono.Cecil.FieldReference);
+                        stack.Ldfld(this, GetField(code.Operand));
                         break;
                     case Code.Ldflda:
-                        stack.Ldflda(this, code.Operand as Mono.Cecil.FieldReference);
+                        stack.Ldflda(this, GetField(code.Operand));
                         break;
                     case Code.Ldsfld:
-                        stack.Ldsfld(this, code.Operand as Mono.Cecil.FieldReference);
+                        stack.Ldsfld(this, GetField(code.Operand));
                         break;
                     case Code.Ldsflda:
-                        stack.Ldsflda(this, code.Operand as Mono.Cecil.FieldReference);
+                        stack.Ldsflda(this, GetField(code.Operand));
                         break;
                     case Code.Stfld:
-                        stack.Stfld(this, code.Operand as Mono.Cecil.FieldReference);
+                        stack.Stfld(this, GetField(code.Operand));
                         break;
                     case Code.Stsfld:
-                        stack.Stsfld(this, code.Operand as Mono.Cecil.FieldReference);
+                        stack.Stsfld(this, GetField(code.Operand));
                         break;
 
 
@@ -661,10 +908,10 @@ namespace CLRSharp
                         break;
 
                     case Code.Isinst:
-                        stack.Isinst(this, code.Operand as Mono.Cecil.TypeReference);
+                        stack.Isinst(this, GetType(code.Operand));
                         break;
                     case Code.Ldtoken:
-                        stack.Ldtoken(this, code.Operand as Mono.Cecil.FieldDefinition);
+                        stack.Ldtoken(this, GetToken(code.Operand));
                         break;
 
                     case Code.Ldftn:
@@ -690,7 +937,7 @@ namespace CLRSharp
                         stack.Starg_S(this, code.Operand);
                         break;
                     case Code.Ldnull:
-                        stack.Ldnull(this, code.Operand);
+                        stack.Ldnull();
                         break;
                     case Code.Jmp:
                         stack.Jmp(this, code.Operand);

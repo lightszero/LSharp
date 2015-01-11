@@ -10,16 +10,16 @@ namespace CLRSharp
     public class Delegate_Binder
     {
         static Dictionary<Type, IDelegate_BindTool> mapBind = new Dictionary<Type, IDelegate_BindTool>();
-        public static void RegBind(Type deletype,IDelegate_BindTool bindtool)
+        public static void RegBind(Type deletype, IDelegate_BindTool bindtool)
         {
             mapBind[deletype] = bindtool;
         }
-        public static Delegate MakeDelegate(Type deletype, ThreadContext context, CLRSharp_Instance __this, IMethod __method)
+        public static Delegate MakeDelegate(Type deletype, CLRSharp_Instance __this, IMethod __method)
         {
             IDelegate_BindTool btool = null;
-            if(mapBind.TryGetValue(deletype,out btool))
+            if (mapBind.TryGetValue(deletype, out btool))
             {
-                return btool.CreateDele(deletype, context, __this, __method);
+                return btool.CreateDele(deletype, null, __this, __method);
             }
             var method = deletype.GetMethod("Invoke");
             if (__method.isStatic)
@@ -32,8 +32,8 @@ namespace CLRSharp
             {
                 if (pp.Length == 0)
                 {
-                    var gtype = typeof(Delegate_BindTool).MakeGenericType(new Type[] { });
-                    btool = gtype.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IDelegate_BindTool;
+                    //var gtype = typeof(Delegate_BindTool).MakeGenericType(new Type[] { });
+                    btool = new Delegate_BindTool();
                 }
                 else if (pp.Length == 1)
                 {
@@ -94,7 +94,7 @@ namespace CLRSharp
                 }
             }
             mapBind[deletype] = btool;
-            return btool.CreateDele(deletype, context, __this, __method);
+            return btool.CreateDele(deletype, null, __this, __method);
         }
     }
     public interface IDelegate_BindTool

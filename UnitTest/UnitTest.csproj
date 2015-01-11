@@ -41,9 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLScriptExt\Country.cs" />
-    <Compile Include="CLScriptExt\CSLEConvert.cs" />
+    <Compile Include="CLScriptExt\LSharpConvert.cs" />
     <Compile Include="CLScriptExt\MyClass.cs" />
     <Compile Include="CLScriptExt\MyJson.cs" />
+    <Compile Include="CLScriptExt\MyJsonCompress.cs" />
     <Compile Include="CLScriptExt\Student.cs" />
     <Compile Include="CLScriptExt\TestClass.cs" />
     <Compile Include="CLScriptExt\TestDele.cs" />

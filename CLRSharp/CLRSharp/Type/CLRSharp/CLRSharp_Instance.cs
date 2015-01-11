@@ -6,8 +6,12 @@ namespace CLRSharp
 {
     public class CLRSharp_Instance
     {
-        Type_Common_CLRSharp type;
-        public CLRSharp_Instance(Type_Common_CLRSharp type)
+        public ICLRType_Sharp type
+        {
+            get;
+            private set;
+        }
+        public CLRSharp_Instance(ICLRType_Sharp type)
         {
             this.type = type;
         }
@@ -21,7 +25,7 @@ namespace CLRSharp
             Delegate dele = null;
             if (!Delegates.TryGetValue(method, out dele))
             {
-                dele = Delegate_Binder.MakeDelegate(deleType, context, this, method);
+                dele = Delegate_Binder.MakeDelegate(deleType,  this, method);
                 Delegates[method] = dele;
                 //需要从Delegate转换成实际类型赋值的帮助类
 

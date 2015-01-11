@@ -17,46 +17,75 @@ namespace CLRSharp
         public static MethodParamList MakeList_OneParam_Int(ICLRSharp_Environment env)
         {
             if (_OneParam_Int == null)
-                {
-                    _OneParam_Int = new MethodParamList();
-                    _OneParam_Int.Add(env.GetType(typeof(int).FullName, null));
-                }
+            {
+                _OneParam_Int = new MethodParamList();
+                _OneParam_Int.Add(env.GetType(typeof(int).FullName, null));
+            }
 
-                return _OneParam_Int;
+            return _OneParam_Int;
 
+
+        }
+        static MethodParamList _ZeroParam = null;
+        public static MethodParamList MakeEmpty()
+        {
+            if(_ZeroParam==null)
+            {
+                _ZeroParam = new MethodParamList();
+            }
+            return _ZeroParam;
         }
         public MethodParamList(ICLRSharp_Environment env, Mono.Cecil.MethodReference method)
         {
             if (method.HasParameters)
             {
                 Mono.Cecil.GenericInstanceType _typegen = null;
+                _typegen = method.DeclaringType as Mono.Cecil.GenericInstanceType;
+                Mono.Cecil.GenericInstanceMethod gm = method as Mono.Cecil.GenericInstanceMethod;
                 MethodParamList _methodgen = null;
+                if (gm != null)
+                    _methodgen = new MethodParamList(env, gm);
                 foreach (var p in method.Parameters)
                 {
                     string paramname = p.ParameterType.FullName;
+
                     if (p.ParameterType.IsGenericParameter)
                     {
                         if (p.ParameterType.Name.Contains("!!"))
                         {
-                             if (_methodgen == null)
-                             {
-                                 _methodgen = new MethodParamList(env,method as Mono.Cecil.GenericInstanceMethod);
-                             }
-                             int index = int.Parse(p.ParameterType.Name.Substring(2));
-                             paramname = _methodgen[index].FullName;
+
+                            int index = int.Parse(p.ParameterType.Name.Substring(2));
+                            paramname = _methodgen[index].FullName;
                         }
                         else if (p.ParameterType.Name.Contains("!"))
                         {
-                            if (_typegen == null)
-                                _typegen = method.DeclaringType as Mono.Cecil.GenericInstanceType;
+
+
                             int index = int.Parse(p.ParameterType.Name.Substring(1));
                             paramname = _typegen.GenericArguments[index].FullName;
                         }
-
                     }
-                    this.Add(env.GetType(paramname, method.Module));
+
+                    if (paramname.Contains("!!"))
+                    {
+                        this.Add(GetTType(env, p, method,_methodgen));
+                    }
+                    else
+                    {
+                        this.Add(env.GetType(paramname, method.Module));
+                    }
                 }
             }
+        }
+        ICLRType GetTType(ICLRSharp_Environment env, Mono.Cecil.ParameterDefinition param, Mono.Cecil.MethodReference method,MethodParamList _methodgen)
+        {
+            string  typename =param.ParameterType.FullName;
+            for (int i = 0; i < _methodgen.Count;i++ )
+            {
+                string p = "!!" + i.ToString();
+                typename = typename.Replace(p, _methodgen[i].FullName); 
+            }
+            return env.GetType(typename, method.Module);
         }
         public MethodParamList(ICLRSharp_Environment env, Mono.Cecil.GenericInstanceMethod method)
         {
@@ -77,7 +106,7 @@ namespace CLRSharp
             }
         }
 
-        public MethodParamList(ICLRSharp_Environment env,System.Reflection.MethodBase method)
+        public MethodParamList(ICLRSharp_Environment env, System.Reflection.MethodBase method)
         {
             foreach (var p in method.GetParameters())
             {
@@ -109,6 +138,7 @@ namespace CLRSharp
                 SystemType = new System.Type[this.Count];
                 for (int i = 0; i < this.Count; i++)
                 {
+                    
                     SystemType[i] = this[i].TypeForSystem;
                 }
             }

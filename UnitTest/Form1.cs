@@ -149,10 +149,10 @@ namespace UnitTest
                 body.Nodes.Add(eh);
                 if (method.Body.HasExceptionHandlers)
                 {
-                    foreach (var v in method.Body.ExceptionHandlers)
+                    foreach (Mono.Cecil.Cil.ExceptionHandler v in method.Body.ExceptionHandlers)
                     {
                         TreeNode var = new TreeNode(v.ToString());
-                        variables.Nodes.Add(var);
+                        eh.Nodes.Add(v.HandlerType+" "+v.CatchType+"("+v.HandlerStart+","+v.HandlerEnd+")");
                     }
                 }
                 TreeNode code = new TreeNode("Code");
@@ -252,6 +252,13 @@ namespace UnitTest
         }
         private void button4_Click(object sender, EventArgs e)
         {
+            var types = env.GetAllTypes();
+            foreach(var t in types)
+            {
+                CLRSharp.ICLRType_Sharp type =env.GetType(t,null) as CLRSharp.ICLRType_Sharp;
+                if(type!=null)
+                    type.ResetStaticInstace();
+            }
             int testcount = 0;
             int succcount = 0;
             foreach (TreeNode t in treeView1.Nodes)
@@ -284,18 +291,25 @@ namespace UnitTest
 
         private void treeView2_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag is Mono.Cecil.Cil.Instruction)
+            try
             {
-                Mono.Cecil.Cil.Instruction i = e.Node.Tag as Mono.Cecil.Cil.Instruction;
-                if (i.SequencePoint != null)
-                    foreach (TreeNode n in treeViewCode.Nodes)
-                    {
-                        if (n.Text == i.SequencePoint.Document.Url)
+                if (e.Node.Tag is Mono.Cecil.Cil.Instruction)
+                {
+                    Mono.Cecil.Cil.Instruction i = e.Node.Tag as Mono.Cecil.Cil.Instruction;
+                    if (i.SequencePoint != null)
+                        foreach (TreeNode n in treeViewCode.Nodes)
                         {
-                            treeViewCode.SelectedNode = n.Nodes[i.SequencePoint.StartLine - 1];
-                            treeViewCode.SelectedNode.BackColor = Color.LightBlue;
+                            if (n.Text == i.SequencePoint.Document.Url)
+                            {
+                                treeViewCode.SelectedNode = n.Nodes[i.SequencePoint.StartLine - 1];
+                                treeViewCode.SelectedNode.BackColor = Color.LightBlue;
+                            }
                         }
-                    }
+                }
+            }
+            catch
+            {
+
             }
         }
         TreeNode lastLine = null;

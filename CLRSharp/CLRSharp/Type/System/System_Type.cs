@@ -16,11 +16,17 @@ namespace CLRSharp
             get;
             private set;
         }
-        public Type_Common_System(ICLRSharp_Environment env, System.Type type, string aname)
+        public ICLRType[] SubTypes
+        {
+            get;
+            private set;
+        }
+        public Type_Common_System(ICLRSharp_Environment env, System.Type type, string aname,ICLRType[] subtype)
         {
             this.env = env;
             this.TypeForSystem = type;
             FullNameWithAssembly = aname;
+            this.SubTypes = subtype;
         }
         public string Name
         {
@@ -80,7 +86,7 @@ namespace CLRSharp
         }
         public IField GetField(string name)
         {
-            return new Field_Common_System(TypeForSystem.GetField(name));
+            return new Field_Common_System(env, TypeForSystem.GetField(name));
         }
         public bool IsInst(object obj)
         {
@@ -94,19 +100,43 @@ namespace CLRSharp
             throw new NotImplementedException();
         }
 
-        public Delegate CreateDelegate(Type deletype,object _this, IMethod_System _method)
+        public Delegate CreateDelegate(Type deletype, object _this, IMethod_System _method)
         {
             return Delegate.CreateDelegate(deletype, _this, _method.method_System as System.Reflection.MethodInfo);
+        }
+
+
+        public string[] GetFieldNames()
+        {
+            var fs = TypeForSystem.GetFields();
+            string[] names = new string[fs.Length];
+            for (int i = 0; i < fs.Length; i++)
+            {
+                names[i] = fs[i].Name;
+            }
+            return names;
         }
     }
     class Field_Common_System : IField
     {
         public System.Reflection.FieldInfo info;
-        public Field_Common_System(System.Reflection.FieldInfo field)
+        public Field_Common_System(ICLRSharp_Environment env, System.Reflection.FieldInfo field)
         {
             info = field;
-        }
 
+            FieldType = env.GetType(field.FieldType);
+            DeclaringType = env.GetType(field.DeclaringType);
+        }
+        public ICLRType FieldType
+        {
+            get;
+            private set;
+        }
+        public ICLRType DeclaringType
+        {
+            get;
+            private set;
+        }
         public void Set(object _this, object value)
         {
             info.SetValue(_this, value);
@@ -137,7 +167,7 @@ namespace CLRSharp
                 System.Reflection.MethodInfo info = method as System.Reflection.MethodInfo;
                 ReturnType = DeclaringType.env.GetType(info.ReturnType);
             }
-            ParamList =new MethodParamList(DeclaringType.env,method);
+            ParamList = new MethodParamList(DeclaringType.env, method);
         }
         public bool isStatic
         {
@@ -187,21 +217,52 @@ namespace CLRSharp
                     object src = _params[0];
                     RefFunc fun = _params[1] as RefFunc;
                     ICLRType_Sharp clrtype = fun._method.DeclaringType as ICLRType_Sharp;
-                    if(clrtype!=null)//onclr
+                    if (clrtype != null)//onclr
                     {
-                     
+
                         CLRSharp_Instance inst = src as CLRSharp_Instance;
                         if (fun._method.isStatic && clrtype != null)
                             inst = clrtype.staticInstance;
-                        return inst.GetDelegate(context, method_System.DeclaringType,fun._method);
+                        return inst.GetDelegate(context, method_System.DeclaringType, fun._method);
                     }
                     else//onsystem
                     {
                         ICLRType_System stype = fun._method.DeclaringType as ICLRType_System;
-                        return stype.CreateDelegate(method_System.DeclaringType,src, fun._method as IMethod_System);
+                        return stype.CreateDelegate(method_System.DeclaringType, src, fun._method as IMethod_System);
                     }
                 }
-                var newobj = (method_System as System.Reflection.ConstructorInfo).Invoke(_params);
+                object[] _outp = null;
+                if (_params != null && _params.Length > 0)
+                {
+                    _outp = new object[_params.Length];
+                    var _paramsdef = method_System.GetParameters();
+                    for (int i = 0; i < _params.Length; i++)
+                    {
+                        if (_params[i] == null)
+                            _outp[i] = null;
+                        Type tsrc = _params[i].GetType();
+                        Type ttarget = _paramsdef[i].ParameterType;
+                        if (tsrc == ttarget)
+                        {
+                            _outp[i] = _params[i];
+                        }
+                        else if (tsrc.IsSubclassOf(ttarget))
+                        {
+                            _outp[i] = _params[i];
+                        }
+                        else
+                        {
+                            if (ttarget == typeof(byte))
+                                _outp[i] = (byte)Convert.ToDecimal(_params[i]);
+                            else
+                            {
+                                _outp[i] = _params[i];
+                            }
+                            //var ms =_params[i].GetType().GetMethods();
+                        }
+                    }
+                }
+                var newobj = (method_System as System.Reflection.ConstructorInfo).Invoke(_outp);
                 return newobj;
             }
             else

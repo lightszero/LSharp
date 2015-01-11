@@ -38,24 +38,34 @@ namespace CLRSharp
         /// <param name="TTypes"></param>
         /// <param name="types"></param>
         /// <returns></returns>
-        IMethod GetMethodT(string funcname,MethodParamList TTypes, MethodParamList types);
+        IMethod GetMethodT(string funcname, MethodParamList TTypes, MethodParamList types);
 
         IField GetField(string name);
-
+        string[] GetFieldNames();
         bool IsInst(object obj);
 
-        ICLRType GetNestType(ICLRSharp_Environment env,string fullname);
+        ICLRType GetNestType(ICLRSharp_Environment env, string fullname);
+        ICLRType[] SubTypes
+        {
+            get;
+        }
     }
-    public interface ICLRType_Sharp:ICLRType
+    public interface ICLRType_Sharp : ICLRType
     {
         CLRSharp_Instance staticInstance
         {
             get;
         }
+        void ResetStaticInstace();
+        bool NeedCCtor
+        {
+            get;
+        }
+        void InvokeCCtor(ThreadContext context);
     }
-    public interface ICLRType_System:ICLRType
+    public interface ICLRType_System : ICLRType
     {
-        Delegate CreateDelegate(Type deletype,object _this,IMethod_System _method);
+        Delegate CreateDelegate(Type deletype, object _this, IMethod_System _method);
     }
     public interface IMethod
     {
@@ -82,7 +92,7 @@ namespace CLRSharp
             get;
         }
     }
-    public interface IMethod_System:IMethod
+    public interface IMethod_System : IMethod
     {
         System.Reflection.MethodBase method_System
         {
@@ -97,7 +107,15 @@ namespace CLRSharp
         {
             get;
         }
+        ICLRType DeclaringType
+        {
+            get;
 
+        }
+        ICLRType FieldType
+        {
+            get;
+        }
     }
 
 }

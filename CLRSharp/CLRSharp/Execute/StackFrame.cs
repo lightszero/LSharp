@@ -21,6 +21,21 @@ namespace CLRSharp
     /// </summary>
     class StackFrame
     {
+        public string Name
+        {
+            get;
+            private set;
+        }
+        public bool IsStatic
+        {
+            get;
+            private set;
+        }
+        public StackFrame(string name, bool isStatic)
+        {
+            this.Name = name;
+            this.IsStatic = IsStatic;
+        }
         public Mono.Cecil.Cil.Instruction _pos = null;
 
         Stack<object> stackCalc = new Stack<object>();
@@ -65,6 +80,12 @@ namespace CLRSharp
             }
             if (_clrmethod.DeclaringType.FullName.Contains("System.Runtime.CompilerServices.RuntimeHelpers") && _clrmethod.Name.Contains("InitializeArray"))
             {
+                _pos = _pos.Next;
+                return;
+            }
+            if (_clrmethod.DeclaringType.FullName.Contains("System.Type") && _clrmethod.Name.Contains("GetTypeFromHandle"))
+            {
+                stackCalc.Push(_pp[0]);
                 _pos = _pos.Next;
                 return;
             }
@@ -130,9 +151,26 @@ namespace CLRSharp
         }
         public void Brtrue(Mono.Cecil.Cil.Instruction pos)
         {
-            decimal b = Convert.ToDecimal(stackCalc.Pop());
+            object obj = stackCalc.Pop();
+            bool b = false;
+            if (obj != null)
+            {
+                if (obj.GetType().IsClass)
+                {
+                    b = true;
+                }
+                else if (obj is bool)
+                {
+                    b = (bool)obj;
+                }
+                else
+                {
+                    b = Convert.ToDecimal(obj) > 0;
+                }
+            }
+            //decimal b = Convert.ToDecimal(stackCalc.Pop());
             //bool b = (bool)stackCalc.Pop();
-            if (b > 0)
+            if (b)
             {
                 _pos = pos;
             }
@@ -446,7 +484,7 @@ namespace CLRSharp
         }
 
         //拿出变量槽的引用
-        
+
         public void Ldloca(int pos)
         {
             stackCalc.Push(new RefObj(this, pos, RefType.loc));
@@ -479,7 +517,14 @@ namespace CLRSharp
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            stackCalc.Push(n1.Equals(n2));
+            if (n1 == null)
+            {
+                stackCalc.Push(n1 == n2);
+            }
+            else
+            {
+                stackCalc.Push(n1.Equals(n2));
+            }
             _pos = _pos.Next;
         }
         public void Cgt()
@@ -757,13 +802,13 @@ namespace CLRSharp
         }
 
         ////数组
-        public void NewArr(ThreadContext context, Mono.Cecil.TypeReference type)
+        public void NewArr(ThreadContext context, IMethod newForArray)
         {
-            string typename = type.FullName + "[]";
-            var _type = context.environment.GetType(typename, type.Module);
-            MethodParamList tlist = MethodParamList.MakeList_OneParam_Int(context.environment);
-            var m = _type.GetMethod(".ctor", tlist);
-            var array = m.Invoke(context, null, new object[] { stackCalc.Pop() });
+            //string typename = type.FullName + "[]";
+            //var _type = context.environment.GetType(typename, type.Module);
+            //MethodParamList tlist = MethodParamList.MakeList_OneParam_Int(context.environment);
+            //var m = _type.GetMethod(".ctor", tlist);
+            var array = newForArray.Invoke(context, null, new object[] { stackCalc.Pop() });
             stackCalc.Push(array);
             _pos = _pos.Next;
         }
@@ -944,11 +989,11 @@ namespace CLRSharp
         }
 
         //寻址类
-        public void NewObj(ThreadContext context,IMethod _clrmethod)
+        public void NewObj(ThreadContext context, IMethod _clrmethod)
         {
             //MethodParamList list = new MethodParamList(context.environment, method);
             object[] _pp = null;
-            if (_clrmethod.ParamList!=null&&_clrmethod.ParamList.Count>0)
+            if (_clrmethod.ParamList != null && _clrmethod.ParamList.Count > 0)
             {
                 _pp = new object[_clrmethod.ParamList.Count];
                 for (int i = 0; i < _pp.Length; i++)
@@ -988,71 +1033,72 @@ namespace CLRSharp
         //    _pos = _pos.Next;
 
         //}
-        public void Ldfld(ThreadContext context, Mono.Cecil.FieldReference field)
+        public void Ldfld(ThreadContext context, IField field)
         {
             var obj = stackCalc.Pop();
 
-            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
-            var ff = type.GetField(field.Name);
+            //var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            //ar ff = type.GetField(field.Name);
             if (obj is RefObj)
             {
                 obj = (obj as RefObj).Get();
             }
-            var value = ff.Get(obj);
+            var value = field.Get(obj);
             stackCalc.Push(value);
             //System.Type t =obj.GetType();
             _pos = _pos.Next;
         }
-        public void Ldflda(ThreadContext context, Mono.Cecil.FieldReference field)
+        public void Ldflda(ThreadContext context, IField field)
         {
             var obj = stackCalc.Pop();
 
-            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
-            var ff = type.GetField(field.Name);
+            // var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            //var ff = type.GetField(field.Name);
 
-            stackCalc.Push(new RefObj(ff, obj));
+            stackCalc.Push(new RefObj(field, obj));
 
             _pos = _pos.Next;
         }
-        public void Ldsfld(ThreadContext context, Mono.Cecil.FieldReference field)
+        public void Ldsfld(ThreadContext context, IField field)
         {
-            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
-            var ff = type.GetField(field.Name);
-            var value = ff.Get(null);
+            //var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            //var ff = type.GetField(field.Name);
+            var value = field.Get(null);
             stackCalc.Push(value);
             //System.Type t =obj.GetType();
             _pos = _pos.Next;
         }
-        public void Ldsflda(ThreadContext context, Mono.Cecil.FieldReference field)
+        public void Ldsflda(ThreadContext context, IField field)
         {
-            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
-            var ff = type.GetField(field.Name);
+            //var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            //var ff = type.GetField(field.Name);
 
-            stackCalc.Push(new RefObj(ff, null));
+            stackCalc.Push(new RefObj(field, null));
 
             _pos = _pos.Next;
         }
-        public void Stfld(ThreadContext context, Mono.Cecil.FieldReference field)
+        public void Stfld(ThreadContext context, IField field)
         {
             var value = stackCalc.Pop();
-            
+
             var obj = stackCalc.Pop();
-            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
-            var ff = type.GetField(field.Name);
+            //var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            //var ff = type.GetField(field.Name);
             if (obj is RefObj)
             {
                 obj = (obj as RefObj).Get();
             }
-            ff.Set(obj, value);
+            field.Set(obj, value);
             _pos = _pos.Next;
         }
-        public void Stsfld(ThreadContext context, Mono.Cecil.FieldReference field)
+        public void Stsfld(ThreadContext context, IField field)
         {
             var value = stackCalc.Pop();
             //var obj = stackCalc.Pop();
-            var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
-            var ff = type.GetField(field.Name);
-            ff.Set(null, value);
+
+            //var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
+            //var ff = type.GetField(field.Name);
+            field.Set(null, value);
             _pos = _pos.Next;
         }
         public void Constrained(ThreadContext context, Mono.Cecil.TypeReference obj)
@@ -1060,23 +1106,23 @@ namespace CLRSharp
 
             _pos = _pos.Next;
         }
-        public void Isinst(ThreadContext context, Mono.Cecil.TypeReference obj)
+        public void Isinst(ThreadContext context, ICLRType _type)
         {
             var value = stackCalc.Pop();
-            var _type = context.environment.GetType(obj.FullName, obj.Module);
+            //var _type = context.environment.GetType(obj.FullName, obj.Module);
             if (_type.IsInst(value))
                 stackCalc.Push(value);
             else
                 stackCalc.Push(null);
             _pos = _pos.Next;
         }
-        public void Ldtoken(ThreadContext context, Mono.Cecil.FieldDefinition obj)
+        public void Ldtoken(ThreadContext context, object token)
         {
-            string fname = obj.FullName;
-            string tfname = obj.FieldType.FullName;
-            var _type = context.environment.GetType(obj.DeclaringType.FullName, obj.Module);
-            var field = _type.GetField(obj.Name);
-            stackCalc.Push(field);
+            //string fname = obj.FullName;
+            //string tfname = obj.FieldType.FullName;
+            //var _type = context.environment.GetType(obj.DeclaringType.FullName, obj.Module);
+            //var field = _type.GetField(obj.Name);
+            stackCalc.Push(token);
             _pos = _pos.Next;
         }
 
@@ -1232,10 +1278,9 @@ namespace CLRSharp
             throw new NotImplementedException();
             _pos = _pos.Next;
         }
-        public void Ldnull(ThreadContext context, object obj)
+        public void Ldnull()
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException();
+            stackCalc.Push(null);
             _pos = _pos.Next;
         }
         public void Jmp(ThreadContext context, object obj)
@@ -1409,8 +1454,9 @@ namespace CLRSharp
         }
         public void Ldobj(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException();
+            stackCalc.Push(obj);
+            //Type t = obj.GetType();
+            //throw new NotImplementedException();
             _pos = _pos.Next;
         }
         public void Castclass(ThreadContext context, object obj)
@@ -1421,9 +1467,9 @@ namespace CLRSharp
         }
         public void Throw(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            Exception exc = stackCalc.Pop() as Exception;
+            throw exc;
+            //_pos = _pos.Next;
         }
         public void Stobj(ThreadContext context, object obj)
         {

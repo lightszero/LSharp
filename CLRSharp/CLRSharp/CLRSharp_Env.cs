@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.10Alpha";
+                return "0.20Alpha";
             }
         }
         public ICLRSharp_Logger logger
@@ -39,7 +39,7 @@ namespace CLRSharp
             {
                 foreach (var t in module.Types)
                 {
-                    mapType[t.FullName] = new Type_Common_CLRSharp(this,t);
+                    mapType[t.FullName] = new Type_Common_CLRSharp(this, t);
                 }
             }
 
@@ -59,6 +59,7 @@ namespace CLRSharp
             bool b = mapType.TryGetValue(fullname, out type);
             if (!b)
             {
+                List<ICLRType> subTypes = new List<ICLRType>();
                 if (fullname.Contains("<>"))//匿名类型
                 {
                     string[] subts = fullname.Split('/');
@@ -85,7 +86,8 @@ namespace CLRSharp
                         }
                         else if (fullname[i] == '<')
                         {
-                            depth++;
+                            if (i != 0)
+                                depth++;
                             if (depth == 1)//
                             {
                                 lastsplitpos = i;
@@ -100,14 +102,21 @@ namespace CLRSharp
                             {
                                 checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
                                 var subtype = GetType(checkname, module);
+                                subTypes.Add(subtype);
+                                if (subtype is ICLRType_Sharp) subtype = GetType(typeof(CLRSharp_Instance));
                                 outname += "[" + subtype.FullNameWithAssembly + "]";
                                 lastsplitpos = i;
                             }
+                            //if(depth>0)
                             depth--;
                             if (depth == 0)
                             {
                                 outname += "]";
                                 continue;
+                            }
+                            else if (depth < 0)
+                            {
+                                depth = 0;
                             }
                         }
                         else if (fullname[i] == ',')
@@ -116,6 +125,8 @@ namespace CLRSharp
                             {
                                 checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
                                 var subtype = GetType(checkname, module);
+                                subTypes.Add(subtype);
+                                if (subtype is ICLRType_Sharp) subtype = GetType(typeof(CLRSharp_Instance));
                                 outname += "[" + subtype.FullNameWithAssembly + "],";
                                 lastsplitpos = i;
                             }
@@ -150,7 +161,7 @@ namespace CLRSharp
                 }
                 if (t != null)
                 {
-                    type = new Type_Common_System(this, t, fullnameT);
+                    type = new Type_Common_System(this, t, fullnameT, subTypes.ToArray());
                 }
                 mapType[fullname] = type;
             }
@@ -164,7 +175,7 @@ namespace CLRSharp
             bool b = mapType.TryGetValue(systemType.FullName, out type);
             if (!b)
             {
-                type = new Type_Common_System(this, systemType, systemType.FullName);
+                type = new Type_Common_System(this, systemType, systemType.FullName, null);
             }
             return type;
         }

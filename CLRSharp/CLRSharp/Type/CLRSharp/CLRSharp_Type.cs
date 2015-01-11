@@ -10,7 +10,7 @@ namespace CLRSharp
         {
             get
             {
-                return typeof(ICLRType);
+                return typeof(CLRSharp_Instance);
             }
         }
         public Mono.Cecil.TypeDefinition type_CLRSharp;
@@ -19,11 +19,36 @@ namespace CLRSharp
             get;
             private set;
         }
-
+        public ICLRType[] SubTypes
+        {
+            get;
+            private set;
+        }
         public Type_Common_CLRSharp(ICLRSharp_Environment env, Mono.Cecil.TypeDefinition type)
         {
             this.env = env;
             this.type_CLRSharp = type;
+            foreach (var m in this.type_CLRSharp.Methods)
+            {
+                if (m.Name == ".cctor")
+                {
+                    NeedCCtor = true;
+                    break;
+                }
+            }
+
+        }
+        public void ResetStaticInstace()
+        {
+            this._staticInstance = null;
+            foreach (var m in this.type_CLRSharp.Methods)
+            {
+                if (m.Name == ".cctor")
+                {
+                    NeedCCtor = true;
+                    break;
+                }
+            }
 
         }
         public string Name
@@ -84,10 +109,18 @@ namespace CLRSharp
         }
         public bool IsInst(object obj)
         {
+            if (obj is CLRSharp.CLRSharp_Instance)
+            {
+                CLRSharp.CLRSharp_Instance ins = obj as CLRSharp_Instance;
+                if (ins.type == this)
+                {
+                    return true;
+                }
+                //这里还要实现继承关系
+            }
             return false;
 
         }
-
 
         public ICLRType GetNestType(ICLRSharp_Environment env, string fullname)
         {
@@ -113,14 +146,28 @@ namespace CLRSharp
                 return _staticInstance;
             }
         }
-        bool _isCCtor = false;
-        public bool isCCtor()
+
+        public bool NeedCCtor
         {
-            return _isCCtor;
+            get;
+            private set;
         }
-        public void SetCCtor()
+        public void InvokeCCtor(ThreadContext context)
         {
-            _isCCtor = true;
+            NeedCCtor = false;
+            this.GetMethod(".cctor", null).Invoke(context, this.staticInstance, new object[] { });
+
+        }
+
+
+        public string[] GetFieldNames()
+        {
+            string[] abc = new string[type_CLRSharp.Fields.Count];
+            for (int i = 0; i < type_CLRSharp.Fields.Count; i++)
+            {
+                abc[i] = type_CLRSharp.Fields[i].Name;
+            }
+            return abc;
         }
     }
     public class Method_Common_CLRSharp : IMethod
@@ -177,14 +224,15 @@ namespace CLRSharp
 
         public object Invoke(ThreadContext context, object _this, object[] _params)
         {
+            if (context == null)
+                context = ThreadContext.activeContext;
+            if (context == null)
+                throw new Exception("这个线程上没有CLRSharp:ThreadContext");
             if (method_CLRSharp.Name == ".ctor")
             {
 
                 CLRSharp_Instance inst = new CLRSharp_Instance(_DeclaringType);
-                if(_DeclaringType.isCCtor()==false)//静态没构造
-                {
-                    context.environment.logger.Log("静态类型没有执行构造，需要补上。");
-                }
+
                 context.ExecuteFunc(method_CLRSharp, inst, _params);
                 return inst;
             }
@@ -196,12 +244,25 @@ namespace CLRSharp
     {
         public Type_Common_CLRSharp _DeclaringType;
         public Mono.Cecil.FieldDefinition field;
-        public Field_Common_CLRSharp(Type_Common_CLRSharp type, Mono.Cecil.FieldDefinition field)
+        public Field_Common_CLRSharp( Type_Common_CLRSharp type, Mono.Cecil.FieldDefinition field)
         {
             this.field = field;
+            this.FieldType =type.env.GetType(field.FieldType.FullName,field.Module);
             this._DeclaringType = type;
-        }
 
+        }
+        public ICLRType FieldType
+        {
+            get;
+            private set;
+        }
+        public ICLRType DeclaringType
+        {
+            get
+            {
+                return _DeclaringType;
+            }
+        }
         public void Set(object _this, object value)
         {
             CLRSharp_Instance sins = null;
