@@ -15,4 +15,17 @@ class Test10
     {
         Logger.Log(i.ToString());
     }
+
+    public static void TestInnerClass()
+    {
+        new InnerClass();
+    }
+
+    public class InnerClass
+    {
+        public InnerClass()
+        {
+
+        }
+    }
 }

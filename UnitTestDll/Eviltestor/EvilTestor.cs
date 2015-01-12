@@ -86,5 +86,10 @@ namespace UnitTestDll.Eviltestor
 
 
         }
+
+        public static void UnitTest_11()
+        {
+            Test10.TestInnerClass();
+        }
     }
 }
