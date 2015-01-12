@@ -515,11 +515,11 @@ namespace CLRSharp
             object n1 = stackCalc.Pop();
             if (n1 == null)
             {
-                stackCalc.Push(n1 == n2?1:0);
+                stackCalc.Push(n1 == n2 ? 1 : 0);
             }
             else
             {
-                stackCalc.Push(n1.Equals(n2)?1:0);
+                stackCalc.Push(n1.Equals(n2) ? 1 : 0);
             }
             _pos = _pos.Next;
         }
@@ -583,100 +583,51 @@ namespace CLRSharp
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            decimal outd = num1 + num2;
-            if (n1 is sbyte)
-            {
-                stackCalc.Push((sbyte)outd);
-            }
-            else if (n1 is byte)
-            {
-                stackCalc.Push((byte)outd);
-            }
-            else if (n1 is Int16)
-            {
-                stackCalc.Push((int)outd);
-            }
-            else if (n1 is UInt16)
-            {
-                stackCalc.Push((UInt16)outd);
-            }
-            else if (n1 is int)
-            {
-                stackCalc.Push((int)outd);
-            }
-            else if (n1 is uint)
-            {
-                stackCalc.Push((int)outd);
-            }
-            else if (n1 is float)
-            {
-                stackCalc.Push((float)outd);
-            }
-            else if (n1 is double)
-            {
-                stackCalc.Push((double)outd);
-            }
-            else
-            {
-                //decimal p1 =Convert.ToDecimal(outd);
-                stackCalc.Push(outd);
-            }
+            stackCalc.Push(CLRSharp.Math.Add(n1, n2));
             _pos = _pos.Next;
         }
         public void Sub()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 - num2);
+            stackCalc.Push(CLRSharp.Math.Sub(n1, n2));
             _pos = _pos.Next;
         }
         public void Mul()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 * num2);
+            stackCalc.Push(CLRSharp.Math.Mul(n1, n2));
             _pos = _pos.Next;
         }
         public void Div()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 / num2);
+            stackCalc.Push(CLRSharp.Math.Div(n1, n2));
+
             _pos = _pos.Next;
         }
         public void Div_Un()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 / num2);
+            stackCalc.Push(CLRSharp.Math.Div(n1, n2));
             _pos = _pos.Next;
         }
         public void Rem()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push((int)(num1 % num2));
+            stackCalc.Push(CLRSharp.Math.Rem(n1, n2));
+
             _pos = _pos.Next;
         }
         public void Rem_Un()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push((int)(num1 % num2));
+            stackCalc.Push(CLRSharp.Math.Rem(n1, n2));
             _pos = _pos.Next;
         }
         public void Neg()
@@ -1088,7 +1039,7 @@ namespace CLRSharp
             if (obj is RefObj)
             {
                 var _this = (obj as RefObj).Get();
-                if(_this==null&&!field.isStatic)
+                if (_this == null && !field.isStatic)
                 {
                     (obj as RefObj).Set(field.DeclaringType.InitObj());
                 }

@@ -113,9 +113,9 @@ namespace CLRSharp
         }
         public bool IsInst(object obj)
         {
-            if (obj is CLRSharp.CLRSharp_Instance)
+            if (obj is CLRSharp_Instance)
             {
-                CLRSharp.CLRSharp_Instance ins = obj as CLRSharp_Instance;
+                CLRSharp_Instance ins = obj as CLRSharp_Instance;
                 if (ins.type == this)
                 {
                     return true;
