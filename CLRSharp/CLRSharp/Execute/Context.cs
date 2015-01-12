@@ -51,6 +51,7 @@ namespace CLRSharp
             }
             StackFrame stack = new StackFrame(func.Name, func.IsStatic);
             stacks.Push(stack);
+
             object[] _withp = null;
             bool isctor = func.Name == ".ctor";
             if (isctor)
@@ -1090,7 +1091,7 @@ namespace CLRSharp
                         stack.Tail(this, code.Operand);
                         break;
                     case Code.Initobj:
-                        stack.Initobj(this, code.Operand);
+                        stack.Initobj(this,this.GetType ( code.Operand));
                         break;
                     case Code.Cpblk:
                         stack.Cpblk(this, code.Operand);

@@ -1086,6 +1086,11 @@ namespace CLRSharp
             //var ff = type.GetField(field.Name);
             if (obj is RefObj)
             {
+                var _this = (obj as RefObj).Get();
+                if(_this==null&&!field.isStatic)
+                {
+                    (obj as RefObj).Set(field.DeclaringType.InitObj());
+                }
                 obj = (obj as RefObj).Get();
             }
             field.Set(obj, value);
@@ -1581,10 +1586,15 @@ namespace CLRSharp
             throw new NotImplementedException();
             _pos = _pos.Next;
         }
-        public void Initobj(ThreadContext context, object obj)
+        public void Initobj(ThreadContext context, ICLRType _type)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException();
+            RefObj _this = stackCalc.Pop() as RefObj;
+
+            //var typesys = context.environment.GetType(method.DeclaringType.FullName, method.Module);
+            var _object = _type.InitObj();
+
+            _this.Set(_object);
+
             _pos = _pos.Next;
         }
         public void Cpblk(ThreadContext context, object obj)

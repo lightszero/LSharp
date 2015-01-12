@@ -10,6 +10,8 @@ namespace UnitTestDll
         //只要有一个静态函数包含UnitTest名称的，就作为单元测试
         public static object UnitTest_3001()
         {
+            TT t;
+            t.abc = 1.0f;
             int i = 4;
             int c = 5;
             DateTime t1 = DateTime.Now;

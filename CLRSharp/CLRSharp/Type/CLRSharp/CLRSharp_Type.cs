@@ -92,6 +92,10 @@ namespace CLRSharp
             }
             return null;
         }
+        public object InitObj()
+        {
+            return new CLRSharp_Instance(this);
+        }
         public IMethod GetMethodT(string funcname, MethodParamList ttypes, MethodParamList types)
         {
             return null;
