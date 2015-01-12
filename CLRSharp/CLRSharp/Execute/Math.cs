@@ -6,32 +6,39 @@ namespace CLRSharp
 {
     class Math
     {
-        static Dictionary<Type, int> typecode = null;
-        public static int GetNumTypeCode(object obj)
+        static Dictionary<Type, NumberType> typecode = null;
+        public static NumberType GetTypeCode(Type type)
         {
             if (typecode == null)
             {
-                typecode = new Dictionary<Type, int>();
+                typecode = new Dictionary<Type, NumberType>();
                 //typecode[null] = 0;
-                typecode[typeof(sbyte)] = 1;
-                typecode[typeof(byte)] = 2;
-                typecode[typeof(Int16)] = 3;
-                typecode[typeof(UInt16)] = 4;
-                typecode[typeof(Int32)] = 5;
-                typecode[typeof(UInt32)] = 6;
-                typecode[typeof(Int64)] = 7;
-                typecode[typeof(UInt64)] = 8;
-                typecode[typeof(float)] = 9;
-                typecode[typeof(double)] = 10;
-                typecode[typeof(IntPtr)] = 11;
-                typecode[typeof(UIntPtr)] = 12;
-                typecode[typeof(decimal)] = 13;
+                typecode[typeof(sbyte)] = NumberType.SBYTE;
+                typecode[typeof(byte)] = NumberType.BYTE;
+                typecode[typeof(Int16)] = NumberType.INT16;
+                typecode[typeof(UInt16)] = NumberType.UINT16;
+                typecode[typeof(Int32)] = NumberType.INT32;
+                typecode[typeof(UInt32)] = NumberType.UINT32;
+                typecode[typeof(Int64)] = NumberType.INT64;
+                typecode[typeof(UInt64)] = NumberType.UINT64;
+                typecode[typeof(float)] = NumberType.FLOAT;
+                typecode[typeof(double)] = NumberType.DOUBLE;
+                typecode[typeof(IntPtr)] = NumberType.INTPTR;
+                typecode[typeof(UIntPtr)] = NumberType.UINTPTR;
+                typecode[typeof(decimal)] = NumberType.DECIMAL;
             }
+            NumberType t= NumberType.IsNotNumber;
+            typecode.TryGetValue(type, out t);
+            return t;
+        }
+        public static int GetNumTypeCode(object obj)
+        {
+
             if (obj == null)
-                return 0;
+                return (int)NumberType.IsNotNumber;
             else
 
-                return typecode[obj.GetType()];
+                return (int)GetTypeCode(obj.GetType());
         }
         public static object Add(object left, object right)
         {
