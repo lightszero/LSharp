@@ -377,7 +377,7 @@ namespace CLRSharp
         }
         public void Ldc_I4_S(object v)//int8
         {
-            stackCalc.Push(v);
+            stackCalc.Push((int)Convert.ToDecimal(v));
             _pos = _pos.Next;
         }
         public void Ldc_I8(object v)//int64

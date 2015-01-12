@@ -15,11 +15,20 @@ class T04
 }
 class Test08
 {
+    public int i;
+    public Test08()
+    {
+        i = 5;
+    }
     public Color32 vv;
-
+    public void Call()
+    {
+        Logger.Log("i=" + i);
+    }
     public static void F()
     {
         Test08 tt = new Test08();
+        tt.Call();
         tt.vv = new Color32(1,1,1,1);//.FromArgb(1);
         
         tlist = new List<T04>();

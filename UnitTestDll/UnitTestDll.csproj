@@ -47,6 +47,7 @@
     <Compile Include="Eviltestor\test07\Test07.cs" />
     <Compile Include="Eviltestor\test08\Test08.cs" />
     <Compile Include="Eviltestor\test09\Test09.cs" />
+    <Compile Include="Eviltestor\test10.cs" />
     <Compile Include="ExpTest_50.cs" />
     <Compile Include="ExpTest_60.cs" />
     <Compile Include="ExpTest_70.cs" />

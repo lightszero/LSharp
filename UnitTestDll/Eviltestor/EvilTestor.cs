@@ -78,5 +78,13 @@ namespace UnitTestDll.Eviltestor
             Test09.Test();
 
         }
+        public static void UnitTest_10()
+        {
+            //这个测试测试try catch throw
+            Test10 t = new Test10();
+            t.Debug();
+
+
+        }
     }
 }
