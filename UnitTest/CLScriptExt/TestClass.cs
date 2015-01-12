@@ -40,4 +40,8 @@ using UnitTest;
             i++;
             Logger.Log("i=" + i);
         }
+        public static bool TF(bool b)
+        {
+            return b;
+        }
     }

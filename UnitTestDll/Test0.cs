@@ -23,12 +23,18 @@ namespace UnitTestDll
         }
         public static void UnitTest_03()
         {
+            bool b = 3==3;
+            bool b2 = 4 == 3;
+            Logger.Log(TF(b2) + "," + TestClass.TF (b));
             int p = 1;
             float n = 5.0f;
             var i = 1 * p + 54 / n + 3334 * p + 54;
             Logger.Log("calc:" + i);
         }
-
+        public static bool TF(bool v)
+        {
+            return v;
+        }
   
     }
 }
