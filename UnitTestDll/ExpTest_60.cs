@@ -128,6 +128,14 @@ namespace UnitTestDll
             //outicon2.spriteName = view.values[ii] as MyJson.JsonNode_ValueString
 
             Student s = new Student();
+            if(s==null)
+            {
+                Logger.Log("Error out.");
+            }
+            else
+            {
+                Logger.Log("Right out.");
+            }
             string key = "n";
             s.name = obj[key] as MyJson.JsonNode_ValueString;
             int i = s.vs2[1];
