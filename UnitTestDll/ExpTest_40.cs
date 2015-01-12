@@ -16,9 +16,11 @@ namespace UnitTestDll
             for (; b > 0; )
             {
                 b -= 3;
+                Logger.Log("for1");
             }
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 3; i++)
             {
+                Logger.Log("for2");
                 if (i % 2 == 0)
                 {
                     continue;
@@ -36,6 +38,7 @@ namespace UnitTestDll
             ints.Add(3);
             for (int j = 0; j < ints.Count; j++)
             {
+
                 Logger.Log(j+","+ 0);
             }
 

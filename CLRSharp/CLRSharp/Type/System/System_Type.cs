@@ -59,6 +59,10 @@ namespace CLRSharp
             var method = TypeForSystem.GetMethod(funcname, types.ToArraySystem());
             return new Method_Common_System(this, method);
         }
+        public object InitObj()
+        {
+            return Activator.CreateInstance(TypeForSystem);
+        }
         public IMethod GetMethodT(string funcname, MethodParamList ttypes, MethodParamList types)
         {
             //这个实现还不完全

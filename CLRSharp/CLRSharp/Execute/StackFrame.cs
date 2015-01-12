@@ -369,28 +369,24 @@ namespace CLRSharp
             }
         }
         //加载常量
-        public void Ldc_I4(object v)//int32
+        public void Ldc_I4(int v)//int32
         {
             stackCalc.Push(v);
             _pos = _pos.Next;
 
         }
-        public void Ldc_I4_S(object v)//int8
+
+        public void Ldc_I8(Int64 v)//int64
         {
             stackCalc.Push(v);
             _pos = _pos.Next;
         }
-        public void Ldc_I8(object v)//int64
+        public void Ldc_R4(float v)
         {
             stackCalc.Push(v);
             _pos = _pos.Next;
         }
-        public void Ldc_R4(object v)
-        {
-            stackCalc.Push(v);
-            _pos = _pos.Next;
-        }
-        public void Ldc_R8(object v)
+        public void Ldc_R8(double v)
         {
             stackCalc.Push(v);
             _pos = _pos.Next;
@@ -519,11 +515,11 @@ namespace CLRSharp
             object n1 = stackCalc.Pop();
             if (n1 == null)
             {
-                stackCalc.Push(n1 == n2);
+                stackCalc.Push(n1 == n2 ? 1 : 0);
             }
             else
             {
-                stackCalc.Push(n1.Equals(n2));
+                stackCalc.Push(n1.Equals(n2) ? 1 : 0);
             }
             _pos = _pos.Next;
         }
@@ -533,7 +529,7 @@ namespace CLRSharp
             object n1 = stackCalc.Pop();
             decimal num1 = Convert.ToDecimal(n1);
             decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 > num2);
+            stackCalc.Push(num1 > num2 ? 1 : 0);
             _pos = _pos.Next;
         }
         public void Cgt_Un()
@@ -542,7 +538,7 @@ namespace CLRSharp
             object n1 = stackCalc.Pop();
             decimal num1 = Convert.ToDecimal(n1);
             decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 > num2);
+            stackCalc.Push(num1 > num2 ? 1 : 0);
             _pos = _pos.Next;
         }
         public void Clt()
@@ -555,7 +551,7 @@ namespace CLRSharp
             decimal num2 = Convert.ToDecimal(n2);
 
 
-            stackCalc.Push(num1 < num2);
+            stackCalc.Push(num1 < num2 ? 1 : 0);
             _pos = _pos.Next;
         }
         public void Clt_Un()
@@ -564,7 +560,7 @@ namespace CLRSharp
             object n1 = stackCalc.Pop();
             decimal num1 = Convert.ToDecimal(n1);
             decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 < num2);
+            stackCalc.Push(num1 < num2 ? 1 : 0);
             _pos = _pos.Next;
         }
         public void Ckfinite()
@@ -573,12 +569,12 @@ namespace CLRSharp
             if (n1 is float)
             {
                 float v = (float)n1;
-                stackCalc.Push(float.IsInfinity(v) || float.IsNaN(v));
+                stackCalc.Push(float.IsInfinity(v) || float.IsNaN(v) ? 1 : 0);
             }
             else
             {
                 double v = (double)n1;
-                stackCalc.Push(double.IsInfinity(v) || double.IsNaN(v));
+                stackCalc.Push(double.IsInfinity(v) || double.IsNaN(v) ? 1 : 0);
             }
             _pos = _pos.Next;
         }
@@ -587,95 +583,51 @@ namespace CLRSharp
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            decimal outd = num1 + num2;
-            if (n1 is sbyte)
-            {
-                stackCalc.Push((sbyte)outd);
-            }
-            else if (n1 is byte)
-            {
-                stackCalc.Push((byte)outd);
-            }
-            else if (n1 is Int16)
-            {
-                stackCalc.Push((int)outd);
-            }
-            else if (n1 is UInt16)
-            {
-                stackCalc.Push((UInt16)outd);
-            }
-            else if (n1 is int)
-            {
-                stackCalc.Push((int)outd);
-            }
-            else if (n1 is uint)
-            {
-                stackCalc.Push((int)outd);
-            }
-            else if (n1 is float)
-            {
-                stackCalc.Push((float)outd);
-            }
-            else if (n1 is double)
-            {
-                stackCalc.Push((double)outd);
-            }
+            stackCalc.Push(CLRSharp.Math.Add(n1, n2));
             _pos = _pos.Next;
         }
         public void Sub()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 - num2);
+            stackCalc.Push(CLRSharp.Math.Sub(n1, n2));
             _pos = _pos.Next;
         }
         public void Mul()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 * num2);
+            stackCalc.Push(CLRSharp.Math.Mul(n1, n2));
             _pos = _pos.Next;
         }
         public void Div()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 / num2);
+            stackCalc.Push(CLRSharp.Math.Div(n1, n2));
+
             _pos = _pos.Next;
         }
         public void Div_Un()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 / num2);
+            stackCalc.Push(CLRSharp.Math.Div(n1, n2));
             _pos = _pos.Next;
         }
         public void Rem()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 % num2);
+            stackCalc.Push(CLRSharp.Math.Rem(n1, n2));
+
             _pos = _pos.Next;
         }
         public void Rem_Un()
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-            decimal num1 = Convert.ToDecimal(n1);
-            decimal num2 = Convert.ToDecimal(n2);
-            stackCalc.Push(num1 % num2);
+            stackCalc.Push(CLRSharp.Math.Rem(n1, n2));
             _pos = _pos.Next;
         }
         public void Neg()
@@ -1086,6 +1038,11 @@ namespace CLRSharp
             //var ff = type.GetField(field.Name);
             if (obj is RefObj)
             {
+                var _this = (obj as RefObj).Get();
+                if (_this == null && !field.isStatic)
+                {
+                    (obj as RefObj).Set(field.DeclaringType.InitObj());
+                }
                 obj = (obj as RefObj).Get();
             }
             field.Set(obj, value);
@@ -1581,10 +1538,15 @@ namespace CLRSharp
             throw new NotImplementedException();
             _pos = _pos.Next;
         }
-        public void Initobj(ThreadContext context, object obj)
+        public void Initobj(ThreadContext context, ICLRType _type)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException();
+            RefObj _this = stackCalc.Pop() as RefObj;
+
+            //var typesys = context.environment.GetType(method.DeclaringType.FullName, method.Module);
+            var _object = _type.InitObj();
+
+            _this.Set(_object);
+
             _pos = _pos.Next;
         }
         public void Cpblk(ThreadContext context, object obj)

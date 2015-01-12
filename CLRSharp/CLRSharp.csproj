@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +38,7 @@
   <ItemGroup>
     <Compile Include="CLRSharp\CLRSharp_Env.cs" />
     <Compile Include="CLRSharp\Execute\Context.cs" />
+    <Compile Include="CLRSharp\Execute\Math.cs" />
     <Compile Include="CLRSharp\Execute\StackFrame.cs" />
     <Compile Include="CLRSharp\Interface\EnvAndLog.cs" />
     <Compile Include="CLRSharp\Type\CLRSharp\CLRSharp_Instance.cs" />

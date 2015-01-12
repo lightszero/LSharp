@@ -23,6 +23,10 @@ namespace CLScriptExt
             return r+","+g+","+b+","+a;
         }
     }
+    public struct TT
+    {
+        public float abc;
+    }
     public struct Vector3
     {
 

@@ -1,7 +1,7 @@
 ﻿using Mono.Cecil.Cil;
 using System;
 using System.Collections.Generic;
-using System.Text;
+
 
 namespace CLRSharp
 {
@@ -51,6 +51,7 @@ namespace CLRSharp
             }
             StackFrame stack = new StackFrame(func.Name, func.IsStatic);
             stacks.Push(stack);
+
             object[] _withp = null;
             bool isctor = func.Name == ".ctor";
             if (isctor)
@@ -539,10 +540,10 @@ namespace CLRSharp
                         break;
                     //常量加载
                     case Code.Ldc_I4:
-                        stack.Ldc_I4(code.Operand);
+                        stack.Ldc_I4((int)Convert.ToDecimal(code.Operand));
                         break;
                     case Code.Ldc_I4_S:
-                        stack.Ldc_I4_S(code.Operand);
+                        stack.Ldc_I4((int)Convert.ToDecimal(code.Operand));
                         break;
                     case Code.Ldc_I4_M1:
                         stack.Ldc_I4(-1);
@@ -575,13 +576,13 @@ namespace CLRSharp
                         stack.Ldc_I4(8);
                         break;
                     case Code.Ldc_I8:
-                        stack.Ldc_I8(code.Operand);
+                        stack.Ldc_I8((Int64)(Convert.ToDecimal(code.Operand)));
                         break;
                     case Code.Ldc_R4:
-                        stack.Ldc_R4(code.Operand);
+                        stack.Ldc_R4((float)(Convert.ToDecimal(code.Operand)));
                         break;
                     case Code.Ldc_R8:
-                        stack.Ldc_R8(code.Operand);
+                        stack.Ldc_R8((double)(Convert.ToDecimal(code.Operand)));
                         break;
 
                     //定义为临时变量
@@ -1090,7 +1091,7 @@ namespace CLRSharp
                         stack.Tail(this, code.Operand);
                         break;
                     case Code.Initobj:
-                        stack.Initobj(this, code.Operand);
+                        stack.Initobj(this, this.GetType(code.Operand));
                         break;
                     case Code.Cpblk:
                         stack.Cpblk(this, code.Operand);
