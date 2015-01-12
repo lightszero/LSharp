@@ -41,19 +41,19 @@ namespace CLRSharp
             this.DebugLevel = DebugLevel;
         }
         Stack<StackFrame> stacks = new Stack<StackFrame>();
-        public object ExecuteFunc(Mono.Cecil.MethodDefinition func, object _this, object[] _params)
+        public object ExecuteFunc(IMethod_Sharp method, object _this, object[] _params)
         {
             _activeContext = this;
             if (this.DebugLevel >= 9)
             {
-                environment.logger.Log("<Call>::" + func.ToString());
+                environment.logger.Log("<Call>::" + method.DeclaringType.FullName + "::" + method.Name.ToString());
 
             }
-            StackFrame stack = new StackFrame(func.Name, func.IsStatic);
+            StackFrame stack = new StackFrame(method.Name, method.isStatic);
             stacks.Push(stack);
 
             object[] _withp = null;
-            bool isctor = func.Name == ".ctor";
+            bool isctor = method.Name == ".ctor";
             if (isctor)
             {
                 //CLRSharp_Instance pthis = new CLRSharp_Instance(GetType(func.ReturnType) as Type_Common_CLRSharp);
@@ -65,7 +65,7 @@ namespace CLRSharp
             }
             else
             {
-                if (!func.IsStatic)
+                if (!method.isStatic)
                 {
                     _withp = new object[(_params == null) ? 1 : (_params.Length + 1)];
                     _withp[0] = _this;
@@ -78,16 +78,18 @@ namespace CLRSharp
                 }
             }
             stack.SetParams(_withp);
-            if (func.HasBody)
+            
+            if (method.body != null)
             {
-                stack._pos = func.Body.Instructions[0];
-                if (func.Body.HasExceptionHandlers)
+                stack.Init(method.body);
+                stack._pos = method.body.bodyNative.Instructions[0];
+                if (method.body.bodyNative.HasExceptionHandlers)
                 {
-                    RunCodeWithTry(func, stack);
+                    RunCodeWithTry(method.body, stack);
                 }
                 else
                 {
-                    RunCode(stack, func.Body.Instructions);
+                    RunCode(stack, method.body);
                 }
             }
 
@@ -116,22 +118,20 @@ namespace CLRSharp
 
         }
 
-        private void RunCodeWithTry(Mono.Cecil.MethodDefinition func, StackFrame stack)
+        private void RunCodeWithTry(CodeBody body, StackFrame stack)
         {
             try
             {
-                if (func.HasBody)
-                {
 
-                    RunCode(stack, func.Body.Instructions);
-                }
+                RunCode(stack, body);
+
             }
             catch (Exception err)
             {
                 bool bEH = false;
-                if (func.Body.HasExceptionHandlers)
+                if (body.bodyNative.HasExceptionHandlers)
                 {
-                    bEH = JumpToErr(func, stack, err);
+                    bEH = JumpToErr(body, stack, err);
                 }
                 if (!bEH)
                 {
@@ -139,9 +139,9 @@ namespace CLRSharp
                 }
             }
         }
-        ICLRType GetType(string fullname, Mono.Cecil.ModuleDefinition module)
+        ICLRType GetType(string fullname)
         {
-            var type = environment.GetType(fullname, module);
+            var type = environment.GetType(fullname);
             ICLRType_Sharp stype = type as ICLRType_Sharp;
             if (stype != null && stype.NeedCCtor)
             {
@@ -172,7 +172,7 @@ namespace CLRSharp
             {
                 throw new NotImplementedException();
             }
-            return GetType(typename, module);
+            return GetType(typename);
         }
         Dictionary<int, IMethod> methodCache = new Dictionary<int, IMethod>();
         Dictionary<int, IField> fieldCache = new Dictionary<int, IField>();
@@ -220,7 +220,7 @@ namespace CLRSharp
             {
                 throw new NotImplementedException();
             }
-            var typesys = GetType(typename, module);
+            var typesys = GetType(typename);
             if (typesys == null)
                 throw new Exception("type can't find:" + typename);
 
@@ -263,10 +263,10 @@ namespace CLRSharp
                 throw new NotImplementedException();
             }
 
-            ICLRType _Itype = GetType(typename, module);
+            ICLRType _Itype = GetType(typename);
             typename += "[]";
             //var _type = context.environment.GetType(typename, type.Module);
-            var _type = GetType(typename, module);
+            var _type = GetType(typename);
 
             MethodParamList tlist = MethodParamList.MakeList_OneParam_Int(environment);
             var m = _type.GetMethod(".ctor", tlist);
@@ -283,7 +283,7 @@ namespace CLRSharp
             if (token is Mono.Cecil.FieldDefinition)
             {
                 Mono.Cecil.FieldDefinition field = token as Mono.Cecil.FieldDefinition;
-                var type = GetType(field.DeclaringType.FullName, field.Module);
+                var type = GetType(field.DeclaringType.FullName);
                 __field = type.GetField(field.Name);
 
 
@@ -292,7 +292,7 @@ namespace CLRSharp
             else if (token is Mono.Cecil.FieldReference)
             {
                 Mono.Cecil.FieldReference field = token as Mono.Cecil.FieldReference;
-                var type = GetType(field.DeclaringType.FullName, field.Module);
+                var type = GetType(field.DeclaringType.FullName);
                 __field = type.GetField(field.Name);
 
 
@@ -366,13 +366,13 @@ namespace CLRSharp
             }
             return GetBaseCount(_now.BaseType, _base) + 1;
         }
-        bool JumpToErr(Mono.Cecil.MethodDefinition method, StackFrame frame, Exception err)
+        bool JumpToErr(CodeBody body, StackFrame frame, Exception err)
         {
             var posnow = frame._pos;
             List<Mono.Cecil.Cil.ExceptionHandler> ehs = new List<ExceptionHandler>();
             Mono.Cecil.Cil.ExceptionHandler ehNear = null;
             int ehNearB = -1;
-            foreach (var eh in method.Body.ExceptionHandlers)
+            foreach (var eh in body.bodyNative.ExceptionHandlers)
             {
                 if (eh.HandlerType == ExceptionHandlerType.Catch)
                 {
@@ -427,15 +427,15 @@ namespace CLRSharp
             {
                 frame.Ldobj(this, err);
                 frame._pos = ehNear.HandlerStart;
-                RunCodeWithTry(method, frame);
+                RunCodeWithTry(body, frame);
                 return true;
             }
             return false;
         }
 
-        void RunCode(StackFrame stack, Mono.Collections.Generic.Collection<Mono.Cecil.Cil.Instruction> codes)
+        void RunCode(StackFrame stack, CodeBody body)
         {
-
+            Mono.Collections.Generic.Collection<Mono.Cecil.Cil.Instruction> codes = body.bodyNative.Instructions;
             while (true)
             {
                 var code = stack._pos;

@@ -37,9 +37,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLRSharp\CLRSharp_Env.cs" />
+    <Compile Include="CLRSharp\Execute\CodeBody.cs" />
     <Compile Include="CLRSharp\Execute\Context.cs" />
     <Compile Include="CLRSharp\Execute\Math.cs" />
     <Compile Include="CLRSharp\Execute\StackFrame.cs" />
+    <Compile Include="CLRSharp\Execute\ValueOnStack.cs" />
     <Compile Include="CLRSharp\Interface\EnvAndLog.cs" />
     <Compile Include="CLRSharp\Type\CLRSharp\CLRSharp_Instance.cs" />
     <Compile Include="CLRSharp\Type\Delegate\Delegate_Helper.cs" />

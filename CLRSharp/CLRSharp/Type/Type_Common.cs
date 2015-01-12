@@ -99,6 +99,13 @@ namespace CLRSharp
             get;
         }
     }
+    public interface IMethod_Sharp : IMethod
+    {
+        CodeBody body
+        {
+            get;
+        }
+    }
     public interface IField
     {
         void Set(object _this, object value);
