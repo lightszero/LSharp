@@ -239,6 +239,11 @@ namespace CLRSharp
         }
         IMethod GetNewForArray(object token)
         {
+            IMethod __method = null;
+            if (methodCache.TryGetValue(token.GetHashCode(), out __method))
+            {
+                return __method;
+            }
             Mono.Cecil.ModuleDefinition module = null;
             string typename = null;
             if (token is Mono.Cecil.TypeDefinition)
@@ -265,6 +270,7 @@ namespace CLRSharp
 
             MethodParamList tlist = MethodParamList.MakeList_OneParam_Int(environment);
             var m = _type.GetMethod(".ctor", tlist);
+            methodCache[token.GetHashCode()] = m;
             return m;
         }
         IField GetField(object token)
@@ -825,7 +831,7 @@ namespace CLRSharp
                         stack.LdLen();
                         break;
                     case Code.Ldelema:
-                        stack.Ldelema((Mono.Cecil.TypeReference)code.Operand);
+                        stack.Ldelema(code.Operand);
                         break;
                     case Code.Ldelem_I1:
                         stack.Ldelem_I1();
@@ -861,7 +867,7 @@ namespace CLRSharp
                         stack.Ldelem_Ref();
                         break;
                     case Code.Ldelem_Any:
-                        stack.Ldelem_Any((Mono.Cecil.TypeReference)code.Operand);
+                        stack.Ldelem_Any(code.Operand);
                         break;
 
                     case Code.Stelem_I:
@@ -889,7 +895,7 @@ namespace CLRSharp
                         stack.Stelem_Ref();
                         break;
                     case Code.Stelem_Any:
-                        stack.Stelem_Any((Mono.Cecil.TypeReference)code.Operand);
+                        stack.Stelem_Any();
                         break;
 
                     case Code.Newobj:
@@ -924,7 +930,7 @@ namespace CLRSharp
 
 
                     case Code.Constrained:
-                        stack.Constrained(this, code.Operand as Mono.Cecil.TypeReference);
+                        stack.Constrained(this, GetType(code.Operand));
                         break;
 
                     case Code.Isinst:

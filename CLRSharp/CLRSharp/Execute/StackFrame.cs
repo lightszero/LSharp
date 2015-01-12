@@ -931,7 +931,7 @@ namespace CLRSharp
             _pos = _pos.Next;
         }
 
-        public void Stelem_Any(object obj)
+        public void Stelem_Any()
         {
             var value = stackCalc.Pop();
             var index = (int)stackCalc.Pop();
@@ -1058,7 +1058,7 @@ namespace CLRSharp
             field.Set(null, value);
             _pos = _pos.Next;
         }
-        public void Constrained(ThreadContext context, Mono.Cecil.TypeReference obj)
+        public void Constrained(ThreadContext context, ICLRType obj)
         {
 
             _pos = _pos.Next;
