@@ -53,5 +53,11 @@ namespace UnitTestDll
             }
             return 1;
         }
+
+        public static void UnitTest_1006()
+        {
+            byte b = 11;
+            b.ToString();
+        }
     }
 }
