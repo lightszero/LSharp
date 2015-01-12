@@ -50,12 +50,16 @@ namespace test01
 
             //step04 成员调用
             //第二个测试程序是一个成员变量，所以先要创建实例
-            CLRSharp.CLRSharp_Instance typeObj = new CLRSharp.CLRSharp_Instance(wantType as CLRSharp.ICLRType_Sharp);//创建实例
+            //CLRSharp.CLRSharp_Instance typeObj = new CLRSharp.CLRSharp_Instance(wantType as CLRSharp.ICLRType_Sharp);//创建实例
+            //上一句写的有问题，执行构造函数返回的才是 new出来的对象
             CLRSharp.IMethod methodctor = wantType.GetMethod(".ctor", CLRSharp.MethodParamList.MakeEmpty());//取得构造函数
-            methodctor.Invoke(context, typeObj, null);//执行构造函数
+            CLRSharp.CLRSharp_Instance typeObj = methodctor.Invoke(context, null, null) as CLRSharp.CLRSharp_Instance;//执行构造函数
             //这几行的作用对应到代码就约等于 HotFixCode.TestClass typeObj =new HotFixCode.TestClass();
             CLRSharp.IMethod method02 = wantType.GetMethod("Test2", CLRSharp.MethodParamList.MakeEmpty());
-            method02.Invoke(context, typeObj, null);
+            for (int i = 0; i < 5; i++)
+            {
+                method02.Invoke(context, typeObj, null);
+            }
             //这两行的作用就相当于 typeOBj.Test2();
 
 

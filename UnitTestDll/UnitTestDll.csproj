@@ -54,6 +54,7 @@
     <Compile Include="ExpTest_40.cs" />
     <Compile Include="ExpTest_30.cs" />
     <Compile Include="ExpTest_20.cs" />
+    <Compile Include="SimU3D\TestU3D.cs" />
     <Compile Include="Test0.cs" />
     <Compile Include="ExpTest_10.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
