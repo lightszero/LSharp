@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.22.1Alpha";
+                return "0.22.2Alpha";
             }
         }
         public ICLRSharp_Logger logger
@@ -60,15 +60,18 @@ namespace CLRSharp
             if (!b)
             {
                 List<ICLRType> subTypes = new List<ICLRType>();
-                if (fullname.Contains("<>"))//匿名类型
+                if (fullname.Contains("<>")||fullname.Contains("/"))//匿名类型
                 {
                     string[] subts = fullname.Split('/');
                     ICLRType ft = GetType(subts[0], module);
-                    for (int i = 1; i < subts.Length; i++)
+                    if (ft is ICLRType_Sharp)
                     {
-                        ft = ft.GetNestType(this, subts[i]);
+                        for (int i = 1; i < subts.Length; i++)
+                        {
+                            ft = ft.GetNestType(this, subts[i]);
+                        }
+                        return ft;
                     }
-                    return ft;
                 }
                 string fullnameT = fullname.Replace('/', '+');
 
