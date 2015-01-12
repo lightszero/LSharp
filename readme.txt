@@ -1,4 +1,6 @@
-﻿2015-01-12 V0.22.2Alpha
+﻿2015-01-12 V0.23Alpha
+	加入一个MethodCache 和FieldCache，期待提升性能
+2015-01-12 V0.22.2Alpha
 	修复脚本中类中类的查找
 2015-01-12 V0.22.1Alpha
 	实现了switch指令
