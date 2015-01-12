@@ -9,23 +9,36 @@
 //------------------------------------------------------------------------------
 using System;
 using test01;
+using UnityEngine;
 namespace HoxFixCode
 {
-		public class TestClass
-		{
-				public TestClass ()
-				{
-				}
+    public class TestClass
+    {
+        public int name = 213;
+        public int v2 = 33;
+        public TestClass()
+        {
+        }
 
-				public static void Test1 ()
-				{
-						Interface.Test1 ();
-				}
+        public static void Test1()
+        {
+            Interface.Test1();
+        }
+        Transform transform = null;
+        public void Test2()
+        {
+            v2++;
+            Interface.Test2();
+            if (transform == null)
+            {
+                Console.WriteLine("fuu");
+                GameObject go = new GameObject();
+                transform = go.transform;
+            }
+            //Vector3 vector3 = new Vector3(0, 0, 0);
+            //transform.localPosition = vector3;
+        }
 
-				public void Test2 ()
-				{
-						Interface.Test2 ();
-				}
-		}
+    }
 }
 

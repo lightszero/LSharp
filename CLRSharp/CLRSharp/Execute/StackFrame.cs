@@ -1247,11 +1247,18 @@ namespace CLRSharp
             _pos = _pos.Next;
         }
 
-        public void Switch(ThreadContext context, object obj)
+        public void Switch(ThreadContext context, Mono.Cecil.Cil.Instruction[] poss)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            uint pos = (uint)(int)stackCalc.Pop();
+            if (pos >= poss.Length)
+            {
+                _pos = _pos.Next;
+
+            }
+            else
+            {
+                _pos = poss[pos];
+            }
         }
         public void Ldind_I1(ThreadContext context, object obj)
         {

@@ -150,9 +150,10 @@ namespace CLRSharp
             }
             return type;
         }
+
         ICLRType GetType(object token)
         {
-
+            token.GetHashCode();
             Mono.Cecil.ModuleDefinition module = null;
             string typename = null;
             if (token is Mono.Cecil.TypeDefinition)
@@ -173,8 +174,15 @@ namespace CLRSharp
             }
             return GetType(typename, module);
         }
+        Dictionary<int, IMethod> methodCache = new Dictionary<int, IMethod>();
+        Dictionary<int, IField> fieldCache = new Dictionary<int, IField>();
         IMethod GetMethod(object token)
         {
+            IMethod __method = null;
+            if (methodCache.TryGetValue(token.GetHashCode(), out __method))
+            {
+                return __method;
+            }
             Mono.Cecil.ModuleDefinition module = null;
             string methodname = null;
             string typename = null;
@@ -226,7 +234,7 @@ namespace CLRSharp
             {
                 _method = typesys.GetMethod(methodname, list);
             }
-
+            methodCache[token.GetHashCode()] = _method;
             return _method;
         }
         IMethod GetNewForArray(object token)
@@ -261,18 +269,26 @@ namespace CLRSharp
         }
         IField GetField(object token)
         {
+            IField __field = null;
+            if (fieldCache.TryGetValue(token.GetHashCode(), out __field))
+            {
+                return __field;
+            }
             if (token is Mono.Cecil.FieldDefinition)
             {
                 Mono.Cecil.FieldDefinition field = token as Mono.Cecil.FieldDefinition;
                 var type = GetType(field.DeclaringType.FullName, field.Module);
-                return type.GetField(field.Name);
+                __field = type.GetField(field.Name);
+
+
 
             }
             else if (token is Mono.Cecil.FieldReference)
             {
                 Mono.Cecil.FieldReference field = token as Mono.Cecil.FieldReference;
                 var type = GetType(field.DeclaringType.FullName, field.Module);
-                return type.GetField(field.Name);
+                __field = type.GetField(field.Name);
+
 
             }
             //else if(token is CLRSharp_Instance)
@@ -285,6 +301,8 @@ namespace CLRSharp
             {
                 throw new NotImplementedException("不可处理的token" + token.GetType().ToString());
             }
+            fieldCache[token.GetHashCode()] = __field;
+            return __field;
         }
         object GetToken(object token)
         {
@@ -945,7 +963,7 @@ namespace CLRSharp
                         stack.Jmp(this, code.Operand);
                         break;
                     case Code.Switch:
-                        stack.Switch(this, code.Operand);
+                        stack.Switch(this, code.Operand as Mono.Cecil.Cil.Instruction[]);
                         break;
                     case Code.Ldind_I1:
                         stack.Ldind_I1(this, code.Operand);
