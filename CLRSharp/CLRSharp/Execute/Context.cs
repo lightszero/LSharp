@@ -945,7 +945,7 @@ namespace CLRSharp
                         stack.Jmp(this, code.Operand);
                         break;
                     case Code.Switch:
-                        stack.Switch(this, code.Operand);
+                        stack.Switch(this, code.Operand as Mono.Cecil.Cil.Instruction[]);
                         break;
                     case Code.Ldind_I1:
                         stack.Ldind_I1(this, code.Operand);

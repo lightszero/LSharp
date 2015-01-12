@@ -39,12 +39,12 @@ namespace UnitTestDll
             for (int j = 0; j < ints.Count; j++)
             {
 
-                Logger.Log(j+","+ 0);
+                Logger.Log(j + "," + 0);
             }
 
             foreach (int k in ints)
             {
-                Logger.Log(k+","+ 1);
+                Logger.Log(k + "," + 1);
             }
             return b;
         }
@@ -85,6 +85,29 @@ namespace UnitTestDll
                 i++;
             } while (i < 10);
 
+            return 0;
+        }
+        public static object UnitTest_4004()
+        {
+            int k = 2;
+            int p = k - 1;
+            //4003 loops
+            //int i = 0;
+            for (int i = 0; i < 100; i++)
+            {
+                switch (i % 7)
+                {
+                    case 1:
+                        Logger.Log("got 7*n+1:" + i);
+                        break;
+                    case 2:
+                        Logger.Log("got 7*n+2:" + i);
+                        break;
+                    default:
+                        //Logger.Log("got other.");
+                        break;
+                }
+            }
             return 0;
         }
     }
