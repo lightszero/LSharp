@@ -369,28 +369,24 @@ namespace CLRSharp
             }
         }
         //加载常量
-        public void Ldc_I4(object v)//int32
+        public void Ldc_I4(int v)//int32
         {
             stackCalc.Push(v);
             _pos = _pos.Next;
 
         }
-        public void Ldc_I4_S(object v)//int8
-        {
-            stackCalc.Push((int)Convert.ToDecimal(v));
-            _pos = _pos.Next;
-        }
-        public void Ldc_I8(object v)//int64
+
+        public void Ldc_I8(Int64 v)//int64
         {
             stackCalc.Push(v);
             _pos = _pos.Next;
         }
-        public void Ldc_R4(object v)
+        public void Ldc_R4(float v)
         {
             stackCalc.Push(v);
             _pos = _pos.Next;
         }
-        public void Ldc_R8(object v)
+        public void Ldc_R8(double v)
         {
             stackCalc.Push(v);
             _pos = _pos.Next;
