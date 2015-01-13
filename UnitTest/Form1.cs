@@ -30,7 +30,7 @@ namespace UnitTest
             var types = env.GetAllTypes();
             foreach (var t in types)
             {
-                var tclr = env.GetType(t) as CLRSharp.Type_Common_CLRSharp;
+                var tclr = env.GetType(t, null) as CLRSharp.Type_Common_CLRSharp;
                 if (tclr != null && tclr.type_CLRSharp.HasMethods)
                 {
                     TreeNode node = new TreeNode(t);
@@ -244,7 +244,7 @@ namespace UnitTest
         object RunTest(Mono.Cecil.MethodDefinition d, bool LogStep = false)
         {
             if (d == null) throw new Exception("null method call");
-            var type = env.GetType(d.DeclaringType.FullName);
+            var type = env.GetType(d.DeclaringType.FullName, null);
             var method = type.GetMethod(d.Name, null);
             int debug = LogStep ? 9 : 0;
             CLRSharp.ThreadContext context = new CLRSharp.ThreadContext(env, debug);
@@ -255,7 +255,7 @@ namespace UnitTest
             var types = env.GetAllTypes();
             foreach(var t in types)
             {
-                CLRSharp.ICLRType_Sharp type =env.GetType(t) as CLRSharp.ICLRType_Sharp;
+                CLRSharp.ICLRType_Sharp type =env.GetType(t,null) as CLRSharp.ICLRType_Sharp;
                 if(type!=null)
                     type.ResetStaticInstace();
             }

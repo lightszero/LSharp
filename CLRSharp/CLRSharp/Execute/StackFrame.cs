@@ -45,19 +45,6 @@ namespace CLRSharp
         {
             _params = _p;
         }
-        CodeBody _body = null;
-        public void Init(CodeBody body)
-        {
-            _body = body;
-            if (body.typelistForLoc != null)
-            {
-                for (int i = 0; i < body.typelistForLoc.Count; i++)
-                {
-                    ICLRType t = _body.typelistForLoc[i];
-                    slotVar.Add(ValueOnStack.Make(t));
-                }
-            }
-        }
         public object Return()
         {
             if (this.stackCalc.Count == 0) return null;
@@ -81,12 +68,7 @@ namespace CLRSharp
                 _pp = new object[_clrmethod.ParamList.Count];
                 for (int i = 0; i < _pp.Length; i++)
                 {
-                    var pp = stackCalc.Pop();
-                    if (pp is IBox)
-                    {
-                        pp = (pp as IBox).BoxDefine();
-                    }
-                    _pp[_pp.Length - 1 - i] = pp;
+                    _pp[_pp.Length - 1 - i] = stackCalc.Pop();
                 }
             }
 
@@ -110,23 +92,11 @@ namespace CLRSharp
             if (_this is RefObj && _clrmethod.Name != ".ctor")
             {
                 _this = (_this as RefObj).Get();
-
-            }
-            if (_this is IBox)
-            {
-                _this = (_this as IBox).BoxDefine();
             }
             object returnvar = _clrmethod.Invoke(context, _this, _pp);
-
             // bool breturn = false;
             if (_clrmethod.ReturnType != null && _clrmethod.ReturnType.FullName != "System.Void")
             {
-                var type = ValueOnStack.Make(_clrmethod.ReturnType);
-                if (type != null)
-                {
-                    type.SetDirect(returnvar);
-                    returnvar = type;
-                }
                 stackCalc.Push(returnvar);
             }
 
@@ -160,26 +130,10 @@ namespace CLRSharp
         }
         public void Box()
         {
-            object obj = stackCalc.Pop();
-            IBox box = obj as IBox;
-            if (box != null)
-                stackCalc.Push(box.BoxDefine());
-            else
-                stackCalc.Push(obj);
             _pos = _pos.Next;
         }
         public void Unbox()
         {
-            object obj = stackCalc.Pop();
-            var box = ValueOnStack.Make(obj.GetType());
-            if (box != null)
-            {
-                stackCalc.Push(box);
-            }
-            else
-            {
-                stackCalc.Push(obj);
-            }
             _pos = _pos.Next;
         }
         public void Unbox_Any()
@@ -354,7 +308,6 @@ namespace CLRSharp
         {
             object n2 = stackCalc.Pop();
             object n1 = stackCalc.Pop();
-
             decimal num1 = Convert.ToDecimal(n1);
             decimal num2 = Convert.ToDecimal(n2);
             bool b = num1 <= num2;
@@ -418,32 +371,24 @@ namespace CLRSharp
         //加载常量
         public void Ldc_I4(int v)//int32
         {
-            BoxInt32 box = new BoxInt32(NumberType.INT32);
-            box.value = v;
-            stackCalc.Push(box);
+            stackCalc.Push(v);
             _pos = _pos.Next;
 
         }
 
         public void Ldc_I8(Int64 v)//int64
         {
-            BoxInt64 box = new BoxInt64(NumberType.INT64);
-            box.value = v;
-            stackCalc.Push(box);
+            stackCalc.Push(v);
             _pos = _pos.Next;
         }
         public void Ldc_R4(float v)
         {
-            BoxDouble box = new BoxDouble(NumberType.FLOAT);
-            box.value = v;
-            stackCalc.Push(box);
+            stackCalc.Push(v);
             _pos = _pos.Next;
         }
         public void Ldc_R8(double v)
         {
-            BoxDouble box = new BoxDouble(NumberType.DOUBLE);
-            box.value = v;
-            stackCalc.Push(box);
+            stackCalc.Push(v);
             _pos = _pos.Next;
         }
         //放进变量槽
@@ -454,18 +399,7 @@ namespace CLRSharp
             {
                 slotVar.Add(null);
             }
-            IBox box = slotVar[pos] as IBox;
-            if (box == null)
-            {
-                slotVar[pos] = v;
-            }
-            else
-            {
-                if (v is IBox)
-                    box.Set(v as IBox);
-                else
-                    box.SetDirect(v);
-            }
+            slotVar[pos] = v;
             _pos = _pos.Next;
         }
         //拿出变量槽
@@ -661,10 +595,9 @@ namespace CLRSharp
         }
         public void Mul()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
-            n1.Mul(n2);
-            stackCalc.Push(n1);
+            object n2 = stackCalc.Pop();
+            object n1 = stackCalc.Pop();
+            stackCalc.Push(CLRSharp.Math.Mul(n1, n2));
             _pos = _pos.Next;
         }
         public void Div()
@@ -751,16 +684,10 @@ namespace CLRSharp
         }
         public void Conv_I4()
         {
-            object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
-            if (b != null)
-            {
-                stackCalc.Push(ValueOnStack.Convert(b, NumberType.INT32));
-            }
-            else
-            {
-                stackCalc.Push((Int32)num1);
-            }
+
+            decimal num1 = Convert.ToDecimal(stackCalc.Pop());
+
+            stackCalc.Push((Int32)num1);
             _pos = _pos.Next;
         }
         public void Conv_U4()

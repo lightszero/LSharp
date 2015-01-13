@@ -174,7 +174,7 @@ namespace CLRSharp
             return abc;
         }
     }
-    public class Method_Common_CLRSharp : IMethod_Sharp
+    public class Method_Common_CLRSharp : IMethod
     {
         Type_Common_CLRSharp _DeclaringType;
 
@@ -186,7 +186,7 @@ namespace CLRSharp
             this._DeclaringType = type;
 
             method_CLRSharp = method;
-            ReturnType = type.env.GetType(method.ReturnType.FullName);
+            ReturnType = type.env.GetType(method.ReturnType.FullName, null);
             ParamList = new MethodParamList(type.env, method);
         }
         public string Name
@@ -237,26 +237,10 @@ namespace CLRSharp
 
                 CLRSharp_Instance inst = new CLRSharp_Instance(_DeclaringType);
 
-                context.ExecuteFunc(this, inst, _params);
+                context.ExecuteFunc(method_CLRSharp, inst, _params);
                 return inst;
             }
-            return context.ExecuteFunc(this, _this, _params);
-        }
-
-        CodeBody _body = null;
-        public CodeBody body
-        {
-            get
-            {
-                if (_body == null)
-                {
-                    if (!method_CLRSharp.HasBody)
-                        return null;
-                    _body = new CodeBody(this.DeclaringType.env, method_CLRSharp);
-                }
-                return _body;
-            }
-
+            return context.ExecuteFunc(method_CLRSharp, _this, _params);
         }
     }
 
@@ -264,10 +248,10 @@ namespace CLRSharp
     {
         public Type_Common_CLRSharp _DeclaringType;
         public Mono.Cecil.FieldDefinition field;
-        public Field_Common_CLRSharp(Type_Common_CLRSharp type, Mono.Cecil.FieldDefinition field)
+        public Field_Common_CLRSharp( Type_Common_CLRSharp type, Mono.Cecil.FieldDefinition field)
         {
             this.field = field;
-            this.FieldType = type.env.GetType(field.FieldType.FullName);
+            this.FieldType =type.env.GetType(field.FieldType.FullName,field.Module);
             this._DeclaringType = type;
 
         }

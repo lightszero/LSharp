@@ -19,7 +19,7 @@ namespace CLRSharp
             if (_OneParam_Int == null)
             {
                 _OneParam_Int = new MethodParamList();
-                _OneParam_Int.Add(env.GetType(typeof(int).FullName));
+                _OneParam_Int.Add(env.GetType(typeof(int).FullName, null));
             }
 
             return _OneParam_Int;
@@ -29,7 +29,7 @@ namespace CLRSharp
         static MethodParamList _ZeroParam = null;
         public static MethodParamList MakeEmpty()
         {
-            if (_ZeroParam == null)
+            if(_ZeroParam==null)
             {
                 _ZeroParam = new MethodParamList();
             }
@@ -68,34 +68,24 @@ namespace CLRSharp
 
                     if (paramname.Contains("!!"))
                     {
-                        this.Add(GetTType(env, p,  _methodgen));
+                        this.Add(GetTType(env, p, method,_methodgen));
                     }
                     else
                     {
-                        this.Add(env.GetType(paramname));
+                        this.Add(env.GetType(paramname, method.Module));
                     }
                 }
             }
         }
-        public MethodParamList(ICLRSharp_Environment env, Mono.Collections.Generic.Collection<Mono.Cecil.Cil.VariableDefinition> ps)
+        ICLRType GetTType(ICLRSharp_Environment env, Mono.Cecil.ParameterDefinition param, Mono.Cecil.MethodReference method,MethodParamList _methodgen)
         {
-            foreach (var p in ps)
-            {
-                string paramname = p.VariableType.FullName;
-
-                this.Add(env.GetType(paramname));
-
-            }
-        }
-        ICLRType GetTType(ICLRSharp_Environment env, Mono.Cecil.ParameterDefinition param,  MethodParamList _methodgen)
-        {
-            string typename = param.ParameterType.FullName;
-            for (int i = 0; i < _methodgen.Count; i++)
+            string  typename =param.ParameterType.FullName;
+            for (int i = 0; i < _methodgen.Count;i++ )
             {
                 string p = "!!" + i.ToString();
-                typename = typename.Replace(p, _methodgen[i].FullName);
+                typename = typename.Replace(p, _methodgen[i].FullName); 
             }
-            return env.GetType(typename);
+            return env.GetType(typename, method.Module);
         }
         public MethodParamList(ICLRSharp_Environment env, Mono.Cecil.GenericInstanceMethod method)
         {
@@ -112,7 +102,7 @@ namespace CLRSharp
                         paramname = typegen.GenericArguments[index].FullName;
                     }
                 }
-                this.Add(env.GetType(paramname));
+                this.Add(env.GetType(paramname, method.Module));
             }
         }
 
@@ -148,7 +138,7 @@ namespace CLRSharp
                 SystemType = new System.Type[this.Count];
                 for (int i = 0; i < this.Count; i++)
                 {
-
+                    
                     SystemType[i] = this[i].TypeForSystem;
                 }
             }

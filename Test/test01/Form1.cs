@@ -38,7 +38,7 @@ namespace test01
             Log("Create ThreadContext for L#.");
 
             //step02取得想要调用的L#类型
-            CLRSharp.ICLRType wantType = env.GetType("HoxFixCode.TestClass");//用全名称，包括命名空间
+            CLRSharp.ICLRType wantType = env.GetType("HoxFixCode.TestClass", null);//用全名称，包括命名空间
             Log("GetType:" + wantType.Name);
             //和反射代码中的Type.GetType相对应
 
