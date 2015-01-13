@@ -19,7 +19,7 @@ namespace CLRSharp
     /// 一个堆栈帧，包含一个计算栈，一个临时变量槽，一个参数槽
     /// 模拟虚拟机上的堆栈帧
     /// </summary>
-    class StackFrame
+    public class StackFrame
     {
         public string Name
         {
@@ -85,7 +85,7 @@ namespace CLRSharp
                 this.Clear();
             }
         }
-        MyCalcStack stackCalc = new MyCalcStack();
+        public MyCalcStack stackCalc = new MyCalcStack();
         public class MySlotVar : List<object>
         {
             public new void Add(object obj)
@@ -121,13 +121,20 @@ namespace CLRSharp
                 this.Clear();
             }
         }
-        MySlotVar slotVar = new MySlotVar();
-        object[] _params = null;
+        public MySlotVar slotVar = new MySlotVar();
+        public object[] _params = null;
         public void SetParams(object[] _p)
         {
             _params = _p;
         }
         CodeBody _body = null;
+        public CodeBody codebody
+        {
+            get
+            {
+                return _body;
+            }
+        }
         public void Init(CodeBody body)
         {
             _body = body;

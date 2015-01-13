@@ -1,4 +1,10 @@
-﻿2015-01-13 V0.32Alpha
+﻿2015-01-13 V0.33Alpha
+	增加Dump机制
+	Try catch 脚本执行入口，catch以后，调用
+	string CLRSharp.ThreadContext.activeContext.Dump()
+	可以Dump出脚本错误堆栈，这个函数完全可以外部实现
+	可参考此函数自行Dump
+2015-01-13 V0.32Alpha
 	支持了CrossBind，让脚本可以通过绑定继承程序类型
 	目前实现了yield，就是通过这种方式实现的
 	env构造时就执行了这样两句

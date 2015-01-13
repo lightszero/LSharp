@@ -79,6 +79,7 @@ class IT4_Impl : IT4
     public virtual void Call1()
     {
         Logger.Log("IT4_Impl.Call1");
+        throw new Exception("test error.");
     }
 
     public void Call2(int i, string n)

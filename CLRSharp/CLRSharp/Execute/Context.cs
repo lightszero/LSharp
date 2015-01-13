@@ -40,7 +40,48 @@ namespace CLRSharp
             this.environment = env;
             this.DebugLevel = DebugLevel;
         }
+        public Stack<StackFrame> GetStackFrames()
+        {
+            return stacks;
+        }
         Stack<StackFrame> stacks = new Stack<StackFrame>();
+
+        public string Dump()
+        {
+            string str = "";
+            foreach (StackFrame s in GetStackFrames())
+            {
+                var pos = s._pos;
+                Instruction sqIns = pos;
+                while (sqIns != null && sqIns.SequencePoint == null)
+                {
+                    sqIns = sqIns.Previous;
+                }
+                if (sqIns != null && sqIns.SequencePoint != null)
+                {
+                    str += sqIns.SequencePoint.Document.Url + "(" + sqIns.SequencePoint.StartLine + ")\n";
+                }
+                else
+                {
+                    str +="!no pdb info,no code filename(no line)!\n";
+                }
+                str += "    IL " + pos.ToString() + "\n";
+                if (s._params != null)
+                {
+                    str += "    ===Params(" + s._params.Length + ")===\n";
+                    for (int i = 0; i < s._params.Length; i++)
+                    {
+                        str += "        param" + i.ToString("D04") + s._params[i] + "\n";
+                    }
+                }
+                str += "    ===VarSlots(" + s.slotVar.Count + ")===\n";
+                for (int i = 0; i < s.slotVar.Count; i++)
+                {
+                    str += "        var" + i.ToString("D04") + s.slotVar[i] + "\n";
+                }
+            }
+            return str;
+        }
         public object ExecuteFunc(IMethod_Sharp method, object _this, object[] _params)
         {
             _activeContext = this;
@@ -78,16 +119,17 @@ namespace CLRSharp
                 }
             }
             stack.SetParams(_withp);
-            
+
             if (method.body != null)
             {
                 stack.Init(method.body);
                 stack._pos = method.body.bodyNative.Instructions[0];
-                //if (method.body.bodyNative.HasExceptionHandlers)
-                //{
-                //    RunCodeWithTry(method.body, stack);
-                //}
-                //else
+
+                if (method.body.bodyNative.HasExceptionHandlers)
+                {
+                    RunCodeWithTry(method.body, stack);
+                }
+                else
                 {
                     RunCode(stack, method.body);
                 }
@@ -656,13 +698,13 @@ namespace CLRSharp
                     //加载字符串
                     case Code.Ldstr:
                         stack.Ldstr(code.Operand as string);
-                        break; 
+                        break;
                     //呼叫函数
                     case Code.Call:
-                        stack.Call(this, GetMethod(code.Operand),false);
+                        stack.Call(this, GetMethod(code.Operand), false);
                         break;
                     case Code.Callvirt:
-                        stack.Call(this, GetMethod(code.Operand),true);
+                        stack.Call(this, GetMethod(code.Operand), true);
                         break;
                     //算术指令
                     case Code.Add:

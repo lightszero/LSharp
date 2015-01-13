@@ -234,6 +234,10 @@ namespace UnitTest
             {
                 Log("----RunErr----");
                 Log_Error(err.ToString());
+                MessageBox.Show(
+                    "=DumpInfo FirstLine Is Error Pos.=\n"+
+                    CLRSharp.ThreadContext.activeContext.Dump()
+                    +"================err===============\n"+err.Message);
             }
         }
 
