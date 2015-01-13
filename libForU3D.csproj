@@ -45,7 +45,6 @@
     <Compile Include="CLRSharp\CLRSharp\CLRSharp_Env.cs" />
     <Compile Include="CLRSharp\CLRSharp\Execute\CodeBody.cs" />
     <Compile Include="CLRSharp\CLRSharp\Execute\Context.cs" />
-    <Compile Include="CLRSharp\CLRSharp\Execute\Math.cs" />
     <Compile Include="CLRSharp\CLRSharp\Execute\StackFrame.cs" />
     <Compile Include="CLRSharp\CLRSharp\Execute\ValueOnStack.cs" />
     <Compile Include="CLRSharp\CLRSharp\Interface\EnvAndLog.cs" />

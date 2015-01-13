@@ -11,12 +11,20 @@ namespace UnityEngine
         {
             component["trans"] = new Transform();
         }
+        public void Destory()
+        {
+            component.Clear();
+        }
         public Transform transform
         {
             get
             {
                 return component["trans"] as Transform;
             }
+        }
+        public static void Destory(GameObject obj)
+        {
+            obj.Destory();
         }
 
     }

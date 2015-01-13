@@ -8,6 +8,32 @@ namespace CLRSharp
     //
     public class ValueOnStack
     {
+        static Dictionary<Type, NumberType> typecode = null;
+        public static NumberType GetTypeCode(Type type)
+        {
+            if (typecode == null)
+            {
+                typecode = new Dictionary<Type, NumberType>();
+                //typecode[null] = 0;
+                typecode[typeof(bool)] = NumberType.BOOL;
+                typecode[typeof(sbyte)] = NumberType.SBYTE;
+                typecode[typeof(byte)] = NumberType.BYTE;
+                typecode[typeof(Int16)] = NumberType.INT16;
+                typecode[typeof(UInt16)] = NumberType.UINT16;
+                typecode[typeof(Int32)] = NumberType.INT32;
+                typecode[typeof(UInt32)] = NumberType.UINT32;
+                typecode[typeof(Int64)] = NumberType.INT64;
+                typecode[typeof(UInt64)] = NumberType.UINT64;
+                typecode[typeof(float)] = NumberType.FLOAT;
+                typecode[typeof(double)] = NumberType.DOUBLE;
+                typecode[typeof(IntPtr)] = NumberType.INTPTR;
+                typecode[typeof(UIntPtr)] = NumberType.UINTPTR;
+                typecode[typeof(decimal)] = NumberType.DECIMAL;
+            }
+            NumberType t = NumberType.IsNotNumber;
+            typecode.TryGetValue(type, out t);
+            return t;
+        }
         ////valuetype
         //        public NumberType TypeOnDef;
         //        public NumberOnStack TypeOnStack;
@@ -25,7 +51,7 @@ namespace CLRSharp
         } 
         public static IBox Make(System.Type type)
         {
-            NumberType code = Math.GetTypeCode(type);
+            NumberType code = GetTypeCode(type);
             switch (code)
             {
                 case NumberType.BOOL:
