@@ -1,4 +1,8 @@
-﻿2015-01-13 V0.33Alpha
+﻿A Pure C# IL Runner,Run DLL as a Script.直接解析执行IL的脚本引擎
+用途，Unity3D热更（包括IOS平台）等
+Alpha阶段，欢迎小白鼠踩坑
+更新日志：
+2015-01-13 V0.33Alpha
 	增加Dump机制
 	Try catch 脚本执行入口，catch以后，调用
 	string CLRSharp.ThreadContext.activeContext.Dump()
