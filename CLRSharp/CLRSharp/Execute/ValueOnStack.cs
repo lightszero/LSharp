@@ -29,6 +29,8 @@ namespace CLRSharp
                 typecode[typeof(IntPtr)] = NumberType.INTPTR;
                 typecode[typeof(UIntPtr)] = NumberType.UINTPTR;
                 typecode[typeof(decimal)] = NumberType.DECIMAL;
+                typecode[typeof(char)] = NumberType.CHAR;
+
             }
             NumberType t = NumberType.IsNotNumber;
             typecode.TryGetValue(type, out t);
@@ -228,6 +230,7 @@ namespace CLRSharp
         public static Queue<VBox> unusedVBox = new Queue<VBox>();
         public static void UnUse(VBox box)
         {
+            box.refcount = 0;
             unusedVBox.Enqueue(box);
         }
         //public static void UnUse(IBox box)

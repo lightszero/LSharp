@@ -38,7 +38,7 @@ namespace CLRSharp
         }
         public Mono.Cecil.Cil.Instruction _pos = null;
 
-        public class MyCalcStack:Stack<object>
+        public class MyCalcStack : Stack<object>
         {
             Queue<VBox> unused = new Queue<VBox>();
             public void Push(VBox box)
@@ -59,7 +59,7 @@ namespace CLRSharp
             {
                 var ob = base.Pop();
                 VBox box = ob as VBox;
-                if(box!=null)
+                if (box != null)
                 {
                     box.refcount--;
                     if (box.refcount == 0)
@@ -68,9 +68,25 @@ namespace CLRSharp
                 return ob;
 
             }
+            public void ClearVBox()
+            {
+                while (unused.Count > 0)
+                {
+                    VBox b = unused.Dequeue();
+                    if (b.refcount == 0)
+                    {
+                        ValueOnStack.UnUse(b);
+                    }
+                    else
+                    {
+                        Console.WriteLine("not zero.");
+                    }
+                }
+                this.Clear();
+            }
         }
         MyCalcStack stackCalc = new MyCalcStack();
-        public class MySlotVar:List<object>
+        public class MySlotVar : List<object>
         {
             public new void Add(object obj)
             {
@@ -78,11 +94,31 @@ namespace CLRSharp
             }
             public void Add(VBox box)
             {
-                if(box!=null)
+                if (box != null)
                 {
                     box.refcount++;
                 }
                 base.Add(box);
+            }
+            public void ClearVBox()
+            {
+                foreach (object b in this)
+                {
+                    VBox box = b as VBox;
+                    if (box != null)
+                    {
+                        box.refcount--;
+                        if (box.refcount == 0)
+                        {
+                            ValueOnStack.UnUse(box);
+                        }
+                        else
+                        {
+                            Console.WriteLine("not zero.");
+                        }
+                    }
+                }
+                this.Clear();
             }
         }
         MySlotVar slotVar = new MySlotVar();
@@ -100,15 +136,20 @@ namespace CLRSharp
                 for (int i = 0; i < body.typelistForLoc.Count; i++)
                 {
                     ICLRType t = _body.typelistForLoc[i];
-     
+
                     slotVar.Add(ValueOnStack.MakeVBox(t));
                 }
             }
         }
         public object Return()
         {
-            if (this.stackCalc.Count == 0) return null;
-            else return stackCalc.Pop();
+        
+            this.slotVar.ClearVBox();
+              if (this.stackCalc.Count == 0) return null;
+                object ret = stackCalc.Pop();
+            this.stackCalc.ClearVBox();
+
+            return ret;
         }
         //流程控制
         public void Call(ThreadContext context, IMethod _clrmethod)
@@ -135,7 +176,7 @@ namespace CLRSharp
                     }
                     _pp[_pp.Length - 1 - i] = pp;
                 }
-            } 
+            }
 
 
             //if (method.HasThis)
@@ -505,7 +546,7 @@ namespace CLRSharp
         {
             var obj = slotVar[pos];
             VBox b = obj as VBox;
-            if(b!=null)
+            if (b != null)
             {
                 obj = b.Clone();
             }

@@ -12,7 +12,7 @@ namespace UnitTestDll
     {
         public static void UnitTest01()
         {
-            int count = 1000;
+            int count = 100;
             double v1 = Perform.PerformSystem01(count);
             double v2 = Perform.PerformSystem02(count);
             double v3 = Perform.PerformSystem03(count);
