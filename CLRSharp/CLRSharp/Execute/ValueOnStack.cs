@@ -278,6 +278,25 @@ namespace CLRSharp
             this.typeStack = typeStack;
             this.type = thistype;
         }
+        public VBox Clone()
+        {
+            VBox b = ValueOnStack.MakeVBox(this.type);
+            switch (typeStack)
+            {
+                case NumberOnStack.Int32:
+                    b.v32 = this.v32;
+                    break;
+                case NumberOnStack.Int64:
+                    b.v64 = this.v64;
+                    break;
+                case NumberOnStack.Double:
+                    b.vDF = this.v64;
+                    break;
+
+            }
+
+            return b;
+        }
         public int refcount = 0;
         public NumberOnStack typeStack;
         public NumberType type;
@@ -475,6 +494,7 @@ namespace CLRSharp
             }
         }
 
+        //似乎Clone可以替代New系列
         public VBox Mod_New(VBox right)
         {
             VBox newbox = ValueOnStack.MakeVBox(type);

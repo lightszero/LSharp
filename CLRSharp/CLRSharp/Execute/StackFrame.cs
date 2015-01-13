@@ -503,7 +503,13 @@ namespace CLRSharp
         //拿出变量槽
         public void Ldloc(int pos)
         {
-            stackCalc.Push(slotVar[pos]);
+            var obj = slotVar[pos];
+            VBox b = obj as VBox;
+            if(b!=null)
+            {
+                obj = b.Clone();
+            }
+            stackCalc.Push(obj);
             _pos = _pos.Next;
         }
         public enum RefType
@@ -723,7 +729,7 @@ namespace CLRSharp
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
-            n1 = n1.Mod_New(n2);
+            n1.Mod(n2);
             stackCalc.Push(n1);
             _pos = _pos.Next; ;
         }
@@ -731,7 +737,7 @@ namespace CLRSharp
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
-            n1 = n1.Mod_New(n2);//!!!_un
+            n1.Mod(n2);//!!!_un
             stackCalc.Push(n1);
             _pos = _pos.Next;
         }
