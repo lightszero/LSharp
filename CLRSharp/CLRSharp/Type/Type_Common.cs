@@ -62,6 +62,11 @@ namespace CLRSharp
             get;
         }
         void InvokeCCtor(ThreadContext context);
+        Mono.Cecil.TypeDefinition type_CLRSharp
+        {
+            get;
+        }
+        IMethod GetVMethod(IMethod _base);
     }
     public interface ICLRType_System : ICLRType
     {
@@ -105,6 +110,7 @@ namespace CLRSharp
         {
             get;
         }
+
     }
     public interface IField
     {

@@ -13,7 +13,11 @@ namespace CLRSharp
                 return typeof(CLRSharp_Instance);
             }
         }
-        public Mono.Cecil.TypeDefinition type_CLRSharp;
+        public Mono.Cecil.TypeDefinition type_CLRSharp
+        {
+            get;
+            private set;
+        }
         public ICLRSharp_Environment env
         {
             get;
@@ -37,6 +41,20 @@ namespace CLRSharp
                 }
             }
 
+        }
+        public IMethod GetVMethod(IMethod _base)
+        {
+            IMethod _method=null;
+            ICLRType_Sharp type =this;
+            while(type!=_base.DeclaringType&&type!=null)
+            {
+                _method = type.GetMethod(_base.Name, _base.ParamList);
+                if (_method != null)
+                    return _method;
+                type = env.GetType(type.type_CLRSharp.BaseType.FullName) as ICLRType_Sharp;
+            }
+            return _base;
+   
         }
         public void ResetStaticInstace()
         {
@@ -232,10 +250,23 @@ namespace CLRSharp
                 context = ThreadContext.activeContext;
             if (context == null)
                 throw new Exception("这个线程上没有CLRSharp:ThreadContext");
+            if(method_CLRSharp.IsVirtual)
+            {
+                CLRSharp_Instance inst = _this as CLRSharp_Instance;
+                if (inst.type != this.DeclaringType)
+                {
+                    IMethod impl = inst.type.GetVMethod(this);// .GetMethod(this.Name, this.ParamList);
+                    if (impl != this)
+                    {
+                        return impl.Invoke(context, _this, _params);
+                    }
+                }
+            }
             if (method_CLRSharp.Name == ".ctor")
             {
-
-                CLRSharp_Instance inst = new CLRSharp_Instance(_DeclaringType);
+                CLRSharp_Instance inst = _this as CLRSharp_Instance;
+                if(inst==null)
+                     inst = new CLRSharp_Instance(_DeclaringType);
 
                 context.ExecuteFunc(this, inst, _params);
                 return inst;

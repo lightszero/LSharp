@@ -216,6 +216,14 @@ namespace UnitTest
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            var types = env.GetAllTypes();
+            foreach (var t in types)
+            {
+                CLRSharp.ICLRType_Sharp type = env.GetType(t) as CLRSharp.ICLRType_Sharp;
+                if (type != null)
+                    type.ResetStaticInstace();
+            }
+
             Mono.Cecil.MethodDefinition d = this.treeView2.Tag as Mono.Cecil.MethodDefinition;
             try
             {

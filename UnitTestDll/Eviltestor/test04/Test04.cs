@@ -9,16 +9,30 @@ class Test04
     public static Dictionary<string, object> objs = new Dictionary<string, object>();
     public static void Run()
     {
+        Logger.Log("call002-1");
+        IT4 imp = new IT4_Impl3();
+        imp.Call1();
+
+
+        Logger.Log("call001");
         IT4_Impl impl1 = new IT4_Impl();
-        
         impl1.Call1();
+
+        Logger.Log("call002");
         impl2 = new IT4_Impl();
+        impl2.Call1();
+
+
+        Logger.Log("call003");
         Test04.impl2 = new IT4_Impl2();
         Test04.impl2.Call1();
+
+        Logger.Log("call004");
         Test04 t4 = new Test04();
         t4.Run1();
         objs.Add("t1", impl1);
         objs.Add("t4", t4);
+        Logger.Log("call004");
         Test04.IT4();
 
     }
@@ -62,7 +76,7 @@ class IT4_Impl : IT4
         this.name = "IT4_Impl";
     }
 
-    public void Call1()
+    public virtual void Call1()
     {
         Logger.Log("IT4_Impl.Call1");
     }
@@ -85,7 +99,18 @@ class IT4_Impl : IT4
     }
 
 }
+class IT4_Impl3:IT4_Impl
+{
+    public IT4_Impl3()
+    {
+        this.name += "abc";
+    }
+    public virtual void Call1()
+    {
+        Logger.Log("IT4_Impl3.Call1");
+    }
 
+}
 class IT4_Impl2 : IT4
 {
     public IT4_Impl2()

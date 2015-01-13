@@ -152,7 +152,7 @@ namespace CLRSharp
             return ret;
         }
         //流程控制
-        public void Call(ThreadContext context, IMethod _clrmethod)
+        public void Call(ThreadContext context, IMethod _clrmethod ,bool bVisual)
         {
 
             if (_clrmethod == null)//不想被执行的函数

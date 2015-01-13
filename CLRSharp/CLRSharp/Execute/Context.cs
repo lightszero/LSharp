@@ -659,10 +659,10 @@ namespace CLRSharp
                         break; 
                     //呼叫函数
                     case Code.Call:
-                        stack.Call(this, GetMethod(code.Operand));
+                        stack.Call(this, GetMethod(code.Operand),false);
                         break;
                     case Code.Callvirt:
-                        stack.Call(this, GetMethod(code.Operand));
+                        stack.Call(this, GetMethod(code.Operand),true);
                         break;
                     //算术指令
                     case Code.Add:
