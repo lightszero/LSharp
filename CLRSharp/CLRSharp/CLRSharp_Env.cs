@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.23Alpha";
+                return "0.30Alpha";
             }
         }
         public ICLRSharp_Logger logger
@@ -42,28 +42,40 @@ namespace CLRSharp
                     mapType[t.FullName] = new Type_Common_CLRSharp(this, t);
                 }
             }
-
+            if (module.HasAssemblyReferences)
+            {
+                foreach (var ar in module.AssemblyReferences)
+                {
+                    if (moduleref.Contains(ar.Name) == false)
+                        moduleref.Add(ar.Name);
+                }
+            }
         }
+        List<string> moduleref = new List<string>();
         public string[] GetAllTypes()
         {
             string[] array = new string[mapType.Count];
             mapType.Keys.CopyTo(array, 0);
             return array;
         }
+        public string[] GetModuleRefNames()
+        {
+            return moduleref.ToArray();
+        }
         //得到类型的时候应该得到模块内Type或者真实Type
         //一个统一的Type,然后根据具体情况调用两边
 
-        public ICLRType GetType(string fullname, Mono.Cecil.ModuleDefinition module)
+        public ICLRType GetType(string fullname)
         {
             ICLRType type = null;
             bool b = mapType.TryGetValue(fullname, out type);
             if (!b)
             {
                 List<ICLRType> subTypes = new List<ICLRType>();
-                if (fullname.Contains("<>")||fullname.Contains("/"))//匿名类型
+                if (fullname.Contains("<>") || fullname.Contains("/"))//匿名类型
                 {
                     string[] subts = fullname.Split('/');
-                    ICLRType ft = GetType(subts[0], module);
+                    ICLRType ft = GetType(subts[0]);
                     if (ft is ICLRType_Sharp)
                     {
                         for (int i = 1; i < subts.Length; i++)
@@ -104,7 +116,7 @@ namespace CLRSharp
                             if (depth == 1)
                             {
                                 checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
-                                var subtype = GetType(checkname, module);
+                                var subtype = GetType(checkname);
                                 subTypes.Add(subtype);
                                 if (subtype is ICLRType_Sharp) subtype = GetType(typeof(CLRSharp_Instance));
                                 outname += "[" + subtype.FullNameWithAssembly + "]";
@@ -127,7 +139,7 @@ namespace CLRSharp
                             if (depth == 1)
                             {
                                 checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
-                                var subtype = GetType(checkname, module);
+                                var subtype = GetType(checkname);
                                 subTypes.Add(subtype);
                                 if (subtype is ICLRType_Sharp) subtype = GetType(typeof(CLRSharp_Instance));
                                 outname += "[" + subtype.FullNameWithAssembly + "],";
@@ -148,15 +160,15 @@ namespace CLRSharp
 
                 System.Type t = System.Type.GetType(fullnameT);
 
-                if (t == null && module != null && module.HasAssemblyReferences)
+                if (t == null)
                 {
 
-                    foreach (var rm in module.AssemblyReferences)
+                    foreach (var rm in moduleref)
                     {
-                        t = System.Type.GetType(fullnameT + "," + rm.Name);
+                        t = System.Type.GetType(fullnameT + "," + rm);
                         if (t != null)
                         {
-                            fullnameT = fullnameT + "," + rm.Name;
+                            fullnameT = fullnameT + "," + rm;
                             break;
                         }
                     }

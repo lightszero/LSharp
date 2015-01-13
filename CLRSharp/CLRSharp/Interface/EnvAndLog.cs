@@ -18,13 +18,15 @@ namespace CLRSharp
         }
         void LoadModule(System.IO.Stream dllStream, System.IO.Stream pdbStream);
         string[] GetAllTypes();
-        ICLRType GetType(string name, Mono.Cecil.ModuleDefinition module);
+        ICLRType GetType(string name);
+
+        string[] GetModuleRefNames();
         ICLRType GetType(System.Type systemType);
 
         void RegType(ICLRType type);
         ICLRSharp_Logger logger
         {
             get;
-        }
+        } 
     }
 }
