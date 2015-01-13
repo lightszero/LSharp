@@ -32,6 +32,7 @@ namespace CLRSharp
                 typecode[typeof(char)] = NumberType.CHAR;
 
             }
+            if (type.IsEnum) return NumberType.ENUM;
             NumberType t = NumberType.IsNotNumber;
             typecode.TryGetValue(type, out t);
             return t;
@@ -130,6 +131,7 @@ namespace CLRSharp
                 case NumberType.UINT16:
                 case NumberType.INT32:
                 case NumberType.UINT32:
+                case NumberType.ENUM:
                     if (unusedVBox.Count > 0)
                     {
                         var b = unusedVBox.Dequeue();
@@ -267,6 +269,7 @@ namespace CLRSharp
         DECIMAL = 13,
         CHAR = 14,
         BOOL = 15,
+        ENUM = 16,
     };
     public enum NumberOnStack
     {
@@ -328,6 +331,8 @@ namespace CLRSharp
                 case NumberOnStack.Int32:
                     switch (type)
                     {
+                        case NumberType.ENUM:
+                            return v32;
                         case NumberType.BOOL:
                             return (v32 > 0);
                         case NumberType.SBYTE:

@@ -692,7 +692,7 @@ namespace CLRSharp
 
                     //装箱
                     case Code.Box:
-                        stack.Box();
+                        stack.Box(GetType(code.Operand));
                         break;
                     case Code.Unbox:
                         stack.Unbox();

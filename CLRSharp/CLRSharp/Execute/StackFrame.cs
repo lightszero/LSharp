@@ -143,10 +143,10 @@ namespace CLRSharp
         }
         public object Return()
         {
-        
+
             this.slotVar.ClearVBox();
-              if (this.stackCalc.Count == 0) return null;
-                object ret = stackCalc.Pop();
+            if (this.stackCalc.Count == 0) return null;
+            object ret = stackCalc.Pop();
             this.stackCalc.ClearVBox();
 
             return ret;
@@ -249,14 +249,23 @@ namespace CLRSharp
         {
             _pos = _pos.Next;
         }
-        public void Box()
+        public void Box(ICLRType type)
         {
             object obj = stackCalc.Pop();
             VBox box = obj as VBox;
-            if (box != null)
-                stackCalc.Push(box.BoxDefine());
+            if (type.TypeForSystem.IsEnum)
+            {
+                int ev = 0;
+                if (box != null) ev = box.v32;
+                else ev = (int)obj;
+                obj = Enum.ToObject(type.TypeForSystem, ev);
+            }
             else
-                stackCalc.Push(obj);
+            {
+                if (box != null)
+                    obj = box.BoxDefine();
+            }
+            stackCalc.Push(obj);
             _pos = _pos.Next;
         }
         public void Unbox()
@@ -265,6 +274,7 @@ namespace CLRSharp
             var box = ValueOnStack.MakeVBox(obj.GetType());
             if (box != null)
             {
+                box.SetDirect(obj);
                 stackCalc.Push(box);
             }
             else
