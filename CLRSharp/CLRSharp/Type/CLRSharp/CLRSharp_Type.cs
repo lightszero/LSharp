@@ -28,10 +28,72 @@ namespace CLRSharp
             get;
             private set;
         }
+        public ICLRType BaseType
+        {
+            get;
+            private set;
+        }
+        public List<ICLRType> _Interfaces = null;
+
+        public bool ContainBase(Type t)
+        {
+            if (BaseType != null && BaseType.TypeForSystem == t) return true;
+            if (_Interfaces == null) return false;
+            foreach (var i in _Interfaces)
+            {
+                if (i.TypeForSystem == t) return true;
+            }
+            return false;
+        }
+        public bool HasSysBase
+        {
+            get;
+            private set;
+        }
+        public string[] GetMethodNames()
+        {
+            string[] t = new string[type_CLRSharp.Methods.Count];
+            for (int i = 0; i < type_CLRSharp.Methods.Count; i++)
+            {
+                t[i] = type_CLRSharp.Methods[i].Name;
+            }
+            return t;
+        }
         public Type_Common_CLRSharp(ICLRSharp_Environment env, Mono.Cecil.TypeDefinition type)
         {
             this.env = env;
             this.type_CLRSharp = type;
+            if (type_CLRSharp.BaseType != null)
+            {
+                BaseType = env.GetType(type_CLRSharp.BaseType.FullName);
+                if (BaseType is ICLRType_System)
+                {
+                    if (BaseType.TypeForSystem == typeof(object))
+                    {//都是这样，无所谓
+                        BaseType = null;
+                    }
+                    else
+                    {//继承了其他系统类型
+                        env.logger.Log("ScriptType:" + Name + " Based On a SystemType:" + BaseType.Name);
+                        HasSysBase = true;
+                    }
+                }
+                if (type_CLRSharp.HasInterfaces)
+                {
+                    _Interfaces = new List<ICLRType>();
+                    foreach (var i in type_CLRSharp.Interfaces)
+                    {
+                        var itype = env.GetType(i.FullName);
+                        if (itype is ICLRType_System)
+                        {
+                            //继承了其他系统类型
+                            env.logger.Log("ScriptType:" + Name + " Based On a SystemType:" + itype.Name);
+                            HasSysBase = true;
+                        }
+                        _Interfaces.Add(itype);
+                    }
+                }
+            }
             foreach (var m in this.type_CLRSharp.Methods)
             {
                 if (m.Name == ".cctor")
@@ -44,9 +106,9 @@ namespace CLRSharp
         }
         public IMethod GetVMethod(IMethod _base)
         {
-            IMethod _method=null;
-            ICLRType_Sharp type =this;
-            while(type!=_base.DeclaringType&&type!=null)
+            IMethod _method = null;
+            ICLRType_Sharp type = this;
+            while (type != _base.DeclaringType && type != null)
             {
                 _method = type.GetMethod(_base.Name, _base.ParamList);
                 if (_method != null)
@@ -54,7 +116,7 @@ namespace CLRSharp
                 type = env.GetType(type.type_CLRSharp.BaseType.FullName) as ICLRType_Sharp;
             }
             return _base;
-   
+
         }
         public void ResetStaticInstace()
         {
@@ -205,6 +267,7 @@ namespace CLRSharp
 
             method_CLRSharp = method;
             ReturnType = type.env.GetType(method.ReturnType.FullName);
+
             ParamList = new MethodParamList(type.env, method);
         }
         public string Name
@@ -250,7 +313,7 @@ namespace CLRSharp
                 context = ThreadContext.activeContext;
             if (context == null)
                 throw new Exception("这个线程上没有CLRSharp:ThreadContext");
-            if(method_CLRSharp.IsVirtual)
+            if (method_CLRSharp.IsVirtual)
             {
                 CLRSharp_Instance inst = _this as CLRSharp_Instance;
                 if (inst.type != this.DeclaringType)
@@ -265,9 +328,10 @@ namespace CLRSharp
             if (method_CLRSharp.Name == ".ctor")
             {
                 CLRSharp_Instance inst = _this as CLRSharp_Instance;
-                if(inst==null)
-                     inst = new CLRSharp_Instance(_DeclaringType);
+                if (inst == null)
+                    inst = new CLRSharp_Instance(_DeclaringType);
 
+                //if (_DeclaringType.BaseType is ICLRType_System)
                 context.ExecuteFunc(this, inst, _params);
                 return inst;
             }

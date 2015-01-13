@@ -5,6 +5,7 @@ using System.Text;
 using UnitTest;
 namespace UnitTestDll
 {
+    //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
         //只要有一个static void UnitTest() 函数的，就是单元测试

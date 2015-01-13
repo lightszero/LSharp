@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLRSharp\CLRSharp_Env.cs" />
+    <Compile Include="CLRSharp\CrossBind\Yield.cs" />
     <Compile Include="CLRSharp\Execute\CodeBody.cs" />
     <Compile Include="CLRSharp\Execute\Context.cs" />
     <Compile Include="CLRSharp\Execute\StackFrame.cs" />

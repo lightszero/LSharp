@@ -5,6 +5,7 @@ using System.Text;
 using UnitTest;
 namespace UnitTestDll
 {
+    //原来C#LightTestor的部分
     public class ExpTest_10
     {
         //只要有一个静态函数包含UnitTest名称的，就作为单元测试

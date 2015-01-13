@@ -83,11 +83,11 @@ namespace CLRSharp
             {
                 stack.Init(method.body);
                 stack._pos = method.body.bodyNative.Instructions[0];
-                if (method.body.bodyNative.HasExceptionHandlers)
-                {
-                    RunCodeWithTry(method.body, stack);
-                }
-                else
+                //if (method.body.bodyNative.HasExceptionHandlers)
+                //{
+                //    RunCodeWithTry(method.body, stack);
+                //}
+                //else
                 {
                     RunCode(stack, method.body);
                 }

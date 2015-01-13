@@ -21,7 +21,7 @@ namespace CLRSharp
             get;
             private set;
         }
-        public Type_Common_System(ICLRSharp_Environment env, System.Type type, string aname,ICLRType[] subtype)
+        public Type_Common_System(ICLRSharp_Environment env, System.Type type, string aname, ICLRType[] subtype)
         {
             this.env = env;
             this.TypeForSystem = type;
@@ -209,6 +209,20 @@ namespace CLRSharp
 
         public object Invoke(ThreadContext context, object _this, object[] _params)
         {
+            if (_this is CLRSharp_Instance)
+            {
+                CLRSharp_Instance inst = _this as CLRSharp_Instance;
+                var btype =inst.type.ContainBase(method_System.DeclaringType);
+                if(btype)
+                {
+                    var CrossBind =  context.environment.GetCrossBind(method_System.DeclaringType);
+                    if(CrossBind!=null)
+                    {
+                        _this = CrossBind.CreateBind(inst);
+                    }
+                    context.environment.logger.Log("这里有一个需要映射的类型");
+                }
+            }
             //委托是很特殊的存在
             //if(this.DeclaringType.IsDelegate)
             //{

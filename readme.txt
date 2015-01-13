@@ -1,4 +1,13 @@
-﻿2015-01-13 V0.31.5Alpha
+﻿2015-01-13 V0.32Alpha
+	支持了CrossBind，让脚本可以通过绑定继承程序类型
+	目前实现了yield，就是通过这种方式实现的
+	env构造时就执行了这样两句
+		RegCrossBind(new CrossBind_IEnumerable());
+		RegCrossBind(new CrossBind_IEnumerator());
+	这样就可以让脚本继承IEnumerable 和 IEnumerator
+	也就是迭代器的基础
+
+2015-01-13 V0.31.5Alpha
 	处理了脚本继承脚本的虚函数问题
 2015-01-13 V0.31.3Alpha
 	处理了枚举值得box转换

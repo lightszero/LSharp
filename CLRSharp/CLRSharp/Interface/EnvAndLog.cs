@@ -27,6 +27,17 @@ namespace CLRSharp
         ICLRSharp_Logger logger
         {
             get;
-        } 
+        }
+
+        void RegCrossBind(ICrossBind bind);
+
+        ICrossBind GetCrossBind(Type type);
+
+    }
+    public interface ICrossBind
+    {
+        Type Type
+        { get; }
+        object CreateBind(CLRSharp_Instance inst);
     }
 }

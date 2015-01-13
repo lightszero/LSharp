@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.31.5Alpha";
+                return "0.32Alpha";
             }
         }
         public ICLRSharp_Logger logger
@@ -23,6 +23,9 @@ namespace CLRSharp
         {
             this.logger = logger;
             logger.Log_Warning("CLR# Ver:" + version + " Inited.");
+
+            this.RegCrossBind(new CrossBind_IEnumerable());
+            this.RegCrossBind(new CrossBind_IEnumerator());
         }
         Dictionary<string, ICLRType> mapType = new Dictionary<string, ICLRType>();
         //public Dictionary<string, Mono.Cecil.ModuleDefinition> mapModule = new Dictionary<string, Mono.Cecil.ModuleDefinition>();
@@ -198,5 +201,23 @@ namespace CLRSharp
         {
             mapType[type.FullName] = type;
         }
+
+        /// <summary>
+        /// 交叉绑定工具，让脚本继承程序类型用的
+        /// </summary>
+        Dictionary<Type, ICrossBind> crossBind = new Dictionary<Type, ICrossBind>();
+        public void RegCrossBind(ICrossBind bind)
+        {
+            crossBind[bind.Type] = bind;
+        }
+
+        public ICrossBind GetCrossBind(Type type)
+        {
+            ICrossBind bind = null;
+
+            crossBind.TryGetValue(type, out bind);
+            return bind;
+        }
+
     }
 }

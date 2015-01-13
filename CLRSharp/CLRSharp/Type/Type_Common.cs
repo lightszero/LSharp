@@ -67,6 +67,13 @@ namespace CLRSharp
             get;
         }
         IMethod GetVMethod(IMethod _base);
+
+        bool ContainBase(Type t);
+        bool HasSysBase
+        {
+            get;
+        }
+        string[] GetMethodNames();
     }
     public interface ICLRType_System : ICLRType
     {

@@ -48,16 +48,17 @@
     <Compile Include="Eviltestor\test08\Test08.cs" />
     <Compile Include="Eviltestor\test09\Test09.cs" />
     <Compile Include="Eviltestor\test10.cs" />
-    <Compile Include="ExpTest_50.cs" />
-    <Compile Include="ExpTest_60.cs" />
-    <Compile Include="ExpTest_70.cs" />
-    <Compile Include="ExpTest_40.cs" />
-    <Compile Include="ExpTest_30.cs" />
-    <Compile Include="ExpTest_20.cs" />
-    <Compile Include="Perform_01.cs" />
+    <Compile Include="LightTestor\ExpTest_50.cs" />
+    <Compile Include="LightTestor\ExpTest_60.cs" />
+    <Compile Include="LightTestor\ExpTest_70.cs" />
+    <Compile Include="LightTestor\ExpTest_40.cs" />
+    <Compile Include="LightTestor\ExpTest_30.cs" />
+    <Compile Include="LightTestor\ExpTest_20.cs" />
+    <Compile Include="LightTestor\Perform_01.cs" />
     <Compile Include="SimU3D\TestU3D.cs" />
+    <Compile Include="SimU3D\TestYield.cs" />
     <Compile Include="Test0.cs" />
-    <Compile Include="ExpTest_10.cs" />
+    <Compile Include="LightTestor\ExpTest_10.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
