@@ -38,8 +38,54 @@ namespace CLRSharp
         }
         public Mono.Cecil.Cil.Instruction _pos = null;
 
-        Stack<object> stackCalc = new Stack<object>();
-        List<object> slotVar = new List<object>();
+        public class MyCalcStack:Stack<object>
+        {
+            Queue<VBox> unused = new Queue<VBox>();
+            public void Push(VBox box)
+            {
+                if (box != null)
+                {
+                    box.refcount++;
+                    while (unused.Count > 0)
+                    {
+                        VBox b = unused.Dequeue();
+                        if (b.refcount == 0)
+                            ValueOnStack.UnUse(b);
+                    }
+                }
+                base.Push(box);
+            }
+            public new object Pop()
+            {
+                var ob = base.Pop();
+                VBox box = ob as VBox;
+                if(box!=null)
+                {
+                    box.refcount--;
+                    if (box.refcount == 0)
+                        unused.Enqueue(box);
+                }
+                return ob;
+
+            }
+        }
+        MyCalcStack stackCalc = new MyCalcStack();
+        public class MySlotVar:List<object>
+        {
+            public new void Add(object obj)
+            {
+                base.Add(obj);
+            }
+            public void Add(VBox box)
+            {
+                if(box!=null)
+                {
+                    box.refcount++;
+                }
+                base.Add(box);
+            }
+        }
+        MySlotVar slotVar = new MySlotVar();
         object[] _params = null;
         public void SetParams(object[] _p)
         {
@@ -54,7 +100,8 @@ namespace CLRSharp
                 for (int i = 0; i < body.typelistForLoc.Count; i++)
                 {
                     ICLRType t = _body.typelistForLoc[i];
-                    slotVar.Add(ValueOnStack.Make(t));
+     
+                    slotVar.Add(ValueOnStack.MakeVBox(t));
                 }
             }
         }
@@ -82,9 +129,9 @@ namespace CLRSharp
                 for (int i = 0; i < _pp.Length; i++)
                 {
                     var pp = stackCalc.Pop();
-                    if (pp is IBox)
+                    if (pp is VBox)
                     {
-                        pp = (pp as IBox).BoxDefine();
+                        pp = (pp as VBox).BoxDefine();
                     }
                     _pp[_pp.Length - 1 - i] = pp;
                 }
@@ -112,18 +159,18 @@ namespace CLRSharp
                 _this = (_this as RefObj).Get();
 
             }
-            if (_this is IBox)
+            if (_this is VBox)
             {
-                _this = (_this as IBox).BoxDefine();
+                _this = (_this as VBox).BoxDefine();
             }
             object returnvar = _clrmethod.Invoke(context, _this, _pp);
 
             // bool breturn = false;
             if (_clrmethod.ReturnType != null && _clrmethod.ReturnType.FullName != "System.Void")
             {
-                if ((returnvar is IBox) == false)
+                if ((returnvar is VBox) == false)
                 {
-                    var type = ValueOnStack.Make(_clrmethod.ReturnType);
+                    var type = ValueOnStack.MakeVBox(_clrmethod.ReturnType);
                     if (type != null)
                     {
                         type.SetDirect(returnvar);
@@ -164,7 +211,7 @@ namespace CLRSharp
         public void Box()
         {
             object obj = stackCalc.Pop();
-            IBox box = obj as IBox;
+            VBox box = obj as VBox;
             if (box != null)
                 stackCalc.Push(box.BoxDefine());
             else
@@ -174,7 +221,7 @@ namespace CLRSharp
         public void Unbox()
         {
             object obj = stackCalc.Pop();
-            var box = ValueOnStack.Make(obj.GetType());
+            var box = ValueOnStack.MakeVBox(obj.GetType());
             if (box != null)
             {
                 stackCalc.Push(box);
@@ -204,15 +251,10 @@ namespace CLRSharp
             bool b = false;
             if (obj != null)
             {
-                if (obj is BoxInt32)
+                if (obj is VBox)
                 {
-                    BoxInt32 box = obj as BoxInt32;
-                    b = box.value > 0;
-                }
-                else if (obj is BoxInt64)
-                {
-                    BoxInt64 box = obj as BoxInt64;
-                    b = box.value > 0;
+                    VBox box = obj as VBox;
+                    b = box.ToBool();
                 }
                 else if (obj.GetType().IsClass)
                 {
@@ -253,8 +295,8 @@ namespace CLRSharp
         //条件跳转
         public void Beq(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_eq(n2))
             {
@@ -267,8 +309,8 @@ namespace CLRSharp
         }
         public void Bne(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_ne(n2))
             {
@@ -281,8 +323,8 @@ namespace CLRSharp
         }
         public void Bne_Un(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_ne_Un(n2))
             {
@@ -295,8 +337,8 @@ namespace CLRSharp
         }
         public void Bge(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_ge(n2))
             {
@@ -309,8 +351,8 @@ namespace CLRSharp
         }
         public void Bge_Un(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_ge_Un(n2))
             {
@@ -323,8 +365,8 @@ namespace CLRSharp
         }
         public void Bgt(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_gt(n2))
             {
@@ -337,8 +379,8 @@ namespace CLRSharp
         }
         public void Bgt_Un(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_gt_Un(n2))
             {
@@ -351,8 +393,8 @@ namespace CLRSharp
         }
         public void Ble(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_le(n2))
             {
@@ -365,8 +407,8 @@ namespace CLRSharp
         }
         public void Ble_Un(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_le_Un(n2))
             {
@@ -379,8 +421,8 @@ namespace CLRSharp
         }
         public void Blt(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_lt(n2))
             {
@@ -393,8 +435,8 @@ namespace CLRSharp
         }
         public void Blt_Un(Mono.Cecil.Cil.Instruction pos)
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_lt_Un(n2))
             {
@@ -408,8 +450,8 @@ namespace CLRSharp
         //加载常量
         public void Ldc_I4(int v)//int32
         {
-            BoxInt32 box = new BoxInt32(NumberType.INT32);
-            box.value = v;
+            VBox box = ValueOnStack.MakeVBox(NumberType.INT32);
+            box.v32 = v;
             stackCalc.Push(box);
             _pos = _pos.Next;
 
@@ -417,22 +459,22 @@ namespace CLRSharp
 
         public void Ldc_I8(Int64 v)//int64
         {
-            BoxInt64 box = new BoxInt64(NumberType.INT64);
-            box.value = v;
+            VBox box = ValueOnStack.MakeVBox(NumberType.INT64);
+            box.v64 = v;
             stackCalc.Push(box);
             _pos = _pos.Next;
         }
         public void Ldc_R4(float v)
         {
-            BoxDouble box = new BoxDouble(NumberType.FLOAT);
-            box.value = v;
+            VBox box = ValueOnStack.MakeVBox(NumberType.FLOAT);
+            box.vDF = v;
             stackCalc.Push(box);
             _pos = _pos.Next;
         }
         public void Ldc_R8(double v)
         {
-            BoxDouble box = new BoxDouble(NumberType.DOUBLE);
-            box.value = v;
+            VBox box = ValueOnStack.MakeVBox(NumberType.DOUBLE);
+            box.vDF = v;
             stackCalc.Push(box);
             _pos = _pos.Next;
         }
@@ -444,15 +486,15 @@ namespace CLRSharp
             {
                 slotVar.Add(null);
             }
-            IBox box = slotVar[pos] as IBox;
+            VBox box = slotVar[pos] as VBox;
             if (box == null)
             {
                 slotVar[pos] = v;
             }
             else
             {
-                if (v is IBox)
-                    box.Set(v as IBox);
+                if (v is VBox)
+                    box.Set(v as VBox);
                 else
                     box.SetDirect(v);
             }
@@ -569,8 +611,8 @@ namespace CLRSharp
         {
             var obj2 = stackCalc.Pop();
             var obj1 = stackCalc.Pop();
-            IBox n2 = obj2 as IBox;
-            IBox n1 = obj1 as IBox;
+            VBox n2 = obj2 as VBox;
+            VBox n1 = obj1 as VBox;
             bool beq = false;
             if (n1 == null || n2 == null)
             //if (obj1 == null || obj2 == null)
@@ -587,38 +629,38 @@ namespace CLRSharp
 
 
 
-            stackCalc.Push(ValueOnStack.MakeBool(beq));
+            stackCalc.Push(ValueOnStack.MakeVBoxBool(beq));
             _pos = _pos.Next;
         }
         public void Cgt()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
 
-            stackCalc.Push(ValueOnStack.MakeBool(n1.logic_gt(n2)));
+            stackCalc.Push(ValueOnStack.MakeVBoxBool(n1.logic_gt(n2)));
             _pos = _pos.Next;
         }
         public void Cgt_Un()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
 
-            stackCalc.Push(ValueOnStack.MakeBool(n1.logic_gt_Un(n2)));
+            stackCalc.Push(ValueOnStack.MakeVBoxBool(n1.logic_gt_Un(n2)));
             _pos = _pos.Next;
         }
         public void Clt()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
-            stackCalc.Push(ValueOnStack.MakeBool(n1.logic_lt(n2)));
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
+            stackCalc.Push(ValueOnStack.MakeVBoxBool(n1.logic_lt(n2)));
             _pos = _pos.Next;
         }
         public void Clt_Un()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
-            stackCalc.Push(ValueOnStack.MakeBool(n1.logic_lt_Un(n2)));
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
+            stackCalc.Push(ValueOnStack.MakeVBoxBool(n1.logic_lt_Un(n2)));
             _pos = _pos.Next;
         }
         public void Ckfinite()
@@ -639,56 +681,56 @@ namespace CLRSharp
         //算术操作
         public void Add()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
             n1.Add(n2);
             stackCalc.Push(n1);
             _pos = _pos.Next;
         }
         public void Sub()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
             n1.Sub(n2);
             stackCalc.Push(n1);
             _pos = _pos.Next;
         }
         public void Mul()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
             n1.Mul(n2);
             stackCalc.Push(n1);
             _pos = _pos.Next;
         }
         public void Div()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
             n1.Div(n2);
             stackCalc.Push(n1);
             _pos = _pos.Next;
         }
         public void Div_Un()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
             n1.Div(n2);//!!! _un
             stackCalc.Push(n1);
             _pos = _pos.Next;
         }
         public void Rem()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
             n1 = n1.Mod_New(n2);
             stackCalc.Push(n1);
             _pos = _pos.Next; ;
         }
         public void Rem_Un()
         {
-            IBox n2 = stackCalc.Pop() as IBox;
-            IBox n1 = stackCalc.Pop() as IBox;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
             n1 = n1.Mod_New(n2);//!!!_un
             stackCalc.Push(n1);
             _pos = _pos.Next;
@@ -717,7 +759,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.SBYTE));
@@ -732,7 +774,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.BYTE));
@@ -747,7 +789,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.INT16));
@@ -762,7 +804,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.UINT16));
@@ -776,7 +818,7 @@ namespace CLRSharp
         public void Conv_I4()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.INT32));
@@ -791,7 +833,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.UINT32));
@@ -806,7 +848,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.INT64));
@@ -821,7 +863,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.UINT64));
@@ -836,7 +878,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.INT32));
@@ -851,7 +893,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.UINT32));
@@ -867,7 +909,7 @@ namespace CLRSharp
 
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.FLOAT));
@@ -882,7 +924,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.DOUBLE));
@@ -897,7 +939,7 @@ namespace CLRSharp
         {
 
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.FLOAT));
@@ -917,7 +959,7 @@ namespace CLRSharp
             //MethodParamList tlist = MethodParamList.MakeList_OneParam_Int(context.environment);
             //var m = _type.GetMethod(".ctor", tlist);
             var objv = stackCalc.Pop();
-            if (objv is IBox) objv = (objv as IBox).BoxDefine();
+            if (objv is VBox) objv = (objv as VBox).BoxDefine();
             var array = newForArray.Invoke(context, null, new object[] { objv });
             stackCalc.Push(array);
             _pos = _pos.Next;
@@ -936,9 +978,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -952,9 +994,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -969,9 +1011,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -985,9 +1027,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1001,9 +1043,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1025,9 +1067,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1041,9 +1083,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1057,9 +1099,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1073,9 +1115,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1089,9 +1131,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1105,9 +1147,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is IBox))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as IBox).ToInt();
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1121,9 +1163,9 @@ namespace CLRSharp
         {
             var obj = stackCalc.Pop();
             int value = 0;
-            if (obj is IBox)
+            if (obj is VBox)
             {
-                value = (obj as IBox).ToInt();
+                value = (obj as VBox).ToInt();
             }
             else
             {
@@ -1131,13 +1173,9 @@ namespace CLRSharp
             }
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is BoxInt32))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as BoxInt32).value;
-            }
-            else if ((indexobj is BoxInt64))
-            {
-                index = (int)(indexobj as BoxInt64).value;
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1151,9 +1189,9 @@ namespace CLRSharp
         {
             var obj = stackCalc.Pop();
             int value = 0;
-            if (obj is IBox)
+            if (obj is VBox)
             {
-                value = (obj as IBox).ToInt();
+                value = (obj as VBox).ToInt();
             }
             else
             {
@@ -1161,13 +1199,9 @@ namespace CLRSharp
             }
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is BoxInt32))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as BoxInt32).value;
-            }
-            else if ((indexobj is BoxInt64))
-            {
-                index = (int)(indexobj as BoxInt64).value;
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1181,9 +1215,9 @@ namespace CLRSharp
         {
             var obj = stackCalc.Pop();
             int value = 0;
-            if (obj is IBox)
+            if (obj is VBox)
             {
-                value = (obj as IBox).ToInt();
+                value = (obj as VBox).ToInt();
             }
             else
             {
@@ -1191,13 +1225,9 @@ namespace CLRSharp
             }
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is BoxInt32))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as BoxInt32).value;
-            }
-            else if ((indexobj is BoxInt64))
-            {
-                index = (int)(indexobj as BoxInt64).value;
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1219,9 +1249,9 @@ namespace CLRSharp
         {
             var obj = stackCalc.Pop();
             int value = 0;
-            if (obj is IBox)
+            if (obj is VBox)
             {
-                value = (obj as IBox).ToInt();
+                value = (obj as VBox).ToInt();
             }
             else
             {
@@ -1229,13 +1259,9 @@ namespace CLRSharp
             }
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is BoxInt32))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as BoxInt32).value;
-            }
-            else if ((indexobj is BoxInt64))
-            {
-                index = (int)(indexobj as BoxInt64).value;
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1249,9 +1275,9 @@ namespace CLRSharp
         {
             var obj = stackCalc.Pop();
             long value = 0;
-            if (obj is IBox)
+            if (obj is VBox)
             {
-                value = (obj as IBox).ToInt64();
+                value = (obj as VBox).ToInt64();
             }
             else
             {
@@ -1259,13 +1285,9 @@ namespace CLRSharp
             }
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is BoxInt32))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as BoxInt32).value;
-            }
-            else if ((indexobj is BoxInt64))
-            {
-                index = (int)(indexobj as BoxInt64).value;
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1279,9 +1301,9 @@ namespace CLRSharp
         {
             var obj = stackCalc.Pop();
             float value = 0;
-            if (obj is IBox)
+            if (obj is VBox)
             {
-                value = (obj as IBox).ToFloat();
+                value = (obj as VBox).ToFloat();
             }
             else
             {
@@ -1289,13 +1311,9 @@ namespace CLRSharp
             }
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is BoxInt32))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as BoxInt32).value;
-            }
-            else if ((indexobj is BoxInt64))
-            {
-                index = (int)(indexobj as BoxInt64).value;
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1309,9 +1327,9 @@ namespace CLRSharp
         {
             var obj = stackCalc.Pop();
             double value = 0;
-            if (obj is IBox)
+            if (obj is VBox)
             {
-                value = (obj as IBox).ToDouble();
+                value = (obj as VBox).ToDouble();
             }
             else
             {
@@ -1319,13 +1337,9 @@ namespace CLRSharp
             }
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is BoxInt32))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as BoxInt32).value;
-            }
-            else if ((indexobj is BoxInt64))
-            {
-                index = (int)(indexobj as BoxInt64).value;
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1340,13 +1354,9 @@ namespace CLRSharp
             var value = stackCalc.Pop();
             var indexobj = stackCalc.Pop();
             int index = 0;
-            if ((indexobj is BoxInt32))
+            if ((indexobj is VBox))
             {
-                index = (indexobj as BoxInt32).value;
-            }
-            else if ((indexobj is BoxInt64))
-            {
-                index = (int)(indexobj as BoxInt64).value;
+                index = (indexobj as VBox).ToInt();
             }
             else
             {
@@ -1378,9 +1388,9 @@ namespace CLRSharp
                 for (int i = 0; i < _pp.Length; i++)
                 {
                     var obj = stackCalc.Pop();
-                    if (obj is IBox)
+                    if (obj is VBox)
                     {
-                        obj = (obj as IBox).BoxDefine();
+                        obj = (obj as VBox).BoxDefine();
                     }
                     _pp[_pp.Length - 1 - i] = obj;
                 }
@@ -1428,7 +1438,7 @@ namespace CLRSharp
                 obj = (obj as RefObj).Get();
             }
             var value = field.Get(obj);
-            IBox box = ValueOnStack.Make(field.FieldType);
+            VBox box = ValueOnStack.MakeVBox(field.FieldType);
             if (box != null)
             {
                 box.SetDirect(value);
@@ -1454,7 +1464,7 @@ namespace CLRSharp
             //var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
             //var ff = type.GetField(field.Name);
             var value = field.Get(null);
-            IBox box = ValueOnStack.Make(field.FieldType);
+            VBox box = ValueOnStack.MakeVBox(field.FieldType);
             if (box != null)
             {
                 box.SetDirect(value);
@@ -1489,9 +1499,9 @@ namespace CLRSharp
                 }
                 obj = (obj as RefObj).Get();
             }
-            if (value is IBox)
+            if (value is VBox)
             {
-                value = (value as IBox).BoxDefine();
+                value = (value as VBox).BoxDefine();
             }
             field.Set(obj, value);
             _pos = _pos.Next;
@@ -1501,9 +1511,9 @@ namespace CLRSharp
             var value = stackCalc.Pop();
             //var obj = stackCalc.Pop();
 
-            if (value is IBox)
+            if (value is VBox)
             {
-                value = (value as IBox).BoxDefine();
+                value = (value as VBox).BoxDefine();
             }
             //var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
             //var ff = type.GetField(field.Name);
@@ -1539,7 +1549,7 @@ namespace CLRSharp
         public void Conv_Ovf_I1()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.SBYTE));
@@ -1553,7 +1563,7 @@ namespace CLRSharp
         public void Conv_Ovf_U1()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.BYTE));
@@ -1567,7 +1577,7 @@ namespace CLRSharp
         public void Conv_Ovf_I2()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.INT16));
@@ -1581,7 +1591,7 @@ namespace CLRSharp
         public void Conv_Ovf_U2()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.UINT16));
@@ -1595,7 +1605,7 @@ namespace CLRSharp
         public void Conv_Ovf_I4()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.INT32));
@@ -1609,7 +1619,7 @@ namespace CLRSharp
         public void Conv_Ovf_U4()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.UINT32));
@@ -1623,7 +1633,7 @@ namespace CLRSharp
         public void Conv_Ovf_I8()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.INT64));
@@ -1637,7 +1647,7 @@ namespace CLRSharp
         public void Conv_Ovf_U8()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.UINT64));
@@ -1651,7 +1661,7 @@ namespace CLRSharp
         public void Conv_Ovf_I()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.INT32));
@@ -1665,7 +1675,7 @@ namespace CLRSharp
         public void Conv_Ovf_U()
         {
             object num1 = stackCalc.Pop();
-            IBox b = num1 as IBox;
+            VBox b = num1 as VBox;
             if (b != null)
             {
                 stackCalc.Push(ValueOnStack.Convert(b, NumberType.UINT32));
@@ -1774,9 +1784,9 @@ namespace CLRSharp
         {
             var indexobj = stackCalc.Pop();
             uint pos = 0;
-            if (indexobj is IBox)
+            if (indexobj is VBox)
             {
-                pos = (indexobj as IBox).ToUint();
+                pos = (indexobj as VBox).ToUInt();
             }
             else
             {
