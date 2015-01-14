@@ -2,6 +2,8 @@
 用途，Unity3D热更（包括IOS平台）等
 Alpha阶段，欢迎小白鼠踩坑
 更新日志：
+2015-01-14 V0.34Alpha
+	Unity_HelloWorld 在IOS运行成功
 2015-01-13 V0.33Alpha
 	增加Dump机制
 	Try catch 脚本执行入口，catch以后，调用
