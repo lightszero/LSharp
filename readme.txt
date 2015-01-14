@@ -2,6 +2,9 @@
 用途，Unity3D热更（包括IOS平台）等
 Alpha阶段，欢迎小白鼠踩坑
 更新日志：
+2015-01-14 V0.35Alpha
+	Unity_HelloWorld 在WP运行成功
+	调整了一个ForUnity目录，里面放基本的支持库
 2015-01-14 V0.34Alpha
 	Unity_HelloWorld 在IOS运行成功
 2015-01-13 V0.33Alpha
