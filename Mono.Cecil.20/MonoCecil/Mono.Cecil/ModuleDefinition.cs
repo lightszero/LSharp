@@ -93,101 +93,6 @@ namespace Mono.Cecil {
 		}
 	}
 
-#if CANWRITE
-
-	public sealed class ModuleParameters {
-
-		ModuleKind kind;
-		TargetRuntime runtime;
-		TargetArchitecture architecture;
-		IAssemblyResolver assembly_resolver;
-		IMetadataResolver metadata_resolver;
-
-		public ModuleKind Kind {
-			get { return kind; }
-			set { kind = value; }
-		}
-
-		public TargetRuntime Runtime {
-			get { return runtime; }
-			set { runtime = value; }
-		}
-
-		public TargetArchitecture Architecture {
-			get { return architecture; }
-			set { architecture = value; }
-		}
-
-		public IAssemblyResolver AssemblyResolver {
-			get { return assembly_resolver; }
-			set { assembly_resolver = value; }
-		}
-
-		public IMetadataResolver MetadataResolver {
-			get { return metadata_resolver; }
-			set { metadata_resolver = value; }
-		}
-
-		public ModuleParameters ()
-		{
-			this.kind = ModuleKind.Dll;
-			this.runtime = GetCurrentRuntime ();
-			this.architecture = TargetArchitecture.I386;
-		}
-
-		static TargetRuntime GetCurrentRuntime ()
-		{
-#if !CF
-			return typeof (object).Assembly.ImageRuntimeVersion.ParseRuntime ();
-#else
-			var corlib_version = typeof (object).Assembly.GetName ().Version;
-			switch (corlib_version.Major) {
-			case 1:
-				return corlib_version.Minor == 0
-					? TargetRuntime.Net_1_0
-					: TargetRuntime.Net_1_1;
-			case 2:
-				return TargetRuntime.Net_2_0;
-			case 4:
-				return TargetRuntime.Net_4_0;
-			default:
-				throw new NotSupportedException ();
-			}
-#endif
-		}
-	}
-
-	public sealed class WriterParameters {
-
-		Stream symbol_stream;
-		ISymbolWriterProvider symbol_writer_provider;
-		bool write_symbols;
-#if !SILVERLIGHT && !CF
-		SR.StrongNameKeyPair key_pair;
-#endif
-		public Stream SymbolStream {
-			get { return symbol_stream; }
-			set { symbol_stream = value; }
-		}
-
-		public ISymbolWriterProvider SymbolWriterProvider {
-			get { return symbol_writer_provider; }
-			set { symbol_writer_provider = value; }
-		}
-
-		public bool WriteSymbols {
-			get { return write_symbols; }
-			set { write_symbols = value; }
-		}
-#if !SILVERLIGHT && !CF
-		public SR.StrongNameKeyPair StrongNameKeyPair {
-			get { return key_pair; }
-			set { key_pair = value; }
-		}
-#endif
-	}
-
-#endif
 
 	public sealed class ModuleDefinition : ModuleReference, ICustomAttributeProvider {
 
@@ -214,9 +119,6 @@ namespace Mono.Cecil {
 		internal AssemblyDefinition assembly;
 		MethodDefinition entry_point;
 
-#if CANWRITE
-		MetadataImporter importer;
-#endif
 		Collection<CustomAttribute> custom_attributes;
 		Collection<AssemblyNameReference> references;
 		Collection<ModuleReference> modules;
@@ -282,15 +184,6 @@ namespace Mono.Cecil {
 			get { return assembly; }
 		}
 
-#if CANWRITE
-		internal MetadataImporter MetadataImporter {
-			get {
-				if (importer == null)
-					Interlocked.CompareExchange (ref importer, new MetadataImporter (this), null);
-				return importer;
-			}
-		}
-#endif
 
 		public IAssemblyResolver AssemblyResolver {
 			get { return assembly_resolver ?? (assembly_resolver = new DefaultAssemblyResolver ()); }
@@ -607,218 +500,6 @@ namespace Mono.Cecil {
 			return MetadataResolver.Resolve (type);
 		}
 
-#if CANWRITE
-
-		static void CheckType (object type)
-		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-		}
-
-		static void CheckField (object field)
-		{
-			if (field == null)
-				throw new ArgumentNullException ("field");
-		}
-
-		static void CheckMethod (object method)
-		{
-			if (method == null)
-				throw new ArgumentNullException ("method");
-		}
-
-		static void CheckContext (IGenericParameterProvider context, ModuleDefinition module)
-		{
-			if (context == null)
-				return;
-
-			if (context.Module != module)
-				throw new ArgumentException ();
-		}
-
-#if !CF
-		public TypeReference Import (Type type)
-		{
-			CheckType (type);
-
-			return MetadataImporter.ImportType (type, null, ImportGenericKind.Definition);
-		}
-
-		public TypeReference Import (Type type, TypeReference context)
-		{
-			return Import (type, (IGenericParameterProvider) context);
-		}
-
-		public TypeReference Import (Type type, MethodReference context)
-		{
-			return Import (type, (IGenericParameterProvider) context);
-		}
-
-		TypeReference Import (Type type, IGenericParameterProvider context)
-		{
-			CheckType (type);
-			CheckContext (context, this);
-
-			return MetadataImporter.ImportType (
-				type,
-				(IGenericContext) context,
-				context != null
-					? ImportGenericKind.Open
-					: ImportGenericKind.Definition);
-		}
-
-		public FieldReference Import (SR.FieldInfo field)
-		{
-			CheckField (field);
-
-			return MetadataImporter.ImportField (field, null);
-		}
-
-		public FieldReference Import (SR.FieldInfo field, TypeReference context)
-		{
-			return Import (field, (IGenericParameterProvider) context);
-		}
-
-		public FieldReference Import (SR.FieldInfo field, MethodReference context)
-		{
-			return Import (field, (IGenericParameterProvider) context);
-		}
-
-		FieldReference Import (SR.FieldInfo field, IGenericParameterProvider context)
-		{
-			CheckField (field);
-			CheckContext (context, this);
-
-			return MetadataImporter.ImportField (field, (IGenericContext) context);
-		}
-
-		public MethodReference Import (SR.MethodBase method)
-		{
-			CheckMethod (method);
-
-			return MetadataImporter.ImportMethod (method, null, ImportGenericKind.Definition);
-		}
-
-		public MethodReference Import (SR.MethodBase method, TypeReference context)
-		{
-			return Import (method, (IGenericParameterProvider) context);
-		}
-
-		public MethodReference Import (SR.MethodBase method, MethodReference context)
-		{
-			return Import (method, (IGenericParameterProvider) context);
-		}
-
-		MethodReference Import (SR.MethodBase method, IGenericParameterProvider context)
-		{
-			CheckMethod (method);
-			CheckContext (context, this);
-
-			return MetadataImporter.ImportMethod (method,
-				(IGenericContext) context,
-				context != null
-					? ImportGenericKind.Open
-					: ImportGenericKind.Definition);
-		}
-#endif
-
-		public TypeReference Import (TypeReference type)
-		{
-			CheckType (type);
-
-			if (type.Module == this)
-				return type;
-
-			return MetadataImporter.ImportType (type, null);
-		}
-
-		public TypeReference Import (TypeReference type, TypeReference context)
-		{
-			return Import (type, (IGenericParameterProvider) context);
-		}
-
-		public TypeReference Import (TypeReference type, MethodReference context)
-		{
-			return Import (type, (IGenericParameterProvider) context);
-		}
-
-		TypeReference Import (TypeReference type, IGenericParameterProvider context)
-		{
-			CheckType (type);
-
-			if (type.Module == this)
-				return type;
-
-			CheckContext (context, this);
-
-			return MetadataImporter.ImportType (type, (IGenericContext) context);
-		}
-
-		public FieldReference Import (FieldReference field)
-		{
-			CheckField (field);
-
-			if (field.Module == this)
-				return field;
-
-			return MetadataImporter.ImportField (field, null);
-		}
-
-		public FieldReference Import (FieldReference field, TypeReference context)
-		{
-			return Import (field, (IGenericParameterProvider) context);
-		}
-
-		public FieldReference Import (FieldReference field, MethodReference context)
-		{
-			return Import (field, (IGenericParameterProvider) context);
-		}
-
-		FieldReference Import (FieldReference field, IGenericParameterProvider context)
-		{
-			CheckField (field);
-
-			if (field.Module == this)
-				return field;
-
-			CheckContext (context, this);
-
-			return MetadataImporter.ImportField (field, (IGenericContext) context);
-		}
-
-		public MethodReference Import (MethodReference method)
-		{
-			CheckMethod (method);
-
-			if (method.Module == this)
-				return method;
-
-			return MetadataImporter.ImportMethod (method, null);
-		}
-
-		public MethodReference Import (MethodReference method, TypeReference context)
-		{
-			return Import (method, (IGenericParameterProvider) context);
-		}
-
-		public MethodReference Import (MethodReference method, MethodReference context)
-		{
-			return Import (method, (IGenericParameterProvider) context);
-		}
-
-		MethodReference Import (MethodReference method, IGenericParameterProvider context)
-		{
-			CheckMethod (method);
-
-			if (method.Module == this)
-				return method;
-
-			CheckContext (context, this);
-
-			return MetadataImporter.ImportMethod (method, (IGenericContext) context);
-		}
-
-#endif
 
 		public IMetadataTokenProvider LookupToken (int token)
 		{
@@ -893,55 +574,7 @@ namespace Mono.Cecil {
 				throw new InvalidOperationException ();
 		}
 
-#if CANWRITE
 
-		public static ModuleDefinition CreateModule (string name, ModuleKind kind)
-		{
-			return CreateModule (name, new ModuleParameters { Kind = kind });
-		}
-
-		public static ModuleDefinition CreateModule (string name, ModuleParameters parameters)
-		{
-			Mixin.CheckName (name);
-			Mixin.CheckParameters (parameters);
-
-			var module = new ModuleDefinition {
-				Name = name,
-				kind = parameters.Kind,
-				runtime = parameters.Runtime,
-				architecture = parameters.Architecture,
-				mvid = Guid.NewGuid (),
-				Attributes = ModuleAttributes.ILOnly,
-				Characteristics = (ModuleCharacteristics) 0x8540,
-			};
-
-			if (parameters.AssemblyResolver != null)
-				module.assembly_resolver = parameters.AssemblyResolver;
-
-			if (parameters.MetadataResolver != null)
-				module.metadata_resolver = parameters.MetadataResolver;
-
-			if (parameters.Kind != ModuleKind.NetModule) {
-				var assembly = new AssemblyDefinition ();
-				module.assembly = assembly;
-				module.assembly.Name = CreateAssemblyName (name);
-				assembly.main_module = module;
-			}
-
-			module.Types.Add (new TypeDefinition (string.Empty, "<Module>", TypeAttributes.NotPublic));
-
-			return module;
-		}
-
-		static AssemblyNameDefinition CreateAssemblyName (string name)
-		{
-			if (name.EndsWith (".dll") || name.EndsWith (".exe"))
-				name = name.Substring (0, name.Length - 4);
-
-			return new AssemblyNameDefinition (name, new Version (0, 0, 0, 0));
-		}
-
-#endif
 
 		public void ReadSymbols ()
 		{
@@ -1010,36 +643,7 @@ namespace Mono.Cecil {
 			return new FileStream (fileName, mode, access, share);
 		}
 
-#if CANWRITE
 
-		public void Write (string fileName)
-		{
-			Write (fileName, new WriterParameters ());
-		}
-
-		public void Write (Stream stream)
-		{
-			Write (stream, new WriterParameters ());
-		}
-
-		public void Write (string fileName, WriterParameters parameters)
-		{
-			using (var stream = GetFileStream (fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
-				Write (stream, parameters);
-			}
-		}
-
-		public void Write (Stream stream, WriterParameters parameters)
-		{
-			CheckStream (stream);
-			if (!stream.CanWrite || !stream.CanSeek)
-				throw new ArgumentException ();
-			Mixin.CheckParameters (parameters);
-
-			ModuleWriter.WriteModuleTo (this, stream, parameters);
-		}
-
-#endif
 
 	}
 
@@ -1066,15 +670,8 @@ namespace Mono.Cecil {
 
 		public static string GetFullyQualifiedName (this Stream self)
 		{
-#if !SILVERLIGHT
-			var file_stream = self as FileStream;
-			if (file_stream == null)
-				return string.Empty;
 
-			return Path.GetFullPath (file_stream.Name);
-#else
 			return string.Empty;
-#endif
 		}
 
 		public static TargetRuntime ParseRuntime (this string self)

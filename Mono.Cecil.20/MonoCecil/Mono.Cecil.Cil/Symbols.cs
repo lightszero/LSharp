@@ -212,9 +212,7 @@ namespace Mono.Cecil.Cil {
 				if (assembly != null)
 					return assembly.GetType (fullname);
 			} catch (FileNotFoundException) {
-#if !CF
-			} catch (FileLoadException) {
-#endif
+
 			}
 
 			return null;
@@ -239,39 +237,7 @@ namespace Mono.Cecil.Cil {
 			return "Mono.Cecil." + symbol_kind + "." + symbol_kind + name;
 		}
 
-#if CANWRITE
 
-		static ISymbolWriterProvider writer_provider;
-
-		public static ISymbolWriterProvider GetPlatformWriterProvider ()
-		{
-			if (writer_provider != null)
-				return writer_provider;
-
-			var type = GetPlatformType (GetProviderTypeName ("WriterProvider"));
-			if (type == null)
-				return null;
-
-			return writer_provider = (ISymbolWriterProvider) Activator.CreateInstance (type);
-		}
-
-#endif
 	}
 
-#if CANWRITE
-
-	public interface ISymbolWriter : IDisposable {
-
-		bool GetDebugHeader (out ImageDebugDirectory directory, out byte [] header);
-		void Write (MethodBody body);
-		void Write (MethodSymbols symbols);
-	}
-
-	public interface ISymbolWriterProvider {
-
-		ISymbolWriter GetSymbolWriter (ModuleDefinition module, string fileName);
-		ISymbolWriter GetSymbolWriter (ModuleDefinition module, Stream symbolStream);
-	}
-
-#endif
 }

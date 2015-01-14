@@ -107,28 +107,7 @@ namespace Mono.Cecil {
 		{
 		}
 
-#if CANWRITE
-		public static AssemblyDefinition CreateAssembly (AssemblyNameDefinition assemblyName, string moduleName, ModuleKind kind)
-		{
-			return CreateAssembly (assemblyName, moduleName, new ModuleParameters { Kind = kind });
-		}
 
-		public static AssemblyDefinition CreateAssembly (AssemblyNameDefinition assemblyName, string moduleName, ModuleParameters parameters)
-		{
-			if (assemblyName == null)
-				throw new ArgumentNullException ("assemblyName");
-			if (moduleName == null)
-				throw new ArgumentNullException ("moduleName");
-			Mixin.CheckParameters (parameters);
-			if (parameters.Kind == ModuleKind.NetModule)
-				throw new ArgumentException ("kind");
-
-			var assembly = ModuleDefinition.CreateModule (moduleName, parameters).Assembly;
-			assembly.Name = assemblyName;
-
-			return assembly;
-		}
-#endif
 
 		public static AssemblyDefinition ReadAssembly (string fileName)
 		{
@@ -159,27 +138,7 @@ namespace Mono.Cecil {
 			return assembly;
 		}
 
-#if CANWRITE
-		public void Write (string fileName)
-		{
-			Write (fileName, new WriterParameters ());
-		}
 
-		public void Write (Stream stream)
-		{
-			Write (stream, new WriterParameters ());
-		}
-
-		public void Write (string fileName, WriterParameters parameters)
-		{
-			main_module.Write (fileName, parameters);
-		}
-
-		public void Write (Stream stream, WriterParameters parameters)
-		{
-			main_module.Write (stream, parameters);
-		}
-#endif
 
 		public override string ToString ()
 		{

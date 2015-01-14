@@ -36,19 +36,7 @@ namespace Mono.Cecil.Pdb {
 
 	class PdbHelper {
 
-#if CANWRITE
-		public static SymWriter CreateWriter (ModuleDefinition module, string pdb)
-		{
-			var writer = new SymWriter ();
 
-			if (File.Exists (pdb))
-				File.Delete (pdb);
-
-			writer.Initialize (new ModuleMetadata (module), pdb, true);
-
-			return writer;
-		}
-#endif
 
 		public static string GetPdbFileName (string assemblyFileName)
 		{
@@ -69,22 +57,7 @@ namespace Mono.Cecil.Pdb {
 		}
 	}
 
-#if CANWRITE
 
-	public class PdbWriterProvider : ISymbolWriterProvider {
-
-		public ISymbolWriter GetSymbolWriter (ModuleDefinition module, string fileName)
-		{
-			return new PdbWriter (module, PdbHelper.CreateWriter (module, PdbHelper.GetPdbFileName (fileName)));
-		}
-
-		public ISymbolWriter GetSymbolWriter (ModuleDefinition module, Stream symbolStream)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-
-#endif
 
 	static class GuidMapping {
 
