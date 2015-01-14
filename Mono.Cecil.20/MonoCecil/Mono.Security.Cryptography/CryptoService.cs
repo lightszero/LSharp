@@ -31,7 +31,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 
-#if !READ_ONLY
+#if CANWRITE
 
 #if !SILVERLIGHT && !CF
 using System.Runtime.Serialization;

@@ -251,7 +251,7 @@ namespace Mono.Cecil {
 			return MetadataToken.Zero;
 		}
 
-#if !READ_ONLY
+#if CANWRITE
 		public static uint CompressMetadataToken (this CodedIndex self, MetadataToken token)
 		{
 			uint ret = 0;

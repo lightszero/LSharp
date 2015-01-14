@@ -29,8 +29,8 @@ namespace test01
 
             System.IO.MemoryStream msDll = new System.IO.MemoryStream(dll);
             System.IO.MemoryStream msPdb = new System.IO.MemoryStream(pdb);
-            //env.LoadModule (msDll, null);//不需要pdb的话，第二个参数传null
-            env.LoadModule(msDll, msPdb);
+            //env.LoadModule (msDll);//不需要pdb的话
+            env.LoadModule(msDll, msPdb, new Mono.Cecil.Pdb.PdbReaderProvider());
             Log("LoadModule HotFixCode.dll done.");
 
             //step01建立一个线程上下文，用来模拟L#的线程模型，每个线程创建一个即可。

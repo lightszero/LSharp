@@ -239,7 +239,7 @@ namespace Mono.Cecil.Cil {
 			return "Mono.Cecil." + symbol_kind + "." + symbol_kind + name;
 		}
 
-#if !READ_ONLY
+#if CANWRITE
 
 		static ISymbolWriterProvider writer_provider;
 
@@ -258,7 +258,7 @@ namespace Mono.Cecil.Cil {
 #endif
 	}
 
-#if !READ_ONLY
+#if CANWRITE
 
 	public interface ISymbolWriter : IDisposable {
 

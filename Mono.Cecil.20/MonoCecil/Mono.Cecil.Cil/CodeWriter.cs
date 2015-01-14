@@ -36,7 +36,7 @@ using Mono.Cecil.PE;
 
 using RVA = System.UInt32;
 
-#if !READ_ONLY
+#if CANWRITE
 
 namespace Mono.Cecil.Cil {
 

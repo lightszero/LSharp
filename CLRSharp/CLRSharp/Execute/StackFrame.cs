@@ -1031,12 +1031,12 @@ namespace CLRSharp
         public void LdLen()
         {
             throw new NotImplementedException();
-            _pos = _pos.Next;
+            //_pos = _pos.Next;
         }
         public void Ldelema(object obj)
         {
             throw new NotImplementedException();
-            _pos = _pos.Next;
+            //_pos = _pos.Next;
         }
         public void Ldelem_I1()
         {
@@ -1809,28 +1809,28 @@ namespace CLRSharp
         public void Ldarga(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Calli(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
 
 
         public void Break(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Starg_S(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldnull()
         {
@@ -1840,8 +1840,8 @@ namespace CLRSharp
         public void Jmp(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
 
         public void Switch(ThreadContext context, Mono.Cecil.Cil.Instruction[] poss)
@@ -1869,158 +1869,158 @@ namespace CLRSharp
         public void Ldind_I1(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldind_U1(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldind_I2(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldind_U2(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldind_I4(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldind_U4(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldind_I8(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldind_I(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldind_R4(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldind_R8(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldind_Ref(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Stind_Ref(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Stind_I1(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Stind_I2(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Stind_I4(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Stind_I8(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Stind_R4(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Stind_R8(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void And(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Or(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Xor(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Shl(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Shr(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Shr_Un(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Not(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Cpobj(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Ldobj(ThreadContext context, object obj)
         {
@@ -2032,8 +2032,8 @@ namespace CLRSharp
         public void Castclass(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Throw(ThreadContext context, object obj)
         {
@@ -2044,112 +2044,112 @@ namespace CLRSharp
         public void Stobj(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Refanyval(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Mkrefany(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
 
         public void Add_Ovf(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Add_Ovf_Un(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Mul_Ovf(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Mul_Ovf_Un(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Sub_Ovf(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Sub_Ovf_Un(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Endfinally(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Stind_I(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Arglist(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
 
         public void Starg(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Localloc(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Endfilter(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Unaligned(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Volatile(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Tail(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Initobj(ThreadContext context, ICLRType _type)
         {
@@ -2165,44 +2165,44 @@ namespace CLRSharp
         public void Cpblk(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Initblk(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void No(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Rethrow(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Sizeof(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Refanytype(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
         public void Readonly(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
-            throw new NotImplementedException();
-            _pos = _pos.Next;
+            throw new NotImplementedException(t.ToString());
+            //_pos = _pos.Next;
         }
     }
 }

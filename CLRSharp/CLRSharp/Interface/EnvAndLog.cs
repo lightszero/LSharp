@@ -16,7 +16,10 @@ namespace CLRSharp
         {
             get;
         }
-        void LoadModule(System.IO.Stream dllStream, System.IO.Stream pdbStream);
+        void LoadModule(System.IO.Stream dllStream);
+
+        void LoadModule(System.IO.Stream dllStream, System.IO.Stream pdbStream, Mono.Cecil.Cil.ISymbolReaderProvider debugInfoLoader);
+
         string[] GetAllTypes();
         ICLRType GetType(string name);
 

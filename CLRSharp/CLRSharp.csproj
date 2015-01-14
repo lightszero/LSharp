@@ -51,18 +51,18 @@
     <Compile Include="CLRSharp\Type\CLRSharp\CLRSharp_Type.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Mono.Cecil.20\Mono.Cecil.20.csproj">
-      <Project>{d3785d8b-4d85-4546-8763-47fc848c13e0}</Project>
-      <Name>Mono.Cecil.20</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="..\readme.txt">
       <Link>readme.txt</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mono.Cecil.20\Mono.Cecil.20.csproj">
+      <Project>{d3785d8b-4d85-4546-8763-47fc848c13e0}</Project>
+      <Name>Mono.Cecil.20</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

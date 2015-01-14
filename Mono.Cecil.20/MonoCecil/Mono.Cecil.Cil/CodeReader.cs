@@ -377,7 +377,7 @@ namespace Mono.Cecil.Cil {
 			return new MetadataToken (ReadUInt32 ());
 		}
 
-#if !READ_ONLY
+#if CANWRITE
 
 		public ByteBuffer PatchRawMethodBody (MethodDefinition method, CodeWriter writer, out MethodSymbols symbols)
 		{

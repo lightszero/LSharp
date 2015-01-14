@@ -30,7 +30,7 @@
 using System;
 using System.Security.Cryptography;
 
-#if !(SILVERLIGHT || READ_ONLY)
+#if (!SILVERLIGHT) && CANWRITE
 
 namespace Mono.Security.Cryptography {
 

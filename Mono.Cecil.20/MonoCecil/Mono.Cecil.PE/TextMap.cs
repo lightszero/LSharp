@@ -28,7 +28,7 @@
 
 using System;
 
-#if !READ_ONLY
+#if CANWRITE
 
 using RVA = System.UInt32;
 

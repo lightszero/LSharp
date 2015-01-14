@@ -93,7 +93,7 @@ namespace Mono.Cecil {
 		}
 	}
 
-#if !READ_ONLY
+#if CANWRITE
 
 	public sealed class ModuleParameters {
 
@@ -214,7 +214,7 @@ namespace Mono.Cecil {
 		internal AssemblyDefinition assembly;
 		MethodDefinition entry_point;
 
-#if !READ_ONLY
+#if CANWRITE
 		MetadataImporter importer;
 #endif
 		Collection<CustomAttribute> custom_attributes;
@@ -282,7 +282,7 @@ namespace Mono.Cecil {
 			get { return assembly; }
 		}
 
-#if !READ_ONLY
+#if CANWRITE
 		internal MetadataImporter MetadataImporter {
 			get {
 				if (importer == null)
@@ -607,7 +607,7 @@ namespace Mono.Cecil {
 			return MetadataResolver.Resolve (type);
 		}
 
-#if !READ_ONLY
+#if CANWRITE
 
 		static void CheckType (object type)
 		{
@@ -893,7 +893,7 @@ namespace Mono.Cecil {
 				throw new InvalidOperationException ();
 		}
 
-#if !READ_ONLY
+#if CANWRITE
 
 		public static ModuleDefinition CreateModule (string name, ModuleKind kind)
 		{
@@ -1010,7 +1010,7 @@ namespace Mono.Cecil {
 			return new FileStream (fileName, mode, access, share);
 		}
 
-#if !READ_ONLY
+#if CANWRITE
 
 		public void Write (string fileName)
 		{

@@ -26,7 +26,7 @@ namespace UnitTest
 
             env = new CLRSharp.CLRSharp_Environment(this);
             this.Text += " L# Ver:" + env.version;
-            env.LoadModule(ms, mspdb);
+            env.LoadModule(ms, mspdb,new Mono.Cecil.Pdb.PdbReaderProvider());
             var types = env.GetAllTypes();
             foreach (var t in types)
             {

@@ -29,13 +29,16 @@ namespace CLRSharp
         }
         Dictionary<string, ICLRType> mapType = new Dictionary<string, ICLRType>();
         //public Dictionary<string, Mono.Cecil.ModuleDefinition> mapModule = new Dictionary<string, Mono.Cecil.ModuleDefinition>();
-
-        public void LoadModule(System.IO.Stream dllStream, System.IO.Stream pdbStream)
+        public void LoadModule(System.IO.Stream dllStream)
+        {
+            LoadModule(dllStream, null, null);
+        }
+        public void LoadModule(System.IO.Stream dllStream, System.IO.Stream pdbStream, Mono.Cecil.Cil.ISymbolReaderProvider debugInfoLoader)
         {
             var module = Mono.Cecil.ModuleDefinition.ReadModule(dllStream);
-            if (pdbStream != null)
+            if (debugInfoLoader != null && pdbStream != null)
             {
-                module.ReadSymbols(new Mono.Cecil.Pdb.PdbReaderProvider().GetSymbolReader(module, pdbStream));
+                module.ReadSymbols(debugInfoLoader.GetSymbolReader(module, pdbStream));
             }
             //mapModule[module.Name] = module;
             if (module.HasTypes)

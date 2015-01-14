@@ -107,7 +107,7 @@ namespace Mono.Cecil {
 		{
 		}
 
-#if !READ_ONLY
+#if CANWRITE
 		public static AssemblyDefinition CreateAssembly (AssemblyNameDefinition assemblyName, string moduleName, ModuleKind kind)
 		{
 			return CreateAssembly (assemblyName, moduleName, new ModuleParameters { Kind = kind });
@@ -159,7 +159,7 @@ namespace Mono.Cecil {
 			return assembly;
 		}
 
-#if !READ_ONLY
+#if CANWRITE
 		public void Write (string fileName)
 		{
 			Write (fileName, new WriterParameters ());

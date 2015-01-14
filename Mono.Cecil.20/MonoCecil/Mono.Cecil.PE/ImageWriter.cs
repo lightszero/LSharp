@@ -29,7 +29,7 @@
 using System;
 using System.IO;
 
-#if !READ_ONLY
+#if CANWRITE
 
 using Mono.Cecil.Cil;
 using Mono.Cecil.Metadata;

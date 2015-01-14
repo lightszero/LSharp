@@ -178,7 +178,7 @@ namespace Mono.Cecil.PE {
 			return value;
 		}
 
-#if !READ_ONLY
+#if CANWRITE
 
 		public void WriteByte (byte value)
 		{

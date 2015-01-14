@@ -29,7 +29,7 @@
 using System;
 using System.IO;
 
-#if !READ_ONLY
+#if CANWRITE
 
 namespace Mono.Cecil.PE {
 

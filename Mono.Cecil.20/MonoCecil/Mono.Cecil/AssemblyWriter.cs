@@ -44,7 +44,7 @@ using BlobIndex = System.UInt32;
 
 namespace Mono.Cecil {
 
-#if !READ_ONLY
+#if CANWRITE
 
 	using TypeRefRow     = Row<CodedRID, StringIndex, StringIndex>;
 	using TypeDefRow     = Row<TypeAttributes, StringIndex, StringIndex, CodedRID, RID, RID>;
