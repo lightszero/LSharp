@@ -20,6 +20,7 @@ using UnitTest;
                 Logger.Log(value);
             }
         }
+        public bool b;
         public string ttc = "123";
 
         private static TestClass g_this = null;

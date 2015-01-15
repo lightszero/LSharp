@@ -1567,6 +1567,15 @@ namespace CLRSharp
             {
                 value = (value as VBox).BoxDefine();
             }
+            //else
+            {//某些类型需要转换。。。
+                VBox fbox = ValueOnStack.MakeVBox(field.FieldType);
+                if (fbox != null)
+                {
+                    fbox.SetDirect(value);
+                    value = fbox.BoxDefine();
+                }
+            }
             field.Set(obj, value);
             _pos = _pos.Next;
         }

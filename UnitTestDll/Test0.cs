@@ -24,6 +24,7 @@ namespace UnitTestDll
         }
         public static void UnitTest_03()
         {
+            TestClass.instance.b = true;
             bool b = 3==3;
             bool b2 = 4 == 3;
             Logger.Log(TF(b2) + "," + TestClass.TF (b));
