@@ -350,7 +350,7 @@ namespace CLRSharp
                 {
                     if (!method_CLRSharp.HasBody)
                         return null;
-                    _body = new CodeBody(this.DeclaringType.env, method_CLRSharp);
+                    _body =(this.DeclaringType.env as CLRSharp_Environment).CreateCodeBody(this);
                 }
                 return _body;
             }

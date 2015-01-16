@@ -177,9 +177,19 @@ namespace CLRSharp
                 for (int i = 0; i < _pp.Length; i++)
                 {
                     var pp = stackCalc.Pop();
+
                     if (pp is VBox)
                     {
                         pp = (pp as VBox).BoxDefine();
+                    }
+                    if ((pp is int) && (_clrmethod.ParamList[i].TypeForSystem != typeof(int) && _clrmethod.ParamList[i].TypeForSystem != typeof(object)))
+                    {
+                        var _vbox = ValueOnStack.MakeVBox(_clrmethod.ParamList[i]);
+                        if (_vbox != null)
+                        {
+                            _vbox.SetDirect(pp);
+                            pp = _vbox.BoxDefine();
+                        }
                     }
                     _pp[_pp.Length - 1 - i] = pp;
                 }

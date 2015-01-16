@@ -30,7 +30,18 @@ namespace test01
             System.IO.MemoryStream msDll = new System.IO.MemoryStream(dll);
             System.IO.MemoryStream msPdb = new System.IO.MemoryStream(pdb);
             //env.LoadModule (msDll);//不需要pdb的话
-            env.LoadModule(msDll, msPdb, new Mono.Cecil.Pdb.PdbReaderProvider());
+            bool useSystemAssm = false;
+            if (useSystemAssm)
+            {
+                byte[] dllbytes =msDll.ToArray();
+                byte[] pdbbytes =msPdb.ToArray();
+                var assem = System.Reflection.Assembly.Load(dllbytes, pdbbytes);//用系统反射加载
+                env.AddSerachAssembly(assem);//直接搜索系统反射，此时L#不发挥作用，为了调试的功能
+            }
+            else
+            {
+                env.LoadModule(msDll, msPdb, new Mono.Cecil.Pdb.PdbReaderProvider());
+            }
             Log("LoadModule HotFixCode.dll done.");
 
             //step01建立一个线程上下文，用来模拟L#的线程模型，每个线程创建一个即可。
@@ -53,7 +64,9 @@ namespace test01
             //CLRSharp.CLRSharp_Instance typeObj = new CLRSharp.CLRSharp_Instance(wantType as CLRSharp.ICLRType_Sharp);//创建实例
             //上一句写的有问题，执行构造函数返回的才是 new出来的对象
             CLRSharp.IMethod methodctor = wantType.GetMethod(".ctor", CLRSharp.MethodParamList.MakeEmpty());//取得构造函数
-            CLRSharp.CLRSharp_Instance typeObj = methodctor.Invoke(context, null, null) as CLRSharp.CLRSharp_Instance;//执行构造函数
+            //这里用object 就可以脚本和反射通用了
+            object typeObj = methodctor.Invoke(context, null, null);//执行构造函数
+            
             //这几行的作用对应到代码就约等于 HotFixCode.TestClass typeObj =new HotFixCode.TestClass();
             CLRSharp.IMethod method02 = wantType.GetMethod("Test2", CLRSharp.MethodParamList.MakeEmpty());
             for (int i = 0; i < 5; i++)

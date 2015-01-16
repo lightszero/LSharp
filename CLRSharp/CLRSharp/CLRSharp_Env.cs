@@ -4,14 +4,14 @@ using System.Text;
 
 namespace CLRSharp
 {
-
+    
     public class CLRSharp_Environment : ICLRSharp_Environment
     {
         public string version
         {
             get
             {
-                return "0.35.2Alpha";
+                return "0.36Alpha";
             }
         }
         public ICLRSharp_Logger logger
@@ -56,6 +56,31 @@ namespace CLRSharp
                         moduleref.Add(ar.Name);
                 }
             }
+        }
+        public List<System.Reflection.Assembly> assemblylist;
+        public void AddSerachAssembly(System.Reflection.Assembly assembly)
+        {
+            if (assemblylist == null)
+                assemblylist = new List<System.Reflection.Assembly>();
+            assemblylist.Add(assembly);
+        }
+        public void LoadModule_OnlyName(System.IO.Stream dllStream)
+        {
+            var module = Mono.Cecil.ModuleDefinition.ReadModule(dllStream);
+            if (moduleref.Contains(module.Name) == false)
+                moduleref.Add(module.Name);
+            if (module.HasAssemblyReferences)
+            {
+                foreach (var ar in module.AssemblyReferences)
+                {
+                    if (moduleref.Contains(ar.Name) == false)
+                        moduleref.Add(ar.Name);
+                }
+            }
+        }
+        public CodeBody CreateCodeBody(Method_Common_CLRSharp method)
+        {
+            return new CodeBody(this, method.method_CLRSharp);
         }
         List<string> moduleref = new List<string>();
         public string[] GetAllTypes()
@@ -168,17 +193,27 @@ namespace CLRSharp
 
                 if (t == null)
                 {
-
-                    foreach (var rm in moduleref)
+                    if (assemblylist != null)
                     {
-                        t = System.Type.GetType(fullnameT + "," + rm);
-                        if (t != null)
+                        foreach (var i in assemblylist)
                         {
-                            fullnameT = fullnameT + "," + rm;
-                            break;
+                            t = i.GetType(fullnameT);
+                            if (t != null)
+                                break;
                         }
                     }
-
+                    if (t == null)
+                    {
+                        foreach (var rm in moduleref)
+                        {
+                            t = System.Type.GetType(fullnameT + "," + rm);
+                            if (t != null)
+                            {
+                                fullnameT = fullnameT + "," + rm;
+                                break;
+                            }
+                        }
+                    }
                 }
                 if (t != null)
                 {

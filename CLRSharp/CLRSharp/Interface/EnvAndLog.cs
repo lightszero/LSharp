@@ -20,6 +20,10 @@ namespace CLRSharp
 
         void LoadModule(System.IO.Stream dllStream, System.IO.Stream pdbStream, Mono.Cecil.Cil.ISymbolReaderProvider debugInfoLoader);
 
+        ////仅仅加载模块的名字和他引用的模块名字
+        //void LoadModule_OnlyName(System.IO.Stream dllStream);
+
+        void AddSerachAssembly(System.Reflection.Assembly assembly);
         string[] GetAllTypes();
         ICLRType GetType(string name);
 
