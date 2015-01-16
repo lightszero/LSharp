@@ -79,7 +79,7 @@ class IT4_Impl : IT4
     public virtual void Call1()
     {
         Logger.Log("IT4_Impl.Call1");
-        throw new Exception("test error.");
+        //throw new Exception("test error.");
     }
 
     public void Call2(int i, string n)
@@ -106,8 +106,9 @@ class IT4_Impl3:IT4_Impl
     {
         this.name += "abc";
     }
-    public virtual void Call1()
+    public override void Call1()
     {
+        base.Call1();
         Logger.Log("IT4_Impl3.Call1");
     }
 
@@ -121,6 +122,7 @@ class IT4_Impl2 : IT4
 
     public void Call1()
     {
+
         Logger.Log("IT4_Impl2.Call1");
     }
 

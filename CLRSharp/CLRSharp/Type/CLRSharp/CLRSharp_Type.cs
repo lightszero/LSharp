@@ -306,14 +306,13 @@ namespace CLRSharp
             private set;
         }
         public Mono.Cecil.MethodDefinition method_CLRSharp;
-
-        public object Invoke(ThreadContext context, object _this, object[] _params)
+        public object Invoke(ThreadContext context, object _this, object[] _params, bool bVisual)
         {
             if (context == null)
                 context = ThreadContext.activeContext;
             if (context == null)
                 throw new Exception("这个线程上没有CLRSharp:ThreadContext");
-            if (method_CLRSharp.IsVirtual)
+            if (bVisual&&method_CLRSharp.IsVirtual)
             {
                 CLRSharp_Instance inst = _this as CLRSharp_Instance;
                 if (inst.type != this.DeclaringType)
@@ -336,6 +335,10 @@ namespace CLRSharp
                 return inst;
             }
             return context.ExecuteFunc(this, _this, _params);
+        }
+        public object Invoke(ThreadContext context, object _this, object[] _params)
+        {
+            return Invoke(context, _this, _params, true);
         }
 
         CodeBody _body = null;

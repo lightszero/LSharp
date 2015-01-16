@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.35.1Alpha";
+                return "0.35.2Alpha";
             }
         }
         public ICLRSharp_Logger logger

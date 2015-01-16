@@ -206,17 +206,20 @@ namespace CLRSharp
             get;
             private set;
         }
-
+        public object Invoke(ThreadContext context, object _this, object[] _params, bool bVisual)
+        {//对程序类型，其实我们做不到区分虚实调用。。。没办法
+            return Invoke(context, _this, _params);
+        }
         public object Invoke(ThreadContext context, object _this, object[] _params)
         {
             if (_this is CLRSharp_Instance)
             {
                 CLRSharp_Instance inst = _this as CLRSharp_Instance;
-                var btype =inst.type.ContainBase(method_System.DeclaringType);
-                if(btype)
+                var btype = inst.type.ContainBase(method_System.DeclaringType);
+                if (btype)
                 {
-                    var CrossBind =  context.environment.GetCrossBind(method_System.DeclaringType);
-                    if(CrossBind!=null)
+                    var CrossBind = context.environment.GetCrossBind(method_System.DeclaringType);
+                    if (CrossBind != null)
                     {
                         _this = CrossBind.CreateBind(inst);
                     }

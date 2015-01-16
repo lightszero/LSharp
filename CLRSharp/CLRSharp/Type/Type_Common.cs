@@ -82,6 +82,7 @@ namespace CLRSharp
     public interface IMethod
     {
         object Invoke(ThreadContext context, object _this, object[] _params);
+        object Invoke(ThreadContext context, object _this, object[] _params,bool bVisual);
         bool isStatic
         {
             get;

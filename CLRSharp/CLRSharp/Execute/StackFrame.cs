@@ -211,7 +211,7 @@ namespace CLRSharp
             {
                 _this = (_this as VBox).BoxDefine();
             }
-            object returnvar = _clrmethod.Invoke(context, _this, _pp);
+            object returnvar = _clrmethod.Invoke(context, _this, _pp,bVisual);
 
             // bool breturn = false;
             if (_clrmethod.ReturnType != null && _clrmethod.ReturnType.FullName != "System.Void")
