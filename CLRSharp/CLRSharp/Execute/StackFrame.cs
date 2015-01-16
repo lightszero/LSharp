@@ -159,7 +159,7 @@ namespace CLRSharp
             return ret;
         }
         //流程控制
-        public void Call(ThreadContext context, IMethod _clrmethod ,bool bVisual)
+        public void Call(ThreadContext context, IMethod _clrmethod, bool bVisual)
         {
 
             if (_clrmethod == null)//不想被执行的函数
@@ -202,6 +202,11 @@ namespace CLRSharp
                 _pos = _pos.Next;
                 return;
             }
+            if (_clrmethod.DeclaringType.FullName.Contains("System.Object") && _clrmethod.Name.Contains(".ctor"))
+            {//跳过这个没意义的构造
+                _pos = _pos.Next;
+                return;
+            }
             if (_this is RefObj && _clrmethod.Name != ".ctor")
             {
                 _this = (_this as RefObj).Get();
@@ -211,7 +216,23 @@ namespace CLRSharp
             {
                 _this = (_this as VBox).BoxDefine();
             }
-            object returnvar = _clrmethod.Invoke(context, _this, _pp,bVisual);
+            bool bCross = (_this is CLRSharp_Instance && _clrmethod is IMethod_System);
+            object returnvar =  _clrmethod.Invoke(context, _this, _pp, bVisual);
+            if (bCross)
+            {
+                //这里究竟如何处理还需要再考虑
+                //returnvar = _clrmethod.Invoke(context, (_this as CLRSharp_Instance).system_base, _pp, bVisual);
+                if (_clrmethod.Name.Contains(".ctor"))
+                {
+                    (_this as CLRSharp_Instance).system_base = returnvar;
+                    returnvar = (_this);
+                }
+            }
+            else
+            {
+                //returnvar = _clrmethod.Invoke(context, _this, _pp, bVisual);
+            }
+
 
             // bool breturn = false;
             if (_clrmethod.ReturnType != null && _clrmethod.ReturnType.FullName != "System.Void")
@@ -230,6 +251,7 @@ namespace CLRSharp
 
             else if (_this is RefObj && _clrmethod.Name == ".ctor")
             {
+                //如果这里有发生程序类型，脚本类型的cross，就需要特别处理
                 (_this as RefObj).Set(returnvar);
             }
             _pos = _pos.Next;

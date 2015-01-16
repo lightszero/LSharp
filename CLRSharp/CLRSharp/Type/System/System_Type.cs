@@ -223,7 +223,12 @@ namespace CLRSharp
                     {
                         _this = CrossBind.CreateBind(inst);
                     }
-                    context.environment.logger.Log("这里有一个需要映射的类型");
+                    else
+                    {
+                        _this = (_this as CLRSharp_Instance).system_base;
+                        //如果没有绑定器，尝试直接使用System_base;
+                    }
+                    //context.environment.logger.Log("这里有一个需要映射的类型");
                 }
             }
             //委托是很特殊的存在

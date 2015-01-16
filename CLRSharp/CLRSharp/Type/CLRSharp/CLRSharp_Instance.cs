@@ -15,6 +15,7 @@ namespace CLRSharp
         {
             this.type = type;
         }
+        public object system_base;
         public Dictionary<string, object> Fields = new Dictionary<string, object>();
 
         //每个方法都可以产生一个代理
