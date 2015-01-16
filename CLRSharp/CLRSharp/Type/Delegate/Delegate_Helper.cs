@@ -108,7 +108,7 @@ namespace CLRSharp
         {
             Action act = () =>
             {
-                _method.Invoke(context, _this, new object[] { });
+                _method.Invoke(context, _this, new object[] { }, true, true);
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -120,7 +120,7 @@ namespace CLRSharp
         {
             Action act = (p1) =>
             {
-                _method.Invoke(context, _this, new object[] { p1 });
+                _method.Invoke(context, _this, new object[] { p1 }, true, true);
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -132,7 +132,7 @@ namespace CLRSharp
         {
             Action act = (p1, p2) =>
             {
-                _method.Invoke(context, _this, new object[] { p1, p2 });
+                _method.Invoke(context, _this, new object[] { p1, p2 }, true, true);
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -144,7 +144,7 @@ namespace CLRSharp
         {
             Action act = (p1, p2, p3) =>
             {
-                _method.Invoke(context, _this, new object[] { p1, p2, p3 });
+                _method.Invoke(context, _this, new object[] { p1, p2, p3 }, true, true);
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -156,7 +156,7 @@ namespace CLRSharp
         {
             Action act = (p1, p2, p3, p4) =>
             {
-                _method.Invoke(context, _this, new object[] { p1, p2, p3, p4 });
+                _method.Invoke(context, _this, new object[] { p1, p2, p3, p4 }, true, true);
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -168,7 +168,7 @@ namespace CLRSharp
         {
             Action act = () =>
             {
-                return (TRet)_method.Invoke(context, _this, new object[] { });
+                return (TRet)_method.Invoke(context, _this, new object[] { }, true, true);
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -180,7 +180,7 @@ namespace CLRSharp
         {
             Action act = (T1 p1) =>
             {
-                return (TRet)_method.Invoke(context, _this, new object[] { p1 });
+                return (TRet)_method.Invoke(context, _this, new object[] { p1 }, true, true);
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -192,7 +192,7 @@ namespace CLRSharp
         {
             Action act = (T1 p1, T2 p2) =>
             {
-                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2 });
+                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2 }, true, true);
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -204,7 +204,7 @@ namespace CLRSharp
         {
             Action act = (T1 p1, T2 p2, T3 p3) =>
             {
-                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2, p3 });
+                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2, p3 }, true, true);
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -216,7 +216,7 @@ namespace CLRSharp
         {
             Action act = (T1 p1, T2 p2, T3 p3, T4 p4) =>
             {
-                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2, p3, p4 });
+                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2, p3, p4 }, true, true);
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }

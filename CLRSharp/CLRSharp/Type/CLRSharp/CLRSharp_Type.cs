@@ -312,7 +312,7 @@ namespace CLRSharp
                 context = ThreadContext.activeContext;
             if (context == null)
                 throw new Exception("这个线程上没有CLRSharp:ThreadContext");
-            if (bVisual&&method_CLRSharp.IsVirtual)
+            if (bVisual && method_CLRSharp.IsVirtual)
             {
                 CLRSharp_Instance inst = _this as CLRSharp_Instance;
                 if (inst.type != this.DeclaringType)
@@ -340,6 +340,24 @@ namespace CLRSharp
         {
             return Invoke(context, _this, _params, true);
         }
+        public object Invoke(ThreadContext context, object _this, object[] _params, bool bVisual, bool autoLogDump)
+        {
+            try
+            {
+                return Invoke(context, _this, _params, bVisual);
+            }
+            catch (Exception err)
+            {
+                if (context == null) context = ThreadContext.activeContext;
+                if (context == null)
+                    throw new Exception("当前线程没有创建ThreadContext,无法Dump", err);
+                else
+                {
+                    context.environment.logger.Log_Error(context.Dump());
+                    throw err;
+                }
+            }
+        }
 
         CodeBody _body = null;
         public CodeBody body
@@ -350,7 +368,7 @@ namespace CLRSharp
                 {
                     if (!method_CLRSharp.HasBody)
                         return null;
-                    _body =(this.DeclaringType.env as CLRSharp_Environment).CreateCodeBody(this);
+                    _body = (this.DeclaringType.env as CLRSharp_Environment).CreateCodeBody(this);
                 }
                 return _body;
             }

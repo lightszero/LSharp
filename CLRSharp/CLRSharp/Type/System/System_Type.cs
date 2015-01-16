@@ -309,7 +309,24 @@ namespace CLRSharp
 
         }
 
-
+        public object Invoke(ThreadContext context, object _this, object[] _params, bool bVisual, bool autoLogDump)
+        {
+            try
+            {
+                return Invoke(context, _this, _params);
+            }
+            catch(Exception err)
+            {
+                if (context == null) context = ThreadContext.activeContext;
+                if (context == null)
+                    throw new Exception("当前线程没有创建ThreadContext,无法Dump", err);
+                else
+                {
+                    context.environment.logger.Log_Error("Error InSystemCall:" + this.DeclaringType.FullName + "::" + this.Name);
+                    throw err;
+                }
+            }
+        }
 
     }
 

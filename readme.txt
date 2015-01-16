@@ -1,10 +1,14 @@
 ﻿A Pure C# IL Runner,Run DLL as a Script.直接解析执行IL的脚本引擎
-用途，Unity3D热更（包括IOS平台）等
-Alpha阶段，欢迎小白鼠踩坑
-更新日志：
-2015-01-15 V0.36Alpha
+	用途，Unity3D热更（包括IOS平台）等
+	Alpha阶段，欢迎小白鼠踩坑
+	更新日志：
+2015-01-16 V0.36Alpha
     修复了一处直接调用函数bool传参的问题
-	增加了用反射加载执行和用L#CLR 加载执行的快速切换方式，见例子Test01
+	增加了用反射加载执行和用L#CLR加载执行的快速切换方式，见例子Test01
+	增加了一个autoLogDump的参数
+	 object IMethod::Invoke(ThreadContext context, object _this, object[] _params, bool bVisual,bool autoLogDump);
+	脚本委托默认打开此参数
+	打开此参数时，脚本内异常堆栈自动通过ILogger.LogError 输出
 2015-01-16 V0.35.2Alpha
 	脚本继承脚本时，没有区分虚实调用，导致脚本的base.XX()实际上调用的是this.XX()，已修复。
 2015-01-15 V0.35.1Alpha
