@@ -39,6 +39,10 @@ namespace HoxFixCode
             //transform.localPosition = vector3;
         }
 
+        public void Test3(int abc,string def)
+        {
+            Console.WriteLine(def + "=" + abc);
+        }
     }
 }
 

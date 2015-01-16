@@ -33,8 +33,8 @@ namespace test01
             bool useSystemAssm = false;
             if (useSystemAssm)
             {
-                byte[] dllbytes =msDll.ToArray();
-                byte[] pdbbytes =msPdb.ToArray();
+                byte[] dllbytes = msDll.ToArray();
+                byte[] pdbbytes = msPdb.ToArray();
                 var assem = System.Reflection.Assembly.Load(dllbytes, pdbbytes);//用系统反射加载
                 env.AddSerachAssembly(assem);//直接搜索系统反射，此时L#不发挥作用，为了调试的功能
             }
@@ -66,7 +66,7 @@ namespace test01
             CLRSharp.IMethod methodctor = wantType.GetMethod(".ctor", CLRSharp.MethodParamList.MakeEmpty());//取得构造函数
             //这里用object 就可以脚本和反射通用了
             object typeObj = methodctor.Invoke(context, null, null);//执行构造函数
-            
+
             //这几行的作用对应到代码就约等于 HotFixCode.TestClass typeObj =new HotFixCode.TestClass();
             CLRSharp.IMethod method02 = wantType.GetMethod("Test2", CLRSharp.MethodParamList.MakeEmpty());
             for (int i = 0; i < 5; i++)
@@ -75,7 +75,11 @@ namespace test01
             }
             //这两行的作用就相当于 typeOBj.Test2();
 
-
+            CLRSharp.MethodParamList list = CLRSharp.MethodParamList.MakeEmpty();
+            list.Add(env.GetType(typeof(int)));
+            list.Add(env.GetType(typeof(string)));
+            CLRSharp.IMethod method03 = wantType.GetMethod("Test3", list);
+            method03.Invoke(context, typeObj, new object[] { 345, "fffff" });
 
 
         }
