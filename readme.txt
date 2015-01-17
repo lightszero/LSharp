@@ -2,6 +2,9 @@
 	用途，Unity3D热更（包括IOS平台）等
 	Alpha阶段，欢迎小白鼠踩坑
 	更新日志：
+2015-01-17 V0.36.3Alpha
+	修改了一下MethodParamList的接口，防止滥用
+	不允许再修改MethodParamList的内容
 2015-01-17 V0.36.2Alpha
 	Test01增加一个CrossBind的使用例子
 2015-01-17 V0.36.1Alpha
