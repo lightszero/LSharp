@@ -31,9 +31,9 @@ namespace test01
                 foreach (string name in ms)
                 {
                     if (name.Contains("GetName"))
-                        _GetName = this.inst.type.GetMethod(name, MethodParamList.MakeEmpty());
+                        _GetName = this.inst.type.GetMethod(name, MethodParamList.constEmpty());
                     if (name.Contains("GetDesc"))
-                        _GetDesc = this.inst.type.GetMethod(name, MethodParamList.MakeEmpty());
+                        _GetDesc = this.inst.type.GetMethod(name, MethodParamList.constEmpty());
                 }
             }
             IMethod _GetName;

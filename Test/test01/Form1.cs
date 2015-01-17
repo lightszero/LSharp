@@ -57,7 +57,7 @@ namespace test01
 
             //step03 静态调用
             //得到类型上的一个函数，第一个参数是函数名字，第二个参数是函数的参数表，这是一个没有参数的函数
-            CLRSharp.IMethod method01 = wantType.GetMethod("Test1", CLRSharp.MethodParamList.MakeEmpty());
+            CLRSharp.IMethod method01 = wantType.GetMethod("Test1", CLRSharp.MethodParamList.constEmpty());
             method01.Invoke(context, null, null);//第三个参数是object[] 参数表，这个例子不需要参数
             //这是个静态函数调用，对应到代码他就是HotFixCode.TestClass.Test1();
 
@@ -65,21 +65,24 @@ namespace test01
             //第二个测试程序是一个成员变量，所以先要创建实例
             //CLRSharp.CLRSharp_Instance typeObj = new CLRSharp.CLRSharp_Instance(wantType as CLRSharp.ICLRType_Sharp);//创建实例
             //上一句写的有问题，执行构造函数返回的才是 new出来的对象
-            CLRSharp.IMethod methodctor = wantType.GetMethod(".ctor", CLRSharp.MethodParamList.MakeEmpty());//取得构造函数
+            CLRSharp.IMethod methodctor = wantType.GetMethod(".ctor", CLRSharp.MethodParamList.constEmpty());//取得构造函数
             //这里用object 就可以脚本和反射通用了
             object typeObj = methodctor.Invoke(context, null, null);//执行构造函数
 
             //这几行的作用对应到代码就约等于 HotFixCode.TestClass typeObj =new HotFixCode.TestClass();
-            CLRSharp.IMethod method02 = wantType.GetMethod("Test2", CLRSharp.MethodParamList.MakeEmpty());
+            CLRSharp.IMethod method02 = wantType.GetMethod("Test2", CLRSharp.MethodParamList.constEmpty());
             for (int i = 0; i < 5; i++)
             {
                 method02.Invoke(context, typeObj, null);
             }
             //这两行的作用就相当于 typeOBj.Test2();
 
-            CLRSharp.MethodParamList list = CLRSharp.MethodParamList.MakeEmpty();
-            list.Add(env.GetType(typeof(int)));
-            list.Add(env.GetType(typeof(string)));
+            CLRSharp.MethodParamList list = CLRSharp.MethodParamList.Make(new CLRSharp.ICLRType[] 
+                    {
+                        env.GetType(typeof(int)),
+                        env.GetType(typeof(string))
+                    }
+                );
             CLRSharp.IMethod method03 = wantType.GetMethod("Test3", list);
             CallMethod(method03, typeObj, 345, "abbc");
         }

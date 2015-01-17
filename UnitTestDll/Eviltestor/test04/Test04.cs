@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnitTest;
+using UnitTestDll;
 
 class Test04
 {
@@ -80,6 +81,7 @@ class IT4_Impl : IT4
     {
         Logger.Log("IT4_Impl.Call1");
         //throw new Exception("test error.");
+        List<TestList> tlist = new List<TestList>();
     }
 
     public void Call2(int i, string n)

@@ -13,7 +13,7 @@ namespace CSEvilTestor.testfunc
         {
             CLRSharp.ICLRType_Sharp type = ScriptType as CLRSharp.ICLRType_Sharp;
             CLRSharp.CLRSharp_Instance s = new CLRSharp.CLRSharp_Instance(type);
-            type.GetMethod(".ctor", CLRSharp.MethodParamList.MakeEmpty()).Invoke(null, s, new object[] { });
+            type.GetMethod(".ctor", CLRSharp.MethodParamList.constEmpty()).Invoke(null, s, new object[] { });
 
 
             foreach (var m in type.GetFieldNames())

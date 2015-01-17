@@ -30,7 +30,7 @@ namespace CLRSharp
             {
                 var context = ThreadContext.activeContext;
                 var _type = context.environment.GetType(typeof(IEnumerable));
-                var _method = this.inst.type.GetMethod(_type.FullName+"."+"GetEnumerator", MethodParamList.MakeEmpty());
+                var _method = this.inst.type.GetMethod(_type.FullName+"."+"GetEnumerator", MethodParamList.constEmpty());
                 var obj = _method.Invoke(context, inst, null) as CLRSharp_Instance;
 
                 return context.environment.GetCrossBind(typeof(IEnumerator)).CreateBind(obj) as IEnumerator;
@@ -60,11 +60,11 @@ namespace CLRSharp
                 foreach(string name in ms)
                 {
                     if(name.Contains("MoveNext"))
-                        _MoveNext = this.inst.type.GetMethod(name, MethodParamList.MakeEmpty());
+                        _MoveNext = this.inst.type.GetMethod(name, MethodParamList.constEmpty());
                     if (name.Contains(".get_Current"))
-                        _get_Current = this.inst.type.GetMethod(name, MethodParamList.MakeEmpty());
+                        _get_Current = this.inst.type.GetMethod(name, MethodParamList.constEmpty());
                     if (name.Contains(".Reset"))
-                        _Reset = this.inst.type.GetMethod(name, MethodParamList.MakeEmpty());
+                        _Reset = this.inst.type.GetMethod(name, MethodParamList.constEmpty());
                 }
             }
             IMethod _MoveNext;
