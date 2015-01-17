@@ -45,7 +45,7 @@ namespace CLRSharp
             return stacks;
         }
         Stack<StackFrame> stacks = new Stack<StackFrame>();
-
+        public bool SetNoTry = false;
         public string Dump()
         {
             string str = "";
@@ -125,7 +125,7 @@ namespace CLRSharp
                 stack.Init(method.body);
                 stack._pos = method.body.bodyNative.Instructions[0];
 
-                if (method.body.bodyNative.HasExceptionHandlers)
+                if (method.body.bodyNative.HasExceptionHandlers && !SetNoTry)
                 {
                     RunCodeWithTry(method.body, stack);
                 }

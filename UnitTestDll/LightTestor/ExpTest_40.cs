@@ -54,16 +54,20 @@ namespace UnitTestDll
             int[] abc = new int[10];
             abc[0] = 1;
             abc[1] = 2;
-            Logger.Log("abc.len=" + abc.Length+","+abc[1]);
+            Logger.Log("abc.len=" + abc.Length + "," + abc[1]);
             Student[] st = new Student[10];
             st[1] = new Student();
-            
-            Logger.Log("st.len=" + st.Length+","+st[1]);
+
+            Logger.Log("st.len=" + st.Length + "," + st[1]);
             List<int> ints = new List<int>();
             for (int i = 0; i < 100; i++)
             {
                 ints.Add(i);
             }
+            List<Student> st2 = new List<Student>();
+            st2.Add(new Student());
+            Logger.Log("ints.len=" + ints.Count + "," + ints[2]);
+            Logger.Log("ints.len=" + st2.Count + "," + st2[0]);
             foreach (int k in ints)
             {
                 if (k % 3 == 0)

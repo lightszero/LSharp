@@ -260,6 +260,7 @@ namespace UnitTest
             var method = type.GetMethod(d.Name, null);
             int debug = LogStep ? 9 : 0;
             CLRSharp.ThreadContext context = new CLRSharp.ThreadContext(env, debug);
+            context.SetNoTry = true;
             return method.Invoke(context, null, null);
         }
         private void button4_Click(object sender, EventArgs e)
