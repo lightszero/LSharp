@@ -60,7 +60,7 @@ class Test02
         TestDele.instance.onUpdate2 += (b) =>
         {
             Logger.Log("b=" + b);
-            throw new Exception("ff");
+            //throw new Exception("ff");
         };
 
 

@@ -116,7 +116,7 @@ namespace CLRSharp
                         return ft;
                     }
                 }
-                string fullnameT = fullname.Replace('/', '+');
+                string fullnameT = fullname;//.Replace('/', '+');
 
                 if (fullnameT.Contains("<"))
                 {
@@ -188,7 +188,7 @@ namespace CLRSharp
 
 
                 }
-
+                fullnameT = fullnameT.Replace('/', '+');
                 System.Type t = System.Type.GetType(fullnameT);
 
                 if (t == null)

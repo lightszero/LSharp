@@ -48,8 +48,17 @@ namespace UnitTestDll
             }
             return b;
         }
+        public class TestList
+        {
+            public TestList()
+            {
+
+            }
+        }
         public static object UnitTest_4002()
         {
+            List<TestList> tlist = new List<TestList>();
+
             List<IT4_Impl> it4p = new List<IT4_Impl>();
             it4p.Add(new IT4_Impl());
             //4002 loops
