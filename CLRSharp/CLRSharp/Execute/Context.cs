@@ -52,6 +52,7 @@ namespace CLRSharp
             foreach (StackFrame s in GetStackFrames())
             {
                 var pos = s._pos;
+
                 Instruction sqIns = pos;
                 while (sqIns != null && sqIns.SequencePoint == null)
                 {
@@ -64,6 +65,10 @@ namespace CLRSharp
                 else
                 {
                     str +="!no pdb info,no code filename(no line)!\n";
+                }
+                if (pos == null)
+                {
+                    continue;
                 }
                 str += "    IL " + pos.ToString() + "\n";
                 if (s._params != null)
