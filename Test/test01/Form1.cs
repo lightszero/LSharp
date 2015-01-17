@@ -77,11 +77,12 @@ namespace test01
             }
             //这两行的作用就相当于 typeOBj.Test2();
 
-            CLRSharp.MethodParamList list = CLRSharp.MethodParamList.Make(new CLRSharp.ICLRType[] 
-                    {
+            //请注意，不要在初始化之后，再修改ParamList的内容
+            CLRSharp.MethodParamList list = CLRSharp.MethodParamList.Make(
+         
                         env.GetType(typeof(int)),
                         env.GetType(typeof(string))
-                    }
+                   
                 );
             CLRSharp.IMethod method03 = wantType.GetMethod("Test3", list);
             CallMethod(method03, typeObj, 345, "abbc");

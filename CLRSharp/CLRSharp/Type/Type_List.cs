@@ -46,7 +46,7 @@ namespace CLRSharp
             return _ZeroParam;
         }
 
-        public static MethodParamList Make(IList<ICLRType> types)
+        public static MethodParamList Make(params ICLRType[] types)
         {
             return new MethodParamList(types);
         }
