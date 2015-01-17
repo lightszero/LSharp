@@ -50,6 +50,7 @@ namespace UnitTestDll
         }
         public static object UnitTest_4002()
         {
+            List<IT4_Impl> it4p = new List<IT4_Impl>();
             //4002 loops
             int[] abc = new int[10];
             abc[0] = 1;

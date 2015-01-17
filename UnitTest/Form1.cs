@@ -249,18 +249,18 @@ namespace UnitTest
         private void button3_Click(object sender, EventArgs e)
         {
             Mono.Cecil.MethodDefinition d = this.treeView2.Tag as Mono.Cecil.MethodDefinition;
-            object obj = RunTest(d);
+            object obj = RunTest(d,false,true);
             Log("----RunOK----" + obj);
 
         }
-        object RunTest(Mono.Cecil.MethodDefinition d, bool LogStep = false)
+        object RunTest(Mono.Cecil.MethodDefinition d, bool LogStep = false,bool notry=false)
         {
             if (d == null) throw new Exception("null method call");
             var type = env.GetType(d.DeclaringType.FullName);
             var method = type.GetMethod(d.Name, null);
             int debug = LogStep ? 9 : 0;
             CLRSharp.ThreadContext context = new CLRSharp.ThreadContext(env, debug);
-            context.SetNoTry = true;
+            context.SetNoTry = notry;
             return method.Invoke(context, null, null);
         }
         private void button4_Click(object sender, EventArgs e)
