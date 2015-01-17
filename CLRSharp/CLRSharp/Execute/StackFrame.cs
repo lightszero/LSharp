@@ -1062,8 +1062,12 @@ namespace CLRSharp
         }
         public void LdLen()
         {
-            throw new NotImplementedException();
-            //_pos = _pos.Next;
+            var obj = stackCalc.Pop();
+            Array a = obj as Array;
+            var vbox = ValueOnStack.MakeVBox(NumberType.INT32);
+            vbox.v32 = a.Length;
+            stackCalc.Push(vbox);
+            _pos = _pos.Next;
         }
         public void Ldelema(object obj)
         {

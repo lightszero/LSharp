@@ -79,9 +79,12 @@ namespace test01
             list.Add(env.GetType(typeof(int)));
             list.Add(env.GetType(typeof(string)));
             CLRSharp.IMethod method03 = wantType.GetMethod("Test3", list);
-            method03.Invoke(context, typeObj, new object[] { 345, "fffff" });
-
-
+            CallMethod(method03, typeObj, 345, "abbc");
+        }
+        void CallMethod(CLRSharp.IMethod method,object _this,params object[] _params)
+        {
+            CLRSharp.ThreadContext context=CLRSharp.ThreadContext.activeContext;
+            method.Invoke(context, _this, _params);
         }
 
         public void Log(string str)
