@@ -43,9 +43,11 @@ namespace test01
                 env.LoadModule(msDll, msPdb, new Mono.Cecil.Pdb.PdbReaderProvider());
             }
             Log("LoadModule HotFixCode.dll done.");
+            env.RegCrossBind(new MyCrossBind());
 
             //step01建立一个线程上下文，用来模拟L#的线程模型，每个线程创建一个即可。
             CLRSharp.ThreadContext context = new CLRSharp.ThreadContext(env);
+            context.SetNoTry = true;
             Log("Create ThreadContext for L#.");
 
             //step02取得想要调用的L#类型
@@ -81,6 +83,7 @@ namespace test01
             CLRSharp.IMethod method03 = wantType.GetMethod("Test3", list);
             CallMethod(method03, typeObj, 345, "abbc");
         }
+
         void CallMethod(CLRSharp.IMethod method,object _this,params object[] _params)
         {
             CLRSharp.ThreadContext context=CLRSharp.ThreadContext.activeContext;
@@ -114,6 +117,27 @@ namespace test01
         public static void Test2()
         {
             Form1.gthis.Log("这不是梦");
+        }
+
+
+        //接口也是一种常用形态，但是基于脚本不能动态产生类型的绝对前提
+        //脚本产生程序可用的接口似乎是不可能的任务，但是，在我们这里，并非不可能
+        public interface IMyType
+        {
+            string GetName();
+            string GetDesc();
+        }
+        static IMyType __type = null;
+        public static void SetMyType(IMyType _type)
+        {
+            __type = _type;
+        }
+        public static void UseType()
+        {
+            if(__type!=null)
+            {
+                Form1.gthis.Log(__type.GetName() + ":" + __type.GetDesc());
+            }
         }
     }
 }

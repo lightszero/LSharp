@@ -315,7 +315,7 @@ namespace CLRSharp
             //var _type = context.environment.GetType(typename, type.Module);
             var _type = GetType(typename);
 
-            MethodParamList tlist = MethodParamList.MakeList_OneParam_Int(environment);
+            MethodParamList tlist = MethodParamList.const_OneParam_Int(environment);
             var m = _type.GetMethod(".ctor", tlist);
             methodCache[token.GetHashCode()] = m;
             return m;

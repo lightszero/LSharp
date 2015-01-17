@@ -177,7 +177,27 @@ namespace CLRSharp
                 for (int i = 0; i < _pp.Length; i++)
                 {
                     var pp = stackCalc.Pop();
+                    if (pp is CLRSharp_Instance&&_clrmethod.ParamList[i].TypeForSystem!=typeof(CLRSharp_Instance))
+                    {
+                        var inst =pp as CLRSharp_Instance;
 
+                        var btype = inst.type.ContainBase(_clrmethod.ParamList[i].TypeForSystem);
+                        if (btype)
+                        {
+                            var CrossBind = context.environment.GetCrossBind(_clrmethod.ParamList[i].TypeForSystem);
+                            if (CrossBind != null)
+                            {
+                                pp = CrossBind.CreateBind(inst);
+                            }
+                            else
+                            {
+                                pp = (_this as CLRSharp_Instance).system_base;
+                                //如果没有绑定器，尝试直接使用System_base;
+                            }
+                            //context.environment.logger.Log("这里有一个需要映射的类型");
+                        }
+
+                    }
                     if (pp is VBox)
                     {
                         pp = (pp as VBox).BoxDefine();

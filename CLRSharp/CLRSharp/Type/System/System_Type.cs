@@ -215,20 +215,23 @@ namespace CLRSharp
             if (_this is CLRSharp_Instance)
             {
                 CLRSharp_Instance inst = _this as CLRSharp_Instance;
-                var btype = inst.type.ContainBase(method_System.DeclaringType);
-                if (btype)
+                if (inst.type.HasSysBase)
                 {
-                    var CrossBind = context.environment.GetCrossBind(method_System.DeclaringType);
-                    if (CrossBind != null)
+                    var btype = inst.type.ContainBase(method_System.DeclaringType);
+                    if (btype)
                     {
-                        _this = CrossBind.CreateBind(inst);
+                        var CrossBind = context.environment.GetCrossBind(method_System.DeclaringType);
+                        if (CrossBind != null)
+                        {
+                            _this = CrossBind.CreateBind(inst);
+                        }
+                        else
+                        {
+                            _this = (_this as CLRSharp_Instance).system_base;
+                            //如果没有绑定器，尝试直接使用System_base;
+                        }
+                        //context.environment.logger.Log("这里有一个需要映射的类型");
                     }
-                    else
-                    {
-                        _this = (_this as CLRSharp_Instance).system_base;
-                        //如果没有绑定器，尝试直接使用System_base;
-                    }
-                    //context.environment.logger.Log("这里有一个需要映射的类型");
                 }
             }
             //委托是很特殊的存在

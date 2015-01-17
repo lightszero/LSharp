@@ -4,36 +4,61 @@ using System.Text;
 
 namespace CLRSharp
 {
+    public class MethodParamListReadonly : MethodParamList
+    {
+        public MethodParamListReadonly(ICLRType[] types)
+        {
+            foreach(var b in types)
+            {
+                base.Add(b);
+            }
+        }
+        public new void Add(ICLRType _type)
+        {
+            throw new NotSupportedException();
+        }
+        public new void Clear()
+        {
+            throw new NotSupportedException();
+        }
+        public new void Remove(ICLRType _type)
+        {
+             throw new NotSupportedException();
+        }
+    }
     /// <summary>
     /// 方法参数表
     /// </summary>
     public class MethodParamList : List<ICLRType>
     {
-        private MethodParamList()
+        protected MethodParamList()
         {
 
         }
         static MethodParamList _OneParam_Int = null;
-        public static MethodParamList MakeList_OneParam_Int(ICLRSharp_Environment env)
+        public static MethodParamList const_OneParam_Int(ICLRSharp_Environment env)
         {
             if (_OneParam_Int == null)
             {
-                _OneParam_Int = new MethodParamList();
-                _OneParam_Int.Add(env.GetType(typeof(int).FullName));
+                _OneParam_Int = new MethodParamListReadonly(new ICLRType[]{env.GetType(typeof(int))});
             }
 
             return _OneParam_Int;
 
 
         }
-        static MethodParamList _ZeroParam = null;
-        public static MethodParamList MakeEmpty()
+        static MethodParamListReadonly _ZeroParam = null;
+        public static MethodParamList constEmpty()
         {
             if (_ZeroParam == null)
             {
-                _ZeroParam = new MethodParamList();
+                _ZeroParam = new MethodParamListReadonly(new ICLRType[]{});
             }
             return _ZeroParam;
+        }
+        public static MethodParamList MakeEmpty()
+        {
+            return new MethodParamList();
         }
         public MethodParamList(ICLRSharp_Environment env, Mono.Cecil.MethodReference method)
         {
@@ -68,7 +93,7 @@ namespace CLRSharp
 
                     if (paramname.Contains("!!"))
                     {
-                        this.Add(GetTType(env, p,  _methodgen));
+                        this.Add(GetTType(env, p, _methodgen));
                     }
                     else
                     {
@@ -87,7 +112,7 @@ namespace CLRSharp
 
             }
         }
-        ICLRType GetTType(ICLRSharp_Environment env, Mono.Cecil.ParameterDefinition param,  MethodParamList _methodgen)
+        ICLRType GetTType(ICLRSharp_Environment env, Mono.Cecil.ParameterDefinition param, MethodParamList _methodgen)
         {
             string typename = param.ParameterType.FullName;
             for (int i = 0; i < _methodgen.Count; i++)

@@ -39,9 +39,28 @@ namespace HoxFixCode
             //transform.localPosition = vector3;
         }
 
-        public void Test3(int abc,string def)
+        public void Test3(int abc, string def)
         {
             Console.WriteLine(def + "=" + abc);
+            Interface.SetMyType(CreateCrossBind());
+            Interface.UseType();
+        }
+        public Interface.IMyType CreateCrossBind()
+        {
+            return new myi();
+        }
+        public class myi : Interface.IMyType
+        {
+
+            public string GetName()
+            {
+                return "crossbind";
+            }
+
+            public string GetDesc()
+            {
+                return "crossbind very cool.";
+            }
         }
     }
 }
