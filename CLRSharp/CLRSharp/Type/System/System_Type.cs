@@ -21,11 +21,11 @@ namespace CLRSharp
             get;
             private set;
         }
-        public Type_Common_System(ICLRSharp_Environment env, System.Type type, string aname, ICLRType[] subtype)
+        public Type_Common_System(ICLRSharp_Environment env, System.Type type, ICLRType[] subtype)
         {
             this.env = env;
             this.TypeForSystem = type;
-            FullNameWithAssembly = aname;
+            FullNameWithAssembly = type.AssemblyQualifiedName;
             this.SubTypes = subtype;
         }
         public string Name

@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.36.3Alpha";
+                return "0.36.4Alpha";
             }
         }
         public ICLRSharp_Logger logger
@@ -217,7 +217,7 @@ namespace CLRSharp
                 }
                 if (t != null)
                 {
-                    type = new Type_Common_System(this, t, fullnameT, subTypes.ToArray());
+                    type = new Type_Common_System(this, t, subTypes.ToArray());
                 }
                 mapType[fullname] = type;
             }
@@ -231,7 +231,7 @@ namespace CLRSharp
             bool b = mapType.TryGetValue(systemType.FullName, out type);
             if (!b)
             {
-                type = new Type_Common_System(this, systemType, systemType.FullName, null);
+                type = new Type_Common_System(this, systemType,  null);
             }
             return type;
         }

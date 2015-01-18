@@ -68,14 +68,11 @@ namespace CLRSharp
                     {
                         if (p.ParameterType.Name.Contains("!!"))
                         {
-
                             int index = int.Parse(p.ParameterType.Name.Substring(2));
                             paramname = _methodgen[index].FullName;
                         }
                         else if (p.ParameterType.Name.Contains("!"))
                         {
-
-
                             int index = int.Parse(p.ParameterType.Name.Substring(1));
                             paramname = _typegen.GenericArguments[index].FullName;
                         }
