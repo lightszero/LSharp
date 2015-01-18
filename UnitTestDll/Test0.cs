@@ -38,6 +38,20 @@ namespace UnitTestDll
         {
             return v;
         }
-  
+        public static void UnitTest_NoName()
+        {
+            Test02 ttt = new Test02();
+            ttt.testdele = (abc) =>
+            {
+                Logger.Log("callv=" + abc);
+
+            };
+            ttt.testdele(4567);
+            ttt.TestCall((abc) =>
+            {
+                Logger.Log("callv=" + abc);
+            
+            });
+        }
     }
 }

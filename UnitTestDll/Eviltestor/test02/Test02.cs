@@ -7,6 +7,7 @@ using UnitTest;
 
 class Test02
 {
+    public Action<int> testdele;
     public static void Run()
     
     {
@@ -69,6 +70,10 @@ class Test02
     static int i = 0;
     static Action<int> deleTest2 = null;
 
+    public void TestCall(Action<int> v)
+    {
+        v(1234);
+    }
     Action<int> deleTest3; 
     static void Test()
     {

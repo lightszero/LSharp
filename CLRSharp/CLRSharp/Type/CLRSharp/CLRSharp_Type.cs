@@ -159,7 +159,7 @@ namespace CLRSharp
                         bool match = true;
                         for (int i = 0; i < ((types == null) ? 0 : types.Count); i++)
                         {
-                            if (m.Parameters[i].ParameterType.FullName != types[i].FullName)
+                            if (env.GetType(m.Parameters[i].ParameterType.FullName) != types[i])
                             {
                                 match = false;
                                 break;
