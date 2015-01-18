@@ -38,9 +38,15 @@ namespace UnitTestDll
         {
             return v;
         }
+
+        public static void tttt(int abc)
+        {
+            Logger.Log("tttt."+abc.ToString());
+        }
         public static void UnitTest_NoName()
         {
             Test02 ttt = new Test02();
+            ttt.testdele = tttt;
             ttt.testdele = (abc) =>
             {
                 Logger.Log("callv=" + abc);
