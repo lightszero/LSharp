@@ -14,17 +14,17 @@ namespace CLRSharp
         {
             mapBind[deletype] = bindtool;
         }
-        public static Delegate MakeDelegate(Type deletype, CLRSharp_Instance __this, IMethod __method)
+        public static Delegate MakeDelegate(Type deletype, CLRSharp_Instance _this_inst, IMethod __method)
         {
             IDelegate_BindTool btool = null;
             if (mapBind.TryGetValue(deletype, out btool))
             {
-                return btool.CreateDele(deletype, null, __this, __method);
+                return btool.CreateDele(deletype, null, _this_inst, __method);
             }
             var method = deletype.GetMethod("Invoke");
             if (__method.isStatic)
             {
-                __this = null;
+                _this_inst = null;
             }
             var pp = method.GetParameters();
 
@@ -94,7 +94,7 @@ namespace CLRSharp
                 }
             }
             mapBind[deletype] = btool;
-            return btool.CreateDele(deletype, null, __this, __method);
+            return btool.CreateDele(deletype, null, _this_inst, __method);
         }
     }
     public interface IDelegate_BindTool
