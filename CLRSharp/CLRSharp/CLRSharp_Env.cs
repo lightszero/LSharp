@@ -232,6 +232,7 @@ namespace CLRSharp
             if (!b)
             {
                 type = new Type_Common_System(this, systemType,  null);
+                mapType[systemType.FullName] = type;
             }
             return type;
         }
