@@ -125,7 +125,26 @@ namespace CLRSharp
         public object[] _params = null;
         public void SetParams(object[] _p)
         {
-            _params = _p;
+            if (_p == null)
+            {
+                _params = null;
+                return;
+            }
+            _params = new object[_p.Length];
+            for (int i = 0; i < _p.Length; i++)
+            {
+                if (_p[i] != null)
+                {
+                    var vbox = ValueOnStack.MakeVBox(_p[i].GetType());
+                    if (vbox != null)
+                    {
+                        _params[i] = vbox;
+                        continue;
+                    }
+                }
+
+                _params[i] = _p[i];
+            }
         }
         CodeBody _body = null;
         public CodeBody codebody
@@ -170,16 +189,16 @@ namespace CLRSharp
 
             object[] _pp = null;
             object _this = null;
-
+            bool bCLR = _clrmethod is IMethod_Sharp;
             if (_clrmethod.ParamList != null)
             {
                 _pp = new object[_clrmethod.ParamList.Count];
                 for (int i = 0; i < _pp.Length; i++)
                 {
                     var pp = stackCalc.Pop();
-                    if (pp is CLRSharp_Instance&&_clrmethod.ParamList[i].TypeForSystem!=typeof(CLRSharp_Instance))
+                    if (pp is CLRSharp_Instance && _clrmethod.ParamList[i].TypeForSystem != typeof(CLRSharp_Instance))
                     {
-                        var inst =pp as CLRSharp_Instance;
+                        var inst = pp as CLRSharp_Instance;
 
                         var btype = inst.type.ContainBase(_clrmethod.ParamList[i].TypeForSystem);
                         if (btype)
@@ -198,7 +217,7 @@ namespace CLRSharp
                         }
 
                     }
-                    if (pp is VBox)
+                    if (pp is VBox&&!bCLR)
                     {
                         pp = (pp as VBox).BoxDefine();
                     }
@@ -208,7 +227,10 @@ namespace CLRSharp
                         if (_vbox != null)
                         {
                             _vbox.SetDirect(pp);
-                            pp = _vbox.BoxDefine();
+                            if (bCLR)
+                                pp = _vbox;
+                            else
+                                pp = _vbox.BoxDefine();
                         }
                     }
                     _pp[_pp.Length - 1 - i] = pp;
@@ -247,7 +269,7 @@ namespace CLRSharp
                 _this = (_this as VBox).BoxDefine();
             }
             bool bCross = (_this is CLRSharp_Instance && _clrmethod is IMethod_System);
-            object returnvar =  _clrmethod.Invoke(context, _this, _pp, bVisual);
+            object returnvar = _clrmethod.Invoke(context, _this, _pp, bVisual);
             if (bCross)
             {
                 //这里究竟如何处理还需要再考虑
