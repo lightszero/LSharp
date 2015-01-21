@@ -73,5 +73,13 @@ namespace UnitTestDll
                 Logger.Log(s);
             }
         }
+        public static void UnitTest_Action()
+        {
+            Dictionary<short, Action> dic = new Dictionary<short, Action>();
+            //short k = 0;
+            //dic[k] = () => { Logger.Log("0"); };
+            dic[(short)0] = () => { Logger.Log("0"); };
+            dic[(short)0]();
+        }
     }
 }

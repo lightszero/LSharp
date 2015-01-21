@@ -195,15 +195,17 @@ namespace CLRSharp
                 _pp = new object[_clrmethod.ParamList.Count];
                 for (int i = 0; i < _pp.Length; i++)
                 {
+                    int iCallPPos = _pp.Length - 1 - i;
+                    ICLRType pType = _clrmethod.ParamList[iCallPPos];
                     var pp = stackCalc.Pop();
-                    if (pp is CLRSharp_Instance && _clrmethod.ParamList[i].TypeForSystem != typeof(CLRSharp_Instance))
+                    if (pp is CLRSharp_Instance && pType.TypeForSystem != typeof(CLRSharp_Instance))
                     {
                         var inst = pp as CLRSharp_Instance;
 
-                        var btype = inst.type.ContainBase(_clrmethod.ParamList[i].TypeForSystem);
+                        var btype = inst.type.ContainBase(pType.TypeForSystem);
                         if (btype)
                         {
-                            var CrossBind = context.environment.GetCrossBind(_clrmethod.ParamList[i].TypeForSystem);
+                            var CrossBind = context.environment.GetCrossBind(pType.TypeForSystem);
                             if (CrossBind != null)
                             {
                                 pp = CrossBind.CreateBind(inst);
@@ -221,9 +223,9 @@ namespace CLRSharp
                     {
                         pp = (pp as VBox).BoxDefine();
                     }
-                    if ((pp is int) && (_clrmethod.ParamList[i].TypeForSystem != typeof(int) && _clrmethod.ParamList[i].TypeForSystem != typeof(object)))
+                    if ((pp is int) && (pType.TypeForSystem != typeof(int) && pType.TypeForSystem != typeof(object)))
                     {
-                        var _vbox = ValueOnStack.MakeVBox(_clrmethod.ParamList[i]);
+                        var _vbox = ValueOnStack.MakeVBox(pType);
                         if (_vbox != null)
                         {
                             _vbox.SetDirect(pp);
@@ -233,7 +235,7 @@ namespace CLRSharp
                                 pp = _vbox.BoxDefine();
                         }
                     }
-                    _pp[_pp.Length - 1 - i] = pp;
+                    _pp[iCallPPos] = pp;
                 }
             }
 
