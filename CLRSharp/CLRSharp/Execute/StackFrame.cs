@@ -414,8 +414,29 @@ namespace CLRSharp
         }
         public void Brfalse(Mono.Cecil.Cil.Instruction pos)
         {
-            decimal b = Convert.ToDecimal(stackCalc.Pop());
-            if (b <= 0)
+            object obj = stackCalc.Pop();
+            bool b = false;
+            if (obj != null)
+            {
+                if (obj is VBox)
+                {
+                    VBox box = obj as VBox;
+                    b = box.ToBool();
+                }
+                else if (obj.GetType().IsClass)
+                {
+                    b = true;
+                }
+                else if (obj is bool)
+                {
+                    b = (bool)obj;
+                }
+                else
+                {
+                    b = Convert.ToDecimal(obj) > 0;
+                }
+            }
+            if (!b)
             {
                 _pos = pos;
             }

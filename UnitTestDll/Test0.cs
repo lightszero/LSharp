@@ -59,5 +59,19 @@ namespace UnitTestDll
             
             });
         }
+        public static void UnitTest_if()
+        {
+            string s = "123";
+
+            if (s != null && s != "")
+            {
+                Logger.Log(s);
+            }
+
+            if (s != "" && s != null) // 对调一下不行
+            {
+                Logger.Log(s);
+            }
+        }
     }
 }
