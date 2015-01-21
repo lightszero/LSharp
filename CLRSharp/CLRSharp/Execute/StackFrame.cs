@@ -172,6 +172,7 @@ namespace CLRSharp
                     var vbox = ValueOnStack.MakeVBox(_p[i].GetType());
                     if (vbox != null)
                     {
+                        vbox.SetDirect(_p[i]);
                         _params[i] = vbox;
                         continue;
                     }

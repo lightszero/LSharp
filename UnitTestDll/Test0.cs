@@ -132,17 +132,24 @@ namespace UnitTestDll
         }
         public static void UnitTest_NoName()
         {
+            Action<int> _abc = (abc) =>
+            {
+                Logger.Log("callv3=" + abc);
+
+            };
+            _abc(234);
             Test02 ttt = new Test02();
             ttt.testdele = tttt;
             ttt.testdele = (abc) =>
             {
-                Logger.Log("callv=" + abc);
+                Logger.Log("callv1=" + abc);
 
             };
+
             ttt.testdele(4567);
             ttt.TestCall((abc) =>
             {
-                Logger.Log("callv=" + abc);
+                Logger.Log("callv2=" + abc);
 
             });
         }

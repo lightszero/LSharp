@@ -68,11 +68,7 @@ namespace CLRSharp
         //    NumberType code = GetTypeCode(type);
         //    return Make(code);
         //}
-        public static VBox MakeVBoxByObject(object obj)
-        {
-            if (obj == null) return null;
-            return MakeVBox(obj.GetType());
-        }
+
         public static VBox MakeVBox(System.Type type)
         {
             NumberType code = GetTypeCode(type);
