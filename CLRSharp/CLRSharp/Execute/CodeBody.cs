@@ -296,7 +296,8 @@ namespace CLRSharp
 
             public object tokenUnknown;
             public int tokenAddr_Index;
-            public int tokenAddr;
+            //public int tokenAddr;
+            public int[] tokenAddr_Switch;
             public ICLRType tokenType;
             public IField tokenField;
             public IMethod tokenMethod;
@@ -338,8 +339,8 @@ namespace CLRSharp
                     case CodeEx.Blt_S:
                     case CodeEx.Blt_Un:
                     case CodeEx.Blt_Un_S:
-                        this.tokenAddr = ((Mono.Cecil.Cil.Instruction)_p).Offset;
-                        this.tokenAddr_Index = body.addr[this.tokenAddr];
+                        //this.tokenAddr = ((Mono.Cecil.Cil.Instruction)_p).Offset;
+                        this.tokenAddr_Index = body.addr[((Mono.Cecil.Cil.Instruction)_p).Offset];
                         break;
                     case CodeEx.Isinst:
                     case CodeEx.Constrained:
@@ -401,7 +402,7 @@ namespace CLRSharp
                         this.tokenI32 = 8;
                         break;
                     case CodeEx.Ldc_I8:
-                        this.tokenI64 =(Int64)_p;
+                        this.tokenI64 = (Int64)_p;
                         break;
                     case CodeEx.Ldc_R4:
                         this.tokenR32 = (float)_p;
@@ -412,6 +413,30 @@ namespace CLRSharp
 
                     case CodeEx.Ldstr:
                         this.tokenStr = _p as string;
+                        break;
+
+                    case CodeEx.Ldloca:
+                    case CodeEx.Ldloca_S:
+                    case CodeEx.Ldloc_S:
+                    case CodeEx.Stloc_S:
+                        this.tokenI32 = ((VariableDefinition)_p).Index;
+                        //this.tokenUnknown = _p;
+                        break;
+                    case CodeEx.Ldloc:
+                    case CodeEx.Stloc:
+                        this.tokenI32 = (int)_p;
+                        break;
+                    case CodeEx.Ldloc_0:
+                        this.tokenI32 = 0;
+                        break;
+                    case CodeEx.Ldloc_1:
+                        this.tokenI32 = 1;
+                        break;
+                    case CodeEx.Ldloc_2:
+                        this.tokenI32 = 2;
+                        break;
+                    case CodeEx.Ldloc_3:
+                        this.tokenI32 = 3;
                         break;
                     default:
                         this.tokenUnknown = _p;

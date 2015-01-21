@@ -623,18 +623,34 @@ namespace CLRSharp
                         stack.Ldc_I4(_code.tokenI32);
                         break;
                     case CodeEx.Ldc_I4_M1:
-                        stack.Ldc_I4(_code.tokenI32);
+                        stack.Ldc_I4(-1);
                         break;
                     case CodeEx.Ldc_I4_0:
+                        stack.Ldc_I4(0);
+                        break;
                     case CodeEx.Ldc_I4_1:
+                        stack.Ldc_I4(1);
+                        break;
                     case CodeEx.Ldc_I4_2:
+                        stack.Ldc_I4(2);
+                        break;
                     case CodeEx.Ldc_I4_3:
+                        stack.Ldc_I4(3);
+                        break;
                     case CodeEx.Ldc_I4_4:
+                        stack.Ldc_I4(4);
+                        break;
                     case CodeEx.Ldc_I4_5:
+                        stack.Ldc_I4(5);
+                        break;
                     case CodeEx.Ldc_I4_6:
+                        stack.Ldc_I4(6); 
+                        break;
                     case CodeEx.Ldc_I4_7:
+                        stack.Ldc_I4(7);
+                        break;
                     case CodeEx.Ldc_I4_8:
-                        stack.Ldc_I4(_code.tokenI32);
+                        stack.Ldc_I4(8);
                         break;
                     case CodeEx.Ldc_I8:
                         stack.Ldc_I8(_code.tokenI64);
@@ -648,10 +664,10 @@ namespace CLRSharp
 
                     //定义为临时变量
                     case CodeEx.Stloc:
-                        stack.Stloc((int)_code.tokenUnknown);
+                        stack.Stloc(_code.tokenI32);
                         break;
                     case CodeEx.Stloc_S:
-                        stack.Stloc(((VariableDefinition)_code.tokenUnknown).Index);
+                        stack.Stloc(_code.tokenI32);
                         break;
                     case CodeEx.Stloc_0:
                         stack.Stloc(0);
@@ -667,10 +683,10 @@ namespace CLRSharp
                         break;
                     //从临时变量加载
                     case CodeEx.Ldloc:
-                        stack.Ldloc((int)_code.tokenUnknown);
+                        stack.Ldloc(_code.tokenI32);
                         break;
                     case CodeEx.Ldloc_S:
-                        stack.Ldloc(((VariableDefinition)_code.tokenUnknown).Index);
+                        stack.Ldloc(_code.tokenI32);
                         break;
                     case CodeEx.Ldloc_0:
                         stack.Ldloc(0);
@@ -685,10 +701,10 @@ namespace CLRSharp
                         stack.Ldloc(3);
                         break;
                     case CodeEx.Ldloca:
-                        stack.Ldloca(((VariableDefinition)_code.tokenUnknown).Index);
+                        stack.Ldloca(_code.tokenI32);
                         break;
                     case CodeEx.Ldloca_S:
-                        stack.Ldloca(((VariableDefinition)_code.tokenUnknown).Index);
+                        stack.Ldloca(_code.tokenI32);
                         break;
                     //加载字符串
                     case CodeEx.Ldstr:

@@ -2205,8 +2205,7 @@ namespace CLRSharp
         public void Ldobj(ThreadContext context, object obj)
         {
             stackCalc.Push(obj);
-            //Type t = obj.GetType();
-            //throw new NotImplementedException();
+
             _codepos++;
         }
         public void Castclass(ThreadContext context, object obj)
