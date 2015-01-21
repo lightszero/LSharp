@@ -51,15 +51,19 @@ namespace HoxFixCode
         }
         public class myi : Interface.IMyType
         {
-
+            string name = "";
             public string GetName()
             {
-                return "crossbind";
+                return name;
             }
 
             public string GetDesc()
             {
                 return "crossbind very cool.";
+            }
+            public void SetName(string name)
+            {
+                this.name = name;
             }
         }
     }

@@ -130,7 +130,12 @@ namespace test01
         {
             string GetName();
             string GetDesc();
+
+            void SetName(string name);
         }
+
+        //SetMyType，UseType 直接使用程序接口，但是这个接口实例从脚本中返回
+        //这实质是不可能的，要通过CrossBind去转发
         static IMyType __type = null;
         public static void SetMyType(IMyType _type)
         {
