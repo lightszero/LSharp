@@ -302,7 +302,7 @@ namespace CLRSharp
                     b.v64 = this.v64;
                     break;
                 case NumberOnStack.Double:
-                    b.vDF = this.v64;
+                    b.vDF = this.vDF;
                     break;
 
             }

@@ -443,6 +443,17 @@ namespace CLRSharp
                     case CodeEx.Ldarga_S:
                         this.tokenI32 = (_p as Mono.Cecil.ParameterDefinition).Index;
                         break;
+                    case CodeEx.Switch:
+                        {
+                            Mono.Cecil.Cil.Instruction[] e = _p as Mono.Cecil.Cil.Instruction[];
+                            tokenAddr_Switch = new int[e.Length];
+                            for (int i = 0; i < e.Length; i++)
+                            {
+                                tokenAddr_Switch[i] = body.addr[(e[i].Offset)];
+                            }
+
+                        }
+                        break;
                     default:
                         this.tokenUnknown = _p;
                         break;

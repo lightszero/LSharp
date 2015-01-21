@@ -1022,7 +1022,7 @@ namespace CLRSharp
                         stack.Jmp(this, _code.tokenUnknown);
                         break;
                     case CodeEx.Switch:
-                        stack.Switch(this, _code.tokenUnknown as Mono.Cecil.Cil.Instruction[]);
+                        stack.Switch(this, _code.tokenAddr_Switch);
                         break;
                     case CodeEx.Ldind_I1:
                         stack.Ldind_I1(this, _code.tokenUnknown);

@@ -2033,7 +2033,7 @@ namespace CLRSharp
             //_codepos++;
         }
 
-        public void Switch(ThreadContext context, Mono.Cecil.Cil.Instruction[] poss)
+        public void Switch(ThreadContext context, int[] index)
         {
             var indexobj = stackCalc.Pop();
             uint pos = 0;
@@ -2045,14 +2045,14 @@ namespace CLRSharp
             {
                 pos = (uint)(int)indexobj;
             }
-            if (pos >= poss.Length)
+            if (pos >= index.Length)
             {
                 _codepos++;
 
             }
             else
             {
-                _codepos = _body.addr[poss[pos].Offset];
+                _codepos = index[pos];
                 //_pos = poss[pos];
             }
         }
