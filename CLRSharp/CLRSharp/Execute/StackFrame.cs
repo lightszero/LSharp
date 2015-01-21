@@ -803,10 +803,15 @@ namespace CLRSharp
         //加载参数(还得处理static，il静态非静态不一样，成员参数0是this)
         public void Ldarg(int pos)
         {
-            object p = null;
+            object obj = null;
             if (_params != null)
-                p = _params[pos];
-            stackCalc.Push(p);
+                obj = _params[pos];
+            VBox b = obj as VBox;
+            if (b != null)
+            {
+                obj = b.Clone();
+            }
+            stackCalc.Push(obj);
             _codepos++;
         }
         public void Ldarga(int pos)
