@@ -48,7 +48,6 @@ namespace CLRSharp
         //}
         public static VBox MakeVBox(ICLRType type)
         {
-            if (type == null) return null;
             return MakeVBox(type.TypeForSystem);
         }
         //public static IBox MakeBool(bool b)
@@ -68,11 +67,6 @@ namespace CLRSharp
         //    NumberType code = GetTypeCode(type);
         //    return Make(code);
         //}
-        public static VBox MakeVBoxByObject(object obj)
-        {
-            if (obj == null) return null;
-            return MakeVBox(obj.GetType());
-        }
         public static VBox MakeVBox(System.Type type)
         {
             NumberType code = GetTypeCode(type);
@@ -538,17 +532,9 @@ namespace CLRSharp
                     {
                         v32 = ((bool)value) ? 1 : 0;
                     }
-                    else if(value is int)
-                    {
-                        v32 = (int)value;
-                    }
-                    else if(value is short)
-                    {
-                        v32 = (short)value;
-                    }
                     else
                     {
-                        v32 =(int) Convert.ToDecimal(value);
+                        v32 = (int)value;
                     }
                     break;
                 case NumberOnStack.Int64:

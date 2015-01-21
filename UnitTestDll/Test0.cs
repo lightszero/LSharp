@@ -11,8 +11,7 @@ namespace UnitTestDll
         //只要有一个static void UnitTest() 函数的，就是单元测试
         public static void UnitTest_01()
         {
-            UnityEngine.GameObject o = new UnityEngine.GameObject(25);
-            Logger.Log("abc"+o.GetId());
+            Logger.Log("abc");
             Console.WriteLine("aaaa");
         }
         public static void UnitTest_02()
@@ -59,28 +58,6 @@ namespace UnitTestDll
                 Logger.Log("callv=" + abc);
             
             });
-        }
-        public static void UnitTest_if()
-        {
-            string s = "123";
-
-            if (s != null && s != "")
-            {
-                Logger.Log(s);
-            }
-
-            if (s != "" && s != null) // 对调一下不行
-            {
-                Logger.Log(s);
-            }
-        }
-        public static void UnitTest_Action()
-        {
-            Dictionary<short, Action> dic = new Dictionary<short, Action>();
-            //short k = 0;
-            //dic[k] = () => { Logger.Log("0"); };
-            dic[(short)0] = () => { Logger.Log("0"); };
-            dic[(short)0]();
         }
     }
 }

@@ -9,9 +9,8 @@ namespace UnitTestDll
     {
         public TestList()
         {
-            v = "bb1";
+
         }
-        public string v;
     }
     public class ExpTest_40
     {
@@ -59,9 +58,6 @@ namespace UnitTestDll
 
         public static object UnitTest_4002()
         {
-            TestList[] tl = new TestList[3];
-            tl[0]=new TestList();
-            Logger.Log("v="+tl[0].v);
             List<TestList> tlist = new List<TestList>();
 
             List<IT4_Impl> it4p = new List<IT4_Impl>();
