@@ -538,9 +538,17 @@ namespace CLRSharp
                     {
                         v32 = ((bool)value) ? 1 : 0;
                     }
-                    else
+                    else if(value is int)
                     {
                         v32 = (int)value;
+                    }
+                    else if(value is short)
+                    {
+                        v32 = (short)value;
+                    }
+                    else
+                    {
+                        v32 =(int) Convert.ToDecimal(value);
                     }
                     break;
                 case NumberOnStack.Int64:
