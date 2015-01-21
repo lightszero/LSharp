@@ -431,7 +431,58 @@ namespace CLRSharp
             }
 
         }
+        public void And(VBox right)
+        {
+            switch (typeStack)
+            {
+                case NumberOnStack.Int32:
+                    v32 &= right.v32;
+                    break;
+                case NumberOnStack.Int64:
+                    v64 &= right.v64;
+                    break;
 
+            }
+        }
+        public void Or(VBox right)
+        {
+            switch (typeStack)
+            {
+                case NumberOnStack.Int32:
+                    v32 |= right.v32;
+                    break;
+                case NumberOnStack.Int64:
+                    v64 |= right.v64;
+                    break;
+
+            }
+        }
+        public void Xor(VBox right)
+        {
+            switch (typeStack)
+            {
+                case NumberOnStack.Int32:
+                    v32 ^= right.v32;
+                    break;
+                case NumberOnStack.Int64:
+                    v64 ^= right.v64;
+                    break;
+
+            }
+        }
+        public void Not()
+        {
+            switch (typeStack)
+            {
+                case NumberOnStack.Int32:
+                    v32 = ~v32;
+                    break;
+                case NumberOnStack.Int64:
+                    v64 = ~v64;
+                    break;
+
+            }
+        }
         public void Add(VBox right)
         {
             switch (typeStack)

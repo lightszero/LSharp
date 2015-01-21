@@ -10,7 +10,10 @@ namespace UnitTestDll
         public static void UnitTest_Break()
         {
             //release模式下运行会崩
-            System.Diagnostics.Debugger.Break();
+            //System.Diagnostics.Debugger.Break();
+            //那是因为release模式下不可调用
+            //你永远也不可能手工操作到IL的 break指令。
+            //调试器断点可以产生，L#不是CLR在执行，没有调试器
         }
 
         public static void UnitTest_位操作()
@@ -33,20 +36,22 @@ namespace UnitTestDll
             c %= a;
         }
 
-        public unsafe static void UnitTest_sizeof()
-        {
-            //针对IL的 sizeof?
+        //并不会支持Marshal这种功能，
+        //也不会支持任何的unsafe操作
+        //public static void UnitTest_sizeof()
+        //{
+        //    //针对IL的 sizeof?
 
-            var a = new CCCCC();
-            int b = 1;
-            int c = 1;
-            c = sizeof(SSSSSS);
-            var t = a.GetType();
-            b = System.Runtime.InteropServices.Marshal.SizeOf(a);
-            c = System.Runtime.InteropServices.Marshal.SizeOf(a);
-        }
+        //    var a = new CCCCC();
+        //    int b = 1;
+        //    int c = 1;
+        //    //c = sizeof(SSSSSS);
+        //    var t = a.GetType();
+        //    b = System.Runtime.InteropServices.Marshal.SizeOf(a);
+        //    c = System.Runtime.InteropServices.Marshal.SizeOf(a);
+        //}
 
-        public unsafe static void UnitTest_各种溢出()
+        public static void UnitTest_各种溢出()
         {
             /*
              Conv.Ovf.I 	将位于计算堆栈顶部的有符号值转换为有符号 native int，并在溢出时引发 OverflowException。
@@ -78,15 +83,15 @@ Conv.U2 	将位于计算堆栈顶部的值转换为 unsigned int16，然后将�
 Conv.U4 	将位于计算堆栈顶部的值转换为 unsigned int32，然后将其扩展为 int32。
 Conv.U8 	将位于计算堆栈顶部的值转换为 unsigned int64，然后将其扩展为 int64。
              */
-            unchecked
-            {
-                long i = 2147483647 + 1;
-                void* vp = &i;
-                int* ip;
-                ip = (int*)vp;
-                int c = *ip;
+            //unchecked
+            //{
+            //    long i = 2147483647 + 1;
+            //    void* vp = &i;
+            //    int* ip;
+            //    ip = (int*)vp;
+            //    int c = *ip;
 
-            }
+            //}
 
 
         }

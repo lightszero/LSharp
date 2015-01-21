@@ -2164,47 +2164,62 @@ namespace CLRSharp
             throw new NotImplementedException(t.ToString());
             //_codepos++;
         }
-        public void And(ThreadContext context, object obj)
+        public void And()
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
+            n1.And(n2);
+            stackCalc.Push(n1);
+            _codepos++;
         }
-        public void Or(ThreadContext context, object obj)
+        public void Or()
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
+            n1.Or(n2);
+            stackCalc.Push(n1);
+            _codepos++;
         }
-        public void Xor(ThreadContext context, object obj)
+        public void Xor()
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
+            n1.Xor(n2);
+            stackCalc.Push(n1);
+            _codepos++;
         }
         public void Shl(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
+            n1.v32 <<= n2.v32;
+            stackCalc.Push(n1);
+            _codepos++;
             //_codepos++;
         }
         public void Shr(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
+            n1.v32 >>= n2.v32;
+            stackCalc.Push(n1);
+            _codepos++;
         }
         public void Shr_Un(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n1 = stackCalc.Pop() as VBox;
+            n1.v32 >>= n2.v32;
+            stackCalc.Push(n1);
+            _codepos++;
         }
-        public void Not(ThreadContext context, object obj)
+        public void Not()
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            
+            VBox n1 = stackCalc.Pop() as VBox;
+            n1.Not();
+            stackCalc.Push(n1);
+            _codepos++;
         }
         public void Cpobj(ThreadContext context, object obj)
         {

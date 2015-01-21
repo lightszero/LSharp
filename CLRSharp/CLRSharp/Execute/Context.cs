@@ -1079,13 +1079,13 @@ namespace CLRSharp
                         stack.Stind_R8(this, _code.tokenUnknown);
                         break;
                     case CodeEx.And:
-                        stack.And(this, _code.tokenUnknown);
+                        stack.And();
                         break;
                     case CodeEx.Or:
-                        stack.Or(this, _code.tokenUnknown);
+                        stack.Or();
                         break;
                     case CodeEx.Xor:
-                        stack.Xor(this, _code.tokenUnknown);
+                        stack.Xor();
                         break;
                     case CodeEx.Shl:
                         stack.Shl(this, _code.tokenUnknown);
@@ -1097,7 +1097,7 @@ namespace CLRSharp
                         stack.Shr_Un(this, _code.tokenUnknown);
                         break;
                     case CodeEx.Not:
-                        stack.Not(this, _code.tokenUnknown);
+                        stack.Not();
                         break;
                     case CodeEx.Cpobj:
                         stack.Cpobj(this, _code.tokenUnknown);
