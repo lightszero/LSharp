@@ -15,9 +15,9 @@ namespace CLRSharp
         }
         private MethodParamList(IList<ICLRType> types)
         {
-            if(types!=null)
+            if (types != null)
             {
-                foreach(var t in types)
+                foreach (var t in types)
                 {
                     this.Add(t);
                 }
@@ -29,7 +29,7 @@ namespace CLRSharp
         {
             if (_OneParam_Int == null)
             {
-                _OneParam_Int = new MethodParamList(new ICLRType[]{env.GetType(typeof(int))});
+                _OneParam_Int = new MethodParamList(new ICLRType[] { env.GetType(typeof(int)) });
             }
 
             return _OneParam_Int;
@@ -80,12 +80,29 @@ namespace CLRSharp
 
                     if (paramname.Contains("!!"))
                     {
-                        this.Add(GetTType(env, p, _methodgen));
+                        //string typename = param.ParameterType.FullName;
+                        for (int i = 0; i < _methodgen.Count; i++)
+                        {
+                            string pp = "!!" + i.ToString();
+                            paramname = paramname.Replace(pp, _methodgen[i].FullName);
+                        }
+                        //this.Add(GetTType(env, p, _methodgen));
                     }
-                    else
+
+                    if (paramname.Contains("!"))//函数有T
+                    {
+                        var gens = (method.DeclaringType as Mono.Cecil.GenericInstanceType).GenericArguments;
+                        for (int i = 0; i < gens.Count; i++)
+                        {
+                            string pp = "!" + i.ToString();
+                            paramname = paramname.Replace(pp, gens[i].FullName);
+                        }
+                    }
+                    //else
                     {
                         this.Add(env.GetType(paramname));
                     }
+
                 }
             }
         }

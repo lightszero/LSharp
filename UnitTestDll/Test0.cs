@@ -8,6 +8,11 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_ListInit()
+        {
+            List<int> lst = new List<int>();
+            List<int> lst2 = new List<int>(lst);
+        }
         public static void UnitTest_FuncM()
         {
             FuncM(0, 1, 2, 3, 4, 5);
