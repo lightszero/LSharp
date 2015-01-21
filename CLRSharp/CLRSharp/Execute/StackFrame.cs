@@ -39,13 +39,13 @@ namespace CLRSharp
         Mono.Cecil.Cil.Instruction _posold;
         public void SetCodePos(int offset)
         {
-            _codepos= this._body.addr[offset];
+            _codepos = this._body.addr[offset];
         }
         public Mono.Cecil.Cil.Instruction GetCode()
         {
             if (_body == null) return null;
-            int nowaddr=this._body.opCodes[_codepos].addr;
-            foreach(var c in            this._body.bodyNative.Instructions)
+            int nowaddr = this._body.opCodes[_codepos].addr;
+            foreach (var c in this._body.bodyNative.Instructions)
             {
                 if (nowaddr == c.Offset)
                     return c;
@@ -197,7 +197,7 @@ namespace CLRSharp
                 {
                     ICLRType t = _body.typelistForLoc[i];
 
-                        slotVar.Add(ValueOnStack.MakeVBox(t));
+                    slotVar.Add(ValueOnStack.MakeVBox(t));
 
                 }
             }
@@ -495,11 +495,11 @@ namespace CLRSharp
 
             if (n1.logic_eq(n2))
             {
-                _codepos++;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
             else
             {
-                _codepos = addr_index;// _body.addr[pos.Offset];
+                _codepos++;
             }
         }
         public void Bne(int addr_index)
@@ -509,11 +509,11 @@ namespace CLRSharp
 
             if (n1.logic_ne(n2))
             {
-                _codepos++;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
             else
             {
-                _codepos = addr_index;// _body.addr[pos.Offset];
+                _codepos++;
             }
         }
         public void Bne_Un(int addr_index)
@@ -523,11 +523,12 @@ namespace CLRSharp
 
             if (n1.logic_ne_Un(n2))
             {
-                _codepos++;
+                _codepos = addr_index;// _body.addr[pos.Offset];
+
             }
             else
             {
-                _codepos = addr_index;// _body.addr[pos.Offset];
+                _codepos++;
             }
         }
         public void Bge(int addr_index)
@@ -537,11 +538,12 @@ namespace CLRSharp
 
             if (n1.logic_ge(n2))
             {
-                _codepos++;
+                _codepos = addr_index;// _body.addr[pos.Offset];
+
             }
             else
             {
-                _codepos = addr_index;// _body.addr[pos.Offset];
+                _codepos++;
             }
         }
         public void Bge_Un(int addr_index)
@@ -551,11 +553,12 @@ namespace CLRSharp
 
             if (n1.logic_ge_Un(n2))
             {
-                _codepos++;
+                _codepos = addr_index;// _body.addr[pos.Offset];
+
             }
             else
             {
-                _codepos = addr_index;// _body.addr[pos.Offset];
+                _codepos++;
             }
         }
         public void Bgt(int addr_index)
@@ -565,11 +568,12 @@ namespace CLRSharp
 
             if (n1.logic_gt(n2))
             {
-                _codepos++;
+                _codepos = addr_index;//_body.addr[pos.Offset];
+
             }
             else
             {
-                _codepos = addr_index;//_body.addr[pos.Offset];
+                _codepos++;
             }
         }
         public void Bgt_Un(int addr_index)
@@ -579,11 +583,12 @@ namespace CLRSharp
 
             if (n1.logic_gt_Un(n2))
             {
-                _codepos++;
+                _codepos = addr_index;// _body.addr[pos.Offset];
+
             }
             else
             {
-                _codepos = addr_index;// _body.addr[pos.Offset];
+                _codepos++;
             }
         }
         public void Ble(int addr_index)
@@ -593,11 +598,12 @@ namespace CLRSharp
 
             if (n1.logic_le(n2))
             {
-                _codepos++;
+                _codepos = addr_index;// _body.addr[pos.Offset];
+
             }
             else
             {
-                _codepos = addr_index;// _body.addr[pos.Offset];
+                _codepos++;
             }
         }
         public void Ble_Un(int addr_index)
@@ -607,11 +613,12 @@ namespace CLRSharp
 
             if (n1.logic_le_Un(n2))
             {
-                _codepos++;
+                _codepos = addr_index;//_body.addr[pos.Offset];
+
             }
             else
             {
-                _codepos = addr_index;//_body.addr[pos.Offset];
+                _codepos++;
             }
         }
         public void Blt(int addr_index)
@@ -621,11 +628,12 @@ namespace CLRSharp
 
             if (n1.logic_lt(n2))
             {
-                _codepos++;
+                _codepos = addr_index;//_body.addr[pos.Offset];
+
             }
             else
             {
-                _codepos = addr_index;//_body.addr[pos.Offset];
+                _codepos++;
             }
         }
         public void Blt_Un(int addr_index)
@@ -635,11 +643,12 @@ namespace CLRSharp
 
             if (n1.logic_lt_Un(n2))
             {
-                _codepos++;
+                _codepos = addr_index;// _body.addr[pos.Offset];
+
             }
             else
             {
-                _codepos = addr_index;// _body.addr[pos.Offset];
+                _codepos++;
             }
         }
         //加载常量

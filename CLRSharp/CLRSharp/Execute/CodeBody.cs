@@ -285,6 +285,10 @@ namespace CLRSharp
         }
         public class OpCode
         {
+            public override string ToString()
+            {
+                return "IL_" + addr.ToString("X04") +" "+code ;
+            }
             public int addr;
             public CodeEx code;
             public int debugline = -1;

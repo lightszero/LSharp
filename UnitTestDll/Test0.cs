@@ -8,11 +8,21 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_Judge()
+        {
+            int i = -1;
+            int j = 0;
+            if (i >= 0 && j < 2)
+            {
+                throw new Exception("not cool.");
+            }
+
+        }
         //只要有一个static void UnitTest() 函数的，就是单元测试
         public static void UnitTest_01()
         {
             UnityEngine.GameObject o = new UnityEngine.GameObject(25);
-            Logger.Log("abc"+o.GetId());
+            Logger.Log("abc" + o.GetId());
             Console.WriteLine("aaaa");
         }
         public static void UnitTest_02()
@@ -27,9 +37,9 @@ namespace UnitTestDll
         {
             TestClass.TF(true);
             TestClass.instance.b = true;
-            bool b = 3==3;
+            bool b = 3 == 3;
             bool b2 = 4 == 3;
-            Logger.Log(TF(b2) + "," + TestClass.TF (b));
+            Logger.Log(TF(b2) + "," + TestClass.TF(b));
             int p = 1;
             float n = 5.0f;
             var i = 1 * p + 54 / n + 3334 * p + 54;
@@ -42,7 +52,7 @@ namespace UnitTestDll
 
         public static void tttt(int abc)
         {
-            Logger.Log("tttt."+abc.ToString());
+            Logger.Log("tttt." + abc.ToString());
         }
         public static void UnitTest_NoName()
         {
@@ -57,7 +67,7 @@ namespace UnitTestDll
             ttt.TestCall((abc) =>
             {
                 Logger.Log("callv=" + abc);
-            
+
             });
         }
         public static void UnitTest_if()
