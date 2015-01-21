@@ -36,27 +36,8 @@ namespace CLRSharp
             this.Name = name;
             this.IsStatic = IsStatic;
         }
-        Mono.Cecil.Cil.Instruction _posold;
-        public Mono.Cecil.Cil.Instruction _pos
-        {
-            get
-            {
-                return _posold;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _codepos = -1;
-                }
-                else
-                {
-                    _codepos = _body.addr[value.Offset];
-                }
-                _posold = value;
-            }
-        }
-        public int _codepos = 0;
+        public Mono.Cecil.Cil.Instruction _pos = null;
+
         public class MyCalcStack : Stack<object>
         {
             Queue<VBox> unused = new Queue<VBox>();
@@ -144,26 +125,7 @@ namespace CLRSharp
         public object[] _params = null;
         public void SetParams(object[] _p)
         {
-            if (_p == null)
-            {
-                _params = null;
-                return;
-            }
-            _params = new object[_p.Length];
-            for (int i = 0; i < _p.Length; i++)
-            {
-                if (_p[i] != null)
-                {
-                    var vbox = ValueOnStack.MakeVBox(_p[i].GetType());
-                    if (vbox != null)
-                    {
-                        _params[i] = vbox;
-                        continue;
-                    }
-                }
-
-                _params[i] = _p[i];
-            }
+            _params = _p;
         }
         CodeBody _body = null;
         public CodeBody codebody
@@ -182,8 +144,7 @@ namespace CLRSharp
                 {
                     ICLRType t = _body.typelistForLoc[i];
 
-                        slotVar.Add(ValueOnStack.MakeVBox(t));
-
+                    slotVar.Add(ValueOnStack.MakeVBox(t));
                 }
             }
         }
@@ -209,23 +170,21 @@ namespace CLRSharp
 
             object[] _pp = null;
             object _this = null;
-            bool bCLR = _clrmethod is IMethod_Sharp;
+
             if (_clrmethod.ParamList != null)
             {
                 _pp = new object[_clrmethod.ParamList.Count];
                 for (int i = 0; i < _pp.Length; i++)
                 {
-                    int iCallPPos = _pp.Length - 1 - i;
-                    ICLRType pType = _clrmethod.ParamList[iCallPPos];
                     var pp = stackCalc.Pop();
-                    if (pp is CLRSharp_Instance && pType.TypeForSystem != typeof(CLRSharp_Instance))
+                    if (pp is CLRSharp_Instance&&_clrmethod.ParamList[i].TypeForSystem!=typeof(CLRSharp_Instance))
                     {
-                        var inst = pp as CLRSharp_Instance;
+                        var inst =pp as CLRSharp_Instance;
 
-                        var btype = inst.type.ContainBase(pType.TypeForSystem);
+                        var btype = inst.type.ContainBase(_clrmethod.ParamList[i].TypeForSystem);
                         if (btype)
                         {
-                            var CrossBind = context.environment.GetCrossBind(pType.TypeForSystem);
+                            var CrossBind = context.environment.GetCrossBind(_clrmethod.ParamList[i].TypeForSystem);
                             if (CrossBind != null)
                             {
                                 pp = CrossBind.CreateBind(inst);
@@ -239,23 +198,20 @@ namespace CLRSharp
                         }
 
                     }
-                    if (pp is VBox && !bCLR)
+                    if (pp is VBox)
                     {
                         pp = (pp as VBox).BoxDefine();
                     }
-                    if ((pp is int) && (pType.TypeForSystem != typeof(int) && pType.TypeForSystem != typeof(object)))
+                    if ((pp is int) && (_clrmethod.ParamList[i].TypeForSystem != typeof(int) && _clrmethod.ParamList[i].TypeForSystem != typeof(object)))
                     {
-                        var _vbox = ValueOnStack.MakeVBox(pType);
+                        var _vbox = ValueOnStack.MakeVBox(_clrmethod.ParamList[i]);
                         if (_vbox != null)
                         {
                             _vbox.SetDirect(pp);
-                            if (bCLR)
-                                pp = _vbox;
-                            else
-                                pp = _vbox.BoxDefine();
+                            pp = _vbox.BoxDefine();
                         }
                     }
-                    _pp[iCallPPos] = pp;
+                    _pp[_pp.Length - 1 - i] = pp;
                 }
             }
 
@@ -291,7 +247,7 @@ namespace CLRSharp
                 _this = (_this as VBox).BoxDefine();
             }
             bool bCross = (_this is CLRSharp_Instance && _clrmethod is IMethod_System);
-            object returnvar = _clrmethod.Invoke(context, _this, _pp, bVisual);
+            object returnvar =  _clrmethod.Invoke(context, _this, _pp, bVisual);
             if (bCross)
             {
                 //这里究竟如何处理还需要再考虑
@@ -335,7 +291,6 @@ namespace CLRSharp
         //栈操作
         public void Nop()
         {
-            _codepos++;
             _pos = _pos.Next;
         }
         public void Dup()
@@ -437,29 +392,8 @@ namespace CLRSharp
         }
         public void Brfalse(Mono.Cecil.Cil.Instruction pos)
         {
-            object obj = stackCalc.Pop();
-            bool b = false;
-            if (obj != null)
-            {
-                if (obj is VBox)
-                {
-                    VBox box = obj as VBox;
-                    b = box.ToBool();
-                }
-                else if (obj.GetType().IsClass)
-                {
-                    b = true;
-                }
-                else if (obj is bool)
-                {
-                    b = (bool)obj;
-                }
-                else
-                {
-                    b = Convert.ToDecimal(obj) > 0;
-                }
-            }
-            if (!b)
+            decimal b = Convert.ToDecimal(stackCalc.Pop());
+            if (b <= 0)
             {
                 _pos = pos;
             }
@@ -1568,35 +1502,19 @@ namespace CLRSharp
         {
             //MethodParamList list = new MethodParamList(context.environment, method);
             object[] _pp = null;
-            bool bCLR = _clrmethod is IMethod_Sharp;
-            if (_clrmethod.ParamList != null)
+            if (_clrmethod.ParamList != null && _clrmethod.ParamList.Count > 0)
             {
                 _pp = new object[_clrmethod.ParamList.Count];
                 for (int i = 0; i < _pp.Length; i++)
                 {
-                    int iCallPPos = _pp.Length - 1 - i;
-                    ICLRType pType = _clrmethod.ParamList[iCallPPos];
-                    var pp = stackCalc.Pop();
-                    if (pp is VBox && !bCLR)
+                    var obj = stackCalc.Pop();
+                    if (obj is VBox)
                     {
-                        pp = (pp as VBox).BoxDefine();
+                        obj = (obj as VBox).BoxDefine();
                     }
-                    if ((pp is int) && (pType.TypeForSystem != typeof(int) && pType.TypeForSystem != typeof(object)))
-                    {
-                        var _vbox = ValueOnStack.MakeVBox(pType);
-                        if (_vbox != null)
-                        {
-                            _vbox.SetDirect(pp);
-                            if (bCLR)
-                                pp = _vbox;
-                            else
-                                pp = _vbox.BoxDefine();
-                        }
-                    }
-                    _pp[iCallPPos] = pp;
+                    _pp[_pp.Length - 1 - i] = obj;
                 }
             }
-
             //var typesys = context.environment.GetType(method.DeclaringType.FullName, method.Module);
             object returnvar = _clrmethod.Invoke(context, null, _pp);
 

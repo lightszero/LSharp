@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.37Alpha";
+                return "0.36.5Alpha";
             }
         }
         public ICLRSharp_Logger logger
@@ -78,7 +78,10 @@ namespace CLRSharp
                 }
             }
         }
-
+        public CodeBody CreateCodeBody(Method_Common_CLRSharp method)
+        {
+            return new CodeBody(this, method.method_CLRSharp);
+        }
         List<string> moduleref = new List<string>();
         public string[] GetAllTypes()
         {
