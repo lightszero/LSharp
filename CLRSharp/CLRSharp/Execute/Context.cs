@@ -400,9 +400,9 @@ namespace CLRSharp
             else if (token is Mono.Cecil.ParameterReference)
             {
                 int i = (token as Mono.Cecil.ParameterReference).Index;
-                if (this.stacks.Peek().Name == ".ctor" || this.stacks.Peek().IsStatic == false)
+                //if (this.stacks.Peek().Name == ".ctor" || this.stacks.Peek().IsStatic == false)
                 {
-                    i++;
+                    //i++;
                 }
                 return i;
             }
@@ -756,10 +756,10 @@ namespace CLRSharp
 
                     //加载参数
                     case CodeEx.Ldarg:
-                        stack.Ldarg((int)_code.tokenUnknown);
+                        stack.Ldarg(_code.tokenI32);
                         break;
                     case CodeEx.Ldarg_S:
-                        stack.Ldarg(GetParamPos(_code.tokenUnknown));
+                        stack.Ldarg(_code.tokenI32);
                         break;
                     case CodeEx.Ldarg_0:
                         stack.Ldarg(0);

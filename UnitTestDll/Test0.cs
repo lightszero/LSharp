@@ -8,6 +8,21 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_FuncM()
+        {
+            FuncM(0, 1, 2, 3, 4, 5);
+        }
+
+        static void FuncM(int m0, int m1, int m2, int m3, int m4, int m5)
+        {
+            Logger.Log("" + m0);
+            Logger.Log("" + m1);
+            Logger.Log("" + m2);
+            Logger.Log("" + m3);
+            Logger.Log("" + m4);
+            Logger.Log("" + m5);
+
+        }
         public static void UnitTest_Int()
         {
             float f = -1.5f;
