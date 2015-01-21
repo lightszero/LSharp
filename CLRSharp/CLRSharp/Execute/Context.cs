@@ -51,7 +51,7 @@ namespace CLRSharp
             string str = "";
             foreach (StackFrame s in GetStackFrames())
             {
-                var pos = s._pos;
+                var pos = s.GetCode();
                 Instruction sqIns = pos;
                 while (sqIns != null && sqIns.SequencePoint == null)
                 {
@@ -127,8 +127,9 @@ namespace CLRSharp
             if (method.body != null)
             {
                 stack.Init(method.body);
-                stack._pos = method.body.bodyNative.Instructions[0];
-
+                stack.SetCodePos(0);
+                //._pos = method.body.bodyNative.Instructions[0];
+                stack._codepos = 0;
                 if (method.body.bodyNative.HasExceptionHandlers && !SetNoTry)
                 {
                     RunCodeWithTry(method.body, stack);
@@ -422,7 +423,7 @@ namespace CLRSharp
         }
         bool JumpToErr(CodeBody body, StackFrame frame, Exception err)
         {
-            var posnow = frame._pos;
+            var posnow = frame.GetCode();
             List<Mono.Cecil.Cil.ExceptionHandler> ehs = new List<ExceptionHandler>();
             Mono.Cecil.Cil.ExceptionHandler ehNear = null;
             int ehNearB = -1;
@@ -480,7 +481,7 @@ namespace CLRSharp
             if (ehNear != null)
             {
                 frame.Ldobj(this, err);
-                frame._pos = ehNear.HandlerStart;
+                frame.SetCodePos(ehNear.HandlerStart.Offset);// ._pos = ehNear.HandlerStart;
                 RunCodeWithTry(body, frame);
                 return true;
             }
@@ -489,7 +490,6 @@ namespace CLRSharp
 
         void RunCode(StackFrame stack, CodeBody body)
         {
-            Mono.Collections.Generic.Collection<Mono.Cecil.Cil.Instruction> codes = body.bodyNative.Instructions;
             while (true)
             {
                 //var code = stack._pos;
@@ -501,10 +501,8 @@ namespace CLRSharp
                 }
                 switch (_code.code)
                 {
-
                     ///////////
                     //流程控制
-
                     case CodeEx.Nop:
                         stack.Nop();
                         break;
@@ -512,92 +510,91 @@ namespace CLRSharp
                         stack.Ret();
                         return;
                     case CodeEx.Leave:
-                        stack.Leave(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Leave(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Leave_S:
-                        //stack.Ret();
-                        stack.Leave(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Leave(_code.tokenAddr_Index);
                         break;
                     //流程控制之goto
                     case CodeEx.Br:
-                        stack.Br(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Br(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Br_S:
-                        stack.Br(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Br(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Brtrue:
-                        stack.Brtrue(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Brtrue(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Brtrue_S:
-                        stack.Brtrue(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Brtrue(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Brfalse:
-                        stack.Brfalse(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Brfalse(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Brfalse_S:
-                        stack.Brfalse(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Brfalse(_code.tokenAddr_Index);
                         break;
 
                     //比较流程控制
                     case CodeEx.Beq:
-                        stack.Beq(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Beq(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Beq_S:
-                        stack.Beq(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Beq(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bne_Un:
-                        stack.Bne_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Bne_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bne_Un_S:
-                        stack.Bne_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Bne_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bge:
-                        stack.Bge(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Bge(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bge_S:
-                        stack.Bge(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Bge(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bge_Un:
-                        stack.Bge_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Bge_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bge_Un_S:
-                        stack.Bge_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Bge_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bgt:
-                        stack.Bgt(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Bgt(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bgt_S:
-                        stack.Bgt(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Bgt(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bgt_Un:
-                        stack.Bgt_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Bgt_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bgt_Un_S:
-                        stack.Bge_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Bge_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Ble:
-                        stack.Ble(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Ble(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Ble_S:
-                        stack.Ble(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Ble(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Ble_Un:
-                        stack.Ble_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Ble_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Ble_Un_S:
-                        stack.Ble_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Ble_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Blt:
-                        stack.Blt(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Blt(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Blt_S:
-                        stack.Blt(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Blt(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Blt_Un:
-                        stack.Blt_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Blt_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Blt_Un_S:
-                        stack.Ble_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
+                        stack.Ble_Un(_code.tokenAddr_Index);
                         break;
                     //逻辑计算
                     case CodeEx.Ceq:

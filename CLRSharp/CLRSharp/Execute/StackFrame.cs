@@ -37,25 +37,40 @@ namespace CLRSharp
             this.IsStatic = IsStatic;
         }
         Mono.Cecil.Cil.Instruction _posold;
-        public Mono.Cecil.Cil.Instruction _pos
+        public void SetCodePos(int offset)
         {
-            get
-            {
-                return _posold;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _codepos = -1;
-                }
-                else
-                {
-                    _codepos = _body.addr[value.Offset];
-                }
-                _posold = value;
-            }
+            _codepos= this._body.addr[offset];
         }
+        public Mono.Cecil.Cil.Instruction GetCode()
+        {
+            if (_body == null) return null;
+            int nowaddr=this._body.opCodes[_codepos].addr;
+            foreach(var c in            this._body.bodyNative.Instructions)
+            {
+                if (nowaddr == c.Offset)
+                    return c;
+            }
+            return null;
+        }
+        //public Mono.Cecil.Cil.Instruction _pos
+        //{
+        //    get
+        //    {
+        //        return _posold;
+        //    }
+        //    set
+        //    {
+        //        if (value == null)
+        //        {
+        //            _codepos = -1;
+        //        }
+        //        else
+        //        {
+        //            _codepos = _body.addr[value.Offset];
+        //        }
+        //        _posold = value;
+        //    }
+        //}
         public int _codepos = 0;
         public class MyCalcStack : Stack<object>
         {
@@ -203,7 +218,7 @@ namespace CLRSharp
 
             if (_clrmethod == null)//不想被执行的函数
             {
-                _pos = _pos.Next;
+                _codepos++;
                 return;
             }
 
@@ -267,18 +282,18 @@ namespace CLRSharp
             }
             if (_clrmethod.DeclaringType.FullName.Contains("System.Runtime.CompilerServices.RuntimeHelpers") && _clrmethod.Name.Contains("InitializeArray"))
             {
-                _pos = _pos.Next;
+                _codepos++;
                 return;
             }
             if (_clrmethod.DeclaringType.FullName.Contains("System.Type") && _clrmethod.Name.Contains("GetTypeFromHandle"))
             {
                 stackCalc.Push(_pp[0]);
-                _pos = _pos.Next;
+                _codepos++;
                 return;
             }
             if (_clrmethod.DeclaringType.FullName.Contains("System.Object") && _clrmethod.Name.Contains(".ctor"))
             {//跳过这个没意义的构造
-                _pos = _pos.Next;
+                _codepos++;
                 return;
             }
             if (_this is RefObj && _clrmethod.Name != ".ctor")
@@ -328,7 +343,7 @@ namespace CLRSharp
                 //如果这里有发生程序类型，脚本类型的cross，就需要特别处理
                 (_this as RefObj).Set(returnvar);
             }
-            _pos = _pos.Next;
+            _codepos++;
             return;
 
         }
@@ -336,22 +351,21 @@ namespace CLRSharp
         public void Nop()
         {
             _codepos++;
-            _pos = _pos.Next;
         }
         public void Dup()
         {
             stackCalc.Push(stackCalc.Peek());
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Pop()
         {
             stackCalc.Pop();
-            _pos = _pos.Next;
+            _codepos++;
         }
         //流程控制
         public void Ret()
         {
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Box(ICLRType type)
         {
@@ -370,7 +384,7 @@ namespace CLRSharp
                     obj = box.BoxDefine();
             }
             stackCalc.Push(obj);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Unbox()
         {
@@ -385,22 +399,27 @@ namespace CLRSharp
             {
                 stackCalc.Push(obj);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Unbox_Any()
         {
-            _pos = _pos.Next;
+            _codepos++;
         }
-        public void Br(Mono.Cecil.Cil.Instruction pos)
+        public void Br(int addr_index)
         {
-            _pos = pos;
+            _codepos = addr_index;// _body.addr[pos.Offset];
         }
-        public void Leave(Mono.Cecil.Cil.Instruction pos)
+        public void Leave(int addr_index)
         {
             stackCalc.Clear();
-            _pos = pos;
+            _codepos = addr_index;// _body.addr[addr];
         }
-        public void Brtrue(Mono.Cecil.Cil.Instruction pos)
+        //public void Leave_AddrIndex(int addr_index)
+        //{
+        //    stackCalc.Clear();
+        //    _codepos = addr_index;
+        //}
+        public void Brtrue(int addr_index)
         {
             object obj = stackCalc.Pop();
             bool b = false;
@@ -428,14 +447,14 @@ namespace CLRSharp
             //bool b = (bool)stackCalc.Pop();
             if (b)
             {
-                _pos = pos;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
             else
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
         }
-        public void Brfalse(Mono.Cecil.Cil.Instruction pos)
+        public void Brfalse(int addr_index)
         {
             object obj = stackCalc.Pop();
             bool b = false;
@@ -461,166 +480,166 @@ namespace CLRSharp
             }
             if (!b)
             {
-                _pos = pos;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
             else
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
         }
         //条件跳转
-        public void Beq(Mono.Cecil.Cil.Instruction pos)
+        public void Beq(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_eq(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
         }
-        public void Bne(Mono.Cecil.Cil.Instruction pos)
+        public void Bne(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_ne(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
         }
-        public void Bne_Un(Mono.Cecil.Cil.Instruction pos)
+        public void Bne_Un(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_ne_Un(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
         }
-        public void Bge(Mono.Cecil.Cil.Instruction pos)
+        public void Bge(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_ge(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
         }
-        public void Bge_Un(Mono.Cecil.Cil.Instruction pos)
+        public void Bge_Un(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_ge_Un(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
         }
-        public void Bgt(Mono.Cecil.Cil.Instruction pos)
+        public void Bgt(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_gt(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;//_body.addr[pos.Offset];
             }
         }
-        public void Bgt_Un(Mono.Cecil.Cil.Instruction pos)
+        public void Bgt_Un(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_gt_Un(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
         }
-        public void Ble(Mono.Cecil.Cil.Instruction pos)
+        public void Ble(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_le(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
         }
-        public void Ble_Un(Mono.Cecil.Cil.Instruction pos)
+        public void Ble_Un(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_le_Un(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;//_body.addr[pos.Offset];
             }
         }
-        public void Blt(Mono.Cecil.Cil.Instruction pos)
+        public void Blt(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_lt(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;//_body.addr[pos.Offset];
             }
         }
-        public void Blt_Un(Mono.Cecil.Cil.Instruction pos)
+        public void Blt_Un(int addr_index)
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
 
             if (n1.logic_lt_Un(n2))
             {
-                _pos = _pos.Next;
+                _codepos++;
             }
             else
             {
-                _pos = pos;
+                _codepos = addr_index;// _body.addr[pos.Offset];
             }
         }
         //加载常量
@@ -629,7 +648,7 @@ namespace CLRSharp
             VBox box = ValueOnStack.MakeVBox(NumberType.INT32);
             box.v32 = v;
             stackCalc.Push(box);
-            _pos = _pos.Next;
+            _codepos++;
 
         }
 
@@ -638,21 +657,21 @@ namespace CLRSharp
             VBox box = ValueOnStack.MakeVBox(NumberType.INT64);
             box.v64 = v;
             stackCalc.Push(box);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldc_R4(float v)
         {
             VBox box = ValueOnStack.MakeVBox(NumberType.FLOAT);
             box.vDF = v;
             stackCalc.Push(box);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldc_R8(double v)
         {
             VBox box = ValueOnStack.MakeVBox(NumberType.DOUBLE);
             box.vDF = v;
             stackCalc.Push(box);
-            _pos = _pos.Next;
+            _codepos++;
         }
         //放进变量槽
         public void Stloc(int pos)
@@ -674,7 +693,7 @@ namespace CLRSharp
                 else
                     box.SetDirect(v);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         //拿出变量槽
         public void Ldloc(int pos)
@@ -686,7 +705,7 @@ namespace CLRSharp
                 obj = b.Clone();
             }
             stackCalc.Push(obj);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public enum RefType
         {
@@ -764,13 +783,13 @@ namespace CLRSharp
         public void Ldloca(int pos)
         {
             stackCalc.Push(new RefObj(this, pos, RefType.loc));
-            _pos = _pos.Next;
+            _codepos++;
         }
 
         public void Ldstr(string text)
         {
             stackCalc.Push(text);
-            _pos = _pos.Next;
+            _codepos++;
         }
 
         //加载参数(还得处理static，il静态非静态不一样，成员参数0是this)
@@ -780,12 +799,12 @@ namespace CLRSharp
             if (_params != null)
                 p = _params[pos];
             stackCalc.Push(p);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldarga(int pos)
         {
             stackCalc.Push(new RefObj(this, pos, RefType.arg));
-            _pos = _pos.Next;
+            _codepos++;
         }
         //逻辑计算
 
@@ -812,7 +831,7 @@ namespace CLRSharp
 
 
             stackCalc.Push(ValueOnStack.MakeVBoxBool(beq));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Cgt()
         {
@@ -821,7 +840,7 @@ namespace CLRSharp
 
 
             stackCalc.Push(ValueOnStack.MakeVBoxBool(n1.logic_gt(n2)));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Cgt_Un()
         {
@@ -829,21 +848,21 @@ namespace CLRSharp
             VBox n1 = stackCalc.Pop() as VBox;
 
             stackCalc.Push(ValueOnStack.MakeVBoxBool(n1.logic_gt_Un(n2)));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Clt()
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
             stackCalc.Push(ValueOnStack.MakeVBoxBool(n1.logic_lt(n2)));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Clt_Un()
         {
             VBox n2 = stackCalc.Pop() as VBox;
             VBox n1 = stackCalc.Pop() as VBox;
             stackCalc.Push(ValueOnStack.MakeVBoxBool(n1.logic_lt_Un(n2)));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ckfinite()
         {
@@ -858,7 +877,7 @@ namespace CLRSharp
                 double v = (double)n1;
                 stackCalc.Push(double.IsInfinity(v) || double.IsNaN(v) ? 1 : 0);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         //算术操作
         public void Add()
@@ -867,7 +886,7 @@ namespace CLRSharp
             VBox n1 = stackCalc.Pop() as VBox;
             n1.Add(n2);
             stackCalc.Push(n1);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Sub()
         {
@@ -875,7 +894,7 @@ namespace CLRSharp
             VBox n1 = stackCalc.Pop() as VBox;
             n1.Sub(n2);
             stackCalc.Push(n1);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Mul()
         {
@@ -883,7 +902,7 @@ namespace CLRSharp
             VBox n1 = stackCalc.Pop() as VBox;
             n1.Mul(n2);
             stackCalc.Push(n1);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Div()
         {
@@ -891,7 +910,7 @@ namespace CLRSharp
             VBox n1 = stackCalc.Pop() as VBox;
             n1.Div(n2);
             stackCalc.Push(n1);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Div_Un()
         {
@@ -899,7 +918,7 @@ namespace CLRSharp
             VBox n1 = stackCalc.Pop() as VBox;
             n1.Div(n2);//!!! _un
             stackCalc.Push(n1);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Rem()
         {
@@ -907,7 +926,7 @@ namespace CLRSharp
             VBox n1 = stackCalc.Pop() as VBox;
             n1.Mod(n2);
             stackCalc.Push(n1);
-            _pos = _pos.Next; ;
+            _codepos++; ;
         }
         public void Rem_Un()
         {
@@ -915,7 +934,7 @@ namespace CLRSharp
             VBox n1 = stackCalc.Pop() as VBox;
             n1.Mod(n2);//!!!_un
             stackCalc.Push(n1);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Neg()
         {
@@ -934,7 +953,7 @@ namespace CLRSharp
                 stackCalc.Push(n1);
             }
 
-            _pos = _pos.Next;
+            _codepos++;
         }
         //转换
         public void Conv_I1()
@@ -950,7 +969,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((sbyte)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_U1()
         {
@@ -965,7 +984,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((byte)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_I2()
         {
@@ -980,7 +999,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((Int16)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_U2()
         {
@@ -995,7 +1014,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((UInt16)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_I4()
         {
@@ -1009,7 +1028,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((Int32)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_U4()
         {
@@ -1024,7 +1043,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((UInt32)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_I8()
         {
@@ -1039,7 +1058,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((Int64)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_U8()
         {
@@ -1054,7 +1073,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((UInt64)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_I()
         {
@@ -1069,7 +1088,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((Int32)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_U()
         {
@@ -1084,7 +1103,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((UInt32)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_R4()
         {
@@ -1100,7 +1119,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((float)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_R8()
         {
@@ -1115,7 +1134,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((double)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_R_Un()
         {
@@ -1130,7 +1149,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((float)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
 
         ////数组
@@ -1144,7 +1163,7 @@ namespace CLRSharp
             if (objv is VBox) objv = (objv as VBox).BoxDefine();
             var array = newForArray.Invoke(context, null, new object[] { objv });
             stackCalc.Push(array);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void LdLen()
         {
@@ -1153,12 +1172,12 @@ namespace CLRSharp
             var vbox = ValueOnStack.MakeVBox(NumberType.INT32);
             vbox.v32 = a.Length;
             stackCalc.Push(vbox);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldelema(object obj)
         {
             throw new NotImplementedException();
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldelem_I1()
         {
@@ -1174,7 +1193,7 @@ namespace CLRSharp
             }
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldelem_U1()
         {
@@ -1190,7 +1209,7 @@ namespace CLRSharp
             }
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
 
         public void Ldelem_I2()
@@ -1207,7 +1226,7 @@ namespace CLRSharp
             }
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldelem_U2()
         {
@@ -1223,7 +1242,7 @@ namespace CLRSharp
             }
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldelem_I4()
         {
@@ -1239,14 +1258,14 @@ namespace CLRSharp
             }
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldelem_U4()
         {
             int index = (int)stackCalc.Pop();
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
 
         public void Ldelem_I8()
@@ -1263,7 +1282,7 @@ namespace CLRSharp
             }
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldelem_I()
         {
@@ -1279,7 +1298,7 @@ namespace CLRSharp
             }
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldelem_R4()
         {
@@ -1295,7 +1314,7 @@ namespace CLRSharp
             }
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldelem_R8()
         {
@@ -1311,7 +1330,7 @@ namespace CLRSharp
             }
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldelem_Ref()
         {
@@ -1327,7 +1346,7 @@ namespace CLRSharp
             }
             Array array = stackCalc.Pop() as Array;
             stackCalc.Push(array.GetValue(index));
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldelem_Any(object obj)
         {
@@ -1343,7 +1362,7 @@ namespace CLRSharp
             }
             Object[] array = stackCalc.Pop() as Object[];
             stackCalc.Push(array[index]);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Stelem_I()
         {
@@ -1369,7 +1388,7 @@ namespace CLRSharp
             }
             var array = stackCalc.Pop() as Int32[];
             array[index] = value;
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Stelem_I1()
         {
@@ -1395,7 +1414,7 @@ namespace CLRSharp
             }
             var array = stackCalc.Pop() as sbyte[];
             array[index] = (sbyte)value;
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Stelem_I2()
         {
@@ -1429,7 +1448,7 @@ namespace CLRSharp
                 (array as Int16[])[index] = (Int16)value;
             }
 
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Stelem_I4()
         {
@@ -1455,7 +1474,7 @@ namespace CLRSharp
             }
             var array = stackCalc.Pop() as Int32[];
             array[index] = (Int32)value;
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Stelem_I8()
         {
@@ -1481,7 +1500,7 @@ namespace CLRSharp
             }
             var array = stackCalc.Pop() as Int64[];
             array[index] = value;
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Stelem_R4()
         {
@@ -1507,7 +1526,7 @@ namespace CLRSharp
             }
             var array = stackCalc.Pop() as float[];
             array[index] = value;
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Stelem_R8()
         {
@@ -1533,7 +1552,7 @@ namespace CLRSharp
             }
             var array = stackCalc.Pop() as double[];
             array[index] = value;
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Stelem_Ref()
         {
@@ -1551,7 +1570,7 @@ namespace CLRSharp
             var array = stackCalc.Pop() as Object[];
 
             array[index] = value;
-            _pos = _pos.Next;
+            _codepos++;
         }
 
         public void Stelem_Any()
@@ -1560,7 +1579,7 @@ namespace CLRSharp
             var index = (int)stackCalc.Pop();
             var array = stackCalc.Pop() as Object[];
             array[index] = value;
-            _pos = _pos.Next;
+            _codepos++;
         }
 
         //寻址类
@@ -1602,7 +1621,7 @@ namespace CLRSharp
 
             stackCalc.Push(returnvar);
 
-            _pos = _pos.Next;
+            _codepos++;
         }
         //public void NewObj(ThreadContext context, Mono.Cecil.MethodReference method)
         //{
@@ -1626,7 +1645,7 @@ namespace CLRSharp
 
 
 
-        //    _pos = _pos.Next;
+        //    _codepos++;
 
         //}
         public void Ldfld(ThreadContext context, IField field)
@@ -1648,7 +1667,7 @@ namespace CLRSharp
             }
             stackCalc.Push(value);
             //System.Type t =obj.GetType();
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldflda(ThreadContext context, IField field)
         {
@@ -1659,7 +1678,7 @@ namespace CLRSharp
 
             stackCalc.Push(new RefObj(field, obj));
 
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldsfld(ThreadContext context, IField field)
         {
@@ -1674,7 +1693,7 @@ namespace CLRSharp
             }
             stackCalc.Push(value);
             //System.Type t =obj.GetType();
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldsflda(ThreadContext context, IField field)
         {
@@ -1683,7 +1702,7 @@ namespace CLRSharp
 
             stackCalc.Push(new RefObj(field, null));
 
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Stfld(ThreadContext context, IField field)
         {
@@ -1715,7 +1734,7 @@ namespace CLRSharp
                 }
             }
             field.Set(obj, value);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Stsfld(ThreadContext context, IField field)
         {
@@ -1730,12 +1749,12 @@ namespace CLRSharp
             //var ff = type.GetField(field.Name);
             field.Set(null, value);
 
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Constrained(ThreadContext context, ICLRType obj)
         {
 
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Isinst(ThreadContext context, ICLRType _type)
         {
@@ -1745,7 +1764,7 @@ namespace CLRSharp
                 stackCalc.Push(value);
             else
                 stackCalc.Push(null);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldtoken(ThreadContext context, object token)
         {
@@ -1754,7 +1773,7 @@ namespace CLRSharp
             //var _type = context.environment.GetType(obj.DeclaringType.FullName, obj.Module);
             //var field = _type.GetField(obj.Name);
             stackCalc.Push(token);
-            _pos = _pos.Next;
+            _codepos++;
         }
 
         public void Conv_Ovf_I1()
@@ -1769,7 +1788,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((sbyte)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_Ovf_U1()
         {
@@ -1783,7 +1802,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((byte)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_Ovf_I2()
         {
@@ -1797,7 +1816,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((Int16)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_Ovf_U2()
         {
@@ -1811,7 +1830,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((Int16)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_Ovf_I4()
         {
@@ -1825,7 +1844,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((Int32)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_Ovf_U4()
         {
@@ -1839,7 +1858,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((UInt32)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_Ovf_I8()
         {
@@ -1853,7 +1872,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((Int64)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_Ovf_U8()
         {
@@ -1867,7 +1886,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((Int64)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_Ovf_I()
         {
@@ -1881,7 +1900,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((Int32)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_Ovf_U()
         {
@@ -1895,7 +1914,7 @@ namespace CLRSharp
             {
                 stackCalc.Push((UInt32)num1);
             }
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Conv_Ovf_I1_Un()
         {
@@ -1944,26 +1963,26 @@ namespace CLRSharp
         {
             stackCalc.Push(new RefFunc(method, null));
             //throw new NotImplementedException();
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldvirtftn(ThreadContext context, IMethod method)
         {
             object _this = stackCalc.Pop();
             stackCalc.Push(new RefFunc(method, _this));
 
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Ldarga(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Calli(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
 
 
@@ -1971,24 +1990,24 @@ namespace CLRSharp
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Starg_S(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldnull()
         {
             stackCalc.Push(null);
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Jmp(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
 
         public void Switch(ThreadContext context, Mono.Cecil.Cil.Instruction[] poss)
@@ -2005,298 +2024,299 @@ namespace CLRSharp
             }
             if (pos >= poss.Length)
             {
-                _pos = _pos.Next;
+                _codepos++;
 
             }
             else
             {
-                _pos = poss[pos];
+                _codepos = _body.addr[poss[pos].Offset];
+                //_pos = poss[pos];
             }
         }
         public void Ldind_I1(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldind_U1(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldind_I2(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldind_U2(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldind_I4(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldind_U4(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldind_I8(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldind_I(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldind_R4(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldind_R8(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldind_Ref(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Stind_Ref(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Stind_I1(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Stind_I2(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Stind_I4(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Stind_I8(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Stind_R4(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Stind_R8(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void And(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Or(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Xor(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Shl(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Shr(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Shr_Un(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Not(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Cpobj(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Ldobj(ThreadContext context, object obj)
         {
             stackCalc.Push(obj);
             //Type t = obj.GetType();
             //throw new NotImplementedException();
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Castclass(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Throw(ThreadContext context, object obj)
         {
             Exception exc = stackCalc.Pop() as Exception;
             throw exc;
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Stobj(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Refanyval(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Mkrefany(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
 
         public void Add_Ovf(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Add_Ovf_Un(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Mul_Ovf(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Mul_Ovf_Un(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Sub_Ovf(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Sub_Ovf_Un(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Endfinally(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Stind_I(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Arglist(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
 
         public void Starg(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Localloc(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Endfilter(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Unaligned(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Volatile(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Tail(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Initobj(ThreadContext context, ICLRType _type)
         {
@@ -2307,49 +2327,49 @@ namespace CLRSharp
 
             _this.Set(_object);
 
-            _pos = _pos.Next;
+            _codepos++;
         }
         public void Cpblk(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Initblk(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void No(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Rethrow(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Sizeof(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Refanytype(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
         public void Readonly(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
             throw new NotImplementedException(t.ToString());
-            //_pos = _pos.Next;
+            //_codepos++;
         }
     }
 }

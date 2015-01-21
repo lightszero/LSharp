@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mono.Cecil.Cil;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -270,9 +271,15 @@ namespace CLRSharp
                     c.debugline = code.SequencePoint.StartLine;
                 
                 }
-                c.InitToken(code);
+
                 this.opCodes.Add(c);
                 addr[c.addr] = i; ;
+            }
+            for (int i = 0; i < bodyNative.Instructions.Count; i++)
+            {
+                OpCode c = opCodes[i];
+                var code = bodyNative.Instructions[i];
+                c.InitToken(this, code.Operand);
             }
             bInited = true;
         }
@@ -282,10 +289,48 @@ namespace CLRSharp
             public CodeEx code;
             public int debugline = -1;
             public object tokenUnknown;
+            public int tokenAddr_Index;
             public int tokenAddr;
-            public void InitToken(Mono.Cecil.Cil.Instruction code)
+            public void InitToken(CodeBody body,object _p)
             {
-                this.tokenUnknown = code.Operand;
+                switch (code)
+                {
+                    case CodeEx.Leave:
+                    case CodeEx.Leave_S:
+                    case CodeEx.Br:
+                    case CodeEx.Br_S:
+                    case CodeEx.Brtrue:
+                    case CodeEx.Brtrue_S:
+                    case CodeEx.Brfalse:
+                    case CodeEx.Brfalse_S:
+                    //比较流程控制
+                    case CodeEx.Beq:
+                    case CodeEx.Beq_S:
+                    case CodeEx.Bne_Un:
+                    case CodeEx.Bne_Un_S:
+                    case CodeEx.Bge:
+                    case CodeEx.Bge_S:
+                    case CodeEx.Bge_Un:
+                    case CodeEx.Bge_Un_S:
+                    case CodeEx.Bgt:
+                    case CodeEx.Bgt_S:
+                    case CodeEx.Bgt_Un:
+                    case CodeEx.Bgt_Un_S:
+                    case CodeEx.Ble:
+                    case CodeEx.Ble_S:
+                    case CodeEx.Ble_Un:
+                    case CodeEx.Ble_Un_S:
+                    case CodeEx.Blt:
+                    case CodeEx.Blt_S:
+                    case CodeEx.Blt_Un:
+                    case CodeEx.Blt_Un_S:
+                        this.tokenAddr = ((Mono.Cecil.Cil.Instruction)_p).Offset;
+                        this.tokenAddr_Index = body.addr[this.tokenAddr];
+                        break;
+                    default:
+                        this.tokenUnknown = _p;
+                        break;
+                }
             }
         }
         public Dictionary<string, int> debugDoc = new Dictionary<string, int>();
