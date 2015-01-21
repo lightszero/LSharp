@@ -438,6 +438,11 @@ namespace CLRSharp
                     case CodeEx.Ldloc_3:
                         this.tokenI32 = 3;
                         break;
+
+                    case CodeEx.Ldarga:
+                    case CodeEx.Ldarga_S:
+                        this.tokenI32 = (_p as Mono.Cecil.ParameterDefinition).Index;
+                        break;
                     default:
                         this.tokenUnknown = _p;
                         break;

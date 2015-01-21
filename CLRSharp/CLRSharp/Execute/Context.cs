@@ -1000,10 +1000,10 @@ namespace CLRSharp
                         stack.Ldvirtftn(this, _code.tokenMethod);
                         break;
                     case CodeEx.Ldarga:
-                        stack.Ldarga(this, _code.tokenUnknown);
+                        stack.Ldarga(_code.tokenI32);
                         break;
                     case CodeEx.Ldarga_S:
-                        stack.Ldarga(this, _code.tokenUnknown);
+                        stack.Ldarga(_code.tokenI32);
                         break;
                     case CodeEx.Calli:
                         stack.Calli(this, _code.tokenUnknown);

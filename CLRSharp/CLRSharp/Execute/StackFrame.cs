@@ -1985,12 +1985,14 @@ namespace CLRSharp
 
             _codepos++;
         }
-        public void Ldarga(ThreadContext context, object obj)
-        {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
-        }
+        //public void Ldarga(ThreadContext context, object obj)
+        //{
+        //    int pos=            (obj as Mono.Cecil.ParameterDefinition).Index;
+        //    stackCalc.Push(new RefObj(this, pos, RefType.arg));
+        //    Type t = obj.GetType();
+        //    //throw new NotImplementedException(t.ToString());
+        //    _codepos++;
+        //}
         public void Calli(ThreadContext context, object obj)
         {
             Type t = obj.GetType();

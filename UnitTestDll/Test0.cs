@@ -8,6 +8,16 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_V3()
+        {
+            Vector3 v = new Vector3(45, 5, 0);
+            PassV3(v);
+        }
+
+        static void PassV3(Vector3 v3)
+        {
+            Logger.Log("" + v3.y);
+        }
         public static void UnitTest_Judge()
         {
             int i = -1;
