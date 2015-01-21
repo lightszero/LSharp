@@ -1548,19 +1548,35 @@ namespace CLRSharp
         {
             //MethodParamList list = new MethodParamList(context.environment, method);
             object[] _pp = null;
-            if (_clrmethod.ParamList != null && _clrmethod.ParamList.Count > 0)
+            bool bCLR = _clrmethod is IMethod_Sharp;
+            if (_clrmethod.ParamList != null)
             {
                 _pp = new object[_clrmethod.ParamList.Count];
                 for (int i = 0; i < _pp.Length; i++)
                 {
-                    var obj = stackCalc.Pop();
-                    if (obj is VBox)
+                    int iCallPPos = _pp.Length - 1 - i;
+                    ICLRType pType = _clrmethod.ParamList[iCallPPos];
+                    var pp = stackCalc.Pop();
+                    if (pp is VBox && !bCLR)
                     {
-                        obj = (obj as VBox).BoxDefine();
+                        pp = (pp as VBox).BoxDefine();
                     }
-                    _pp[_pp.Length - 1 - i] = obj;
+                    if ((pp is int) && (pType.TypeForSystem != typeof(int) && pType.TypeForSystem != typeof(object)))
+                    {
+                        var _vbox = ValueOnStack.MakeVBox(pType);
+                        if (_vbox != null)
+                        {
+                            _vbox.SetDirect(pp);
+                            if (bCLR)
+                                pp = _vbox;
+                            else
+                                pp = _vbox.BoxDefine();
+                        }
+                    }
+                    _pp[iCallPPos] = pp;
                 }
             }
+
             //var typesys = context.environment.GetType(method.DeclaringType.FullName, method.Module);
             object returnvar = _clrmethod.Invoke(context, null, _pp);
 

@@ -11,6 +11,7 @@ namespace UnitTestDll
         //只要有一个static void UnitTest() 函数的，就是单元测试
         public static void UnitTest_01()
         {
+            UnityEngine.GameObject o = new UnityEngine.GameObject((short)0);
             Logger.Log("abc");
             Console.WriteLine("aaaa");
         }
