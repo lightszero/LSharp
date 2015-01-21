@@ -61,6 +61,7 @@
     <Compile Include="Test0.cs" />
     <Compile Include="LightTestor\ExpTest_10.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="没有实现的IL.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UnitTest\UnitTest.csproj">
