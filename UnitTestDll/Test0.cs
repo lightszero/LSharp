@@ -8,6 +8,17 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_Int()
+        {
+            float f = -1.5f;
+            int i = (int)(-(f));
+            Logger.Log("i=" + i);
+            if (i != 1)
+            {
+                Logger.Log("" + i);
+                throw new Exception();
+            }
+        }
         public static void UnitTest_Change()
         {
             int i = 1;
