@@ -63,7 +63,7 @@ namespace CLRSharp
                 }
                 else
                 {
-                    str +="!no pdb info,no code filename(no line)!\n";
+                    str += "!no pdb info,no code filename(no line)!\n";
                 }
                 if (pos == null)
                 {
@@ -186,7 +186,7 @@ namespace CLRSharp
                 }
             }
         }
-        ICLRType GetType(string fullname)
+        public ICLRType GetType(string fullname)
         {
             var type = environment.GetType(fullname);
             ICLRType_Sharp stype = type as ICLRType_Sharp;
@@ -198,7 +198,7 @@ namespace CLRSharp
             return type;
         }
 
-        ICLRType GetType(object token)
+        public ICLRType GetType(object token)
         {
             token.GetHashCode();
             Mono.Cecil.ModuleDefinition module = null;
@@ -223,7 +223,7 @@ namespace CLRSharp
         }
         Dictionary<int, IMethod> methodCache = new Dictionary<int, IMethod>();
         Dictionary<int, IField> fieldCache = new Dictionary<int, IField>();
-        IMethod GetMethod(object token)
+        public IMethod GetMethod(object token)
         {
             IMethod __method = null;
             if (methodCache.TryGetValue(token.GetHashCode(), out __method))
@@ -321,14 +321,14 @@ namespace CLRSharp
                 typename += "[]";
                 //var _type = context.environment.GetType(typename, type.Module);
                 _type = GetType(typename);
-            
+
             }
             MethodParamList tlist = MethodParamList.const_OneParam_Int(environment);
             var m = _type.GetMethod(".ctor", tlist);
             methodCache[token.GetHashCode()] = m;
             return m;
         }
-        IField GetField(object token)
+        public IField GetField(object token)
         {
             IField __field = null;
             if (fieldCache.TryGetValue(token.GetHashCode(), out __field))
@@ -617,49 +617,33 @@ namespace CLRSharp
                         break;
                     //常量加载
                     case CodeEx.Ldc_I4:
-                        stack.Ldc_I4((int)Convert.ToDecimal(_code.tokenUnknown));
+                        stack.Ldc_I4(_code.tokenI32);
                         break;
                     case CodeEx.Ldc_I4_S:
-                        stack.Ldc_I4((int)Convert.ToDecimal(_code.tokenUnknown));
+                        stack.Ldc_I4(_code.tokenI32);
                         break;
                     case CodeEx.Ldc_I4_M1:
-                        stack.Ldc_I4(-1);
+                        stack.Ldc_I4(_code.tokenI32);
                         break;
                     case CodeEx.Ldc_I4_0:
-                        stack.Ldc_I4(0);
-                        break;
                     case CodeEx.Ldc_I4_1:
-                        stack.Ldc_I4(1);
-                        break;
                     case CodeEx.Ldc_I4_2:
-                        stack.Ldc_I4(2);
-                        break;
                     case CodeEx.Ldc_I4_3:
-                        stack.Ldc_I4(3);
-                        break;
                     case CodeEx.Ldc_I4_4:
-                        stack.Ldc_I4(4);
-                        break;
                     case CodeEx.Ldc_I4_5:
-                        stack.Ldc_I4(5);
-                        break;
                     case CodeEx.Ldc_I4_6:
-                        stack.Ldc_I4(6);
-                        break;
                     case CodeEx.Ldc_I4_7:
-                        stack.Ldc_I4(7);
-                        break;
                     case CodeEx.Ldc_I4_8:
-                        stack.Ldc_I4(8);
+                        stack.Ldc_I4(_code.tokenI32);
                         break;
                     case CodeEx.Ldc_I8:
-                        stack.Ldc_I8((Int64)(Convert.ToDecimal(_code.tokenUnknown)));
+                        stack.Ldc_I8(_code.tokenI64);
                         break;
                     case CodeEx.Ldc_R4:
-                        stack.Ldc_R4((float)(Convert.ToDecimal(_code.tokenUnknown)));
+                        stack.Ldc_R4(_code.tokenR32);
                         break;
                     case CodeEx.Ldc_R8:
-                        stack.Ldc_R8((double)(Convert.ToDecimal(_code.tokenUnknown)));
+                        stack.Ldc_R8(_code.tokenR64);
                         break;
 
                     //定义为临时变量
@@ -708,14 +692,14 @@ namespace CLRSharp
                         break;
                     //加载字符串
                     case CodeEx.Ldstr:
-                        stack.Ldstr(_code.tokenUnknown as string);
+                        stack.Ldstr(_code.tokenStr);
                         break;
                     //呼叫函数
                     case CodeEx.Call:
-                        stack.Call(this, GetMethod(_code.tokenUnknown), false);
+                        stack.Call(this, _code.tokenMethod, false);
                         break;
                     case CodeEx.Callvirt:
-                        stack.Call(this, GetMethod(_code.tokenUnknown), true);
+                        stack.Call(this, _code.tokenMethod, true);
                         break;
                     //算术指令
                     case CodeEx.Add:
@@ -745,7 +729,7 @@ namespace CLRSharp
 
                     //装箱
                     case CodeEx.Box:
-                        stack.Box(GetType(_code.tokenUnknown));
+                        stack.Box(_code.tokenType);
                         break;
                     case CodeEx.Unbox:
                         stack.Unbox();
@@ -952,7 +936,7 @@ namespace CLRSharp
                         break;
 
                     case CodeEx.Newobj:
-                        stack.NewObj(this, GetMethod(_code.tokenUnknown));
+                        stack.NewObj(this, _code.tokenMethod);
                         break;
 
                     case CodeEx.Dup:
@@ -963,41 +947,41 @@ namespace CLRSharp
                         break;
 
                     case CodeEx.Ldfld:
-                        stack.Ldfld(this, GetField(_code.tokenUnknown));
+                        stack.Ldfld(this, _code.tokenField);
                         break;
                     case CodeEx.Ldflda:
-                        stack.Ldflda(this, GetField(_code.tokenUnknown));
+                        stack.Ldflda(this, _code.tokenField);
                         break;
                     case CodeEx.Ldsfld:
-                        stack.Ldsfld(this, GetField(_code.tokenUnknown));
+                        stack.Ldsfld(this, _code.tokenField);
                         break;
                     case CodeEx.Ldsflda:
-                        stack.Ldsflda(this, GetField(_code.tokenUnknown));
+                        stack.Ldsflda(this, _code.tokenField);
                         break;
                     case CodeEx.Stfld:
-                        stack.Stfld(this, GetField(_code.tokenUnknown));
+                        stack.Stfld(this, _code.tokenField);
                         break;
                     case CodeEx.Stsfld:
-                        stack.Stsfld(this, GetField(_code.tokenUnknown));
+                        stack.Stsfld(this, _code.tokenField);
                         break;
 
 
                     case CodeEx.Constrained:
-                        stack.Constrained(this, GetType(_code.tokenUnknown));
+                        stack.Constrained(this, _code.tokenType);
                         break;
 
                     case CodeEx.Isinst:
-                        stack.Isinst(this, GetType(_code.tokenUnknown));
+                        stack.Isinst(this, _code.tokenType);
                         break;
                     case CodeEx.Ldtoken:
                         stack.Ldtoken(this, GetToken(_code.tokenUnknown));
                         break;
 
                     case CodeEx.Ldftn:
-                        stack.Ldftn(this, GetMethod(_code.tokenUnknown));
+                        stack.Ldftn(this, _code.tokenMethod);
                         break;
                     case CodeEx.Ldvirtftn:
-                        stack.Ldvirtftn(this, GetMethod(_code.tokenUnknown));
+                        stack.Ldvirtftn(this, _code.tokenMethod);
                         break;
                     case CodeEx.Ldarga:
                         stack.Ldarga(this, _code.tokenUnknown);
@@ -1168,7 +1152,7 @@ namespace CLRSharp
                         stack.Tail(this, _code.tokenUnknown);
                         break;
                     case CodeEx.Initobj:
-                        stack.Initobj(this, this.GetType(_code.tokenUnknown));
+                        stack.Initobj(this, _code.tokenType);
                         break;
                     case CodeEx.Cpblk:
                         stack.Cpblk(this, _code.tokenUnknown);

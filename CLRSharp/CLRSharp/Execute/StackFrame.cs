@@ -644,7 +644,6 @@ namespace CLRSharp
             if (n1.logic_lt_Un(n2))
             {
                 _codepos = addr_index;// _body.addr[pos.Offset];
-
             }
             else
             {

@@ -228,7 +228,7 @@ namespace CLRSharp
         Readonly,
     }
 
- 
+
     public class CodeBody
     {
         //以后准备用自定义Body采集一遍，可以先过滤处理掉Mono.Cecil的代码中的指向，执行会更快
@@ -269,17 +269,18 @@ namespace CLRSharp
                         debugDoc.Add(code.SequencePoint.Document.Url, code.SequencePoint.StartLine);
                     }
                     c.debugline = code.SequencePoint.StartLine;
-                
+
                 }
 
                 this.opCodes.Add(c);
                 addr[c.addr] = i; ;
             }
+            var context = ThreadContext.activeContext;
             for (int i = 0; i < bodyNative.Instructions.Count; i++)
             {
                 OpCode c = opCodes[i];
                 var code = bodyNative.Instructions[i];
-                c.InitToken(this, code.Operand);
+                c.InitToken(context, this, code.Operand);
             }
             bInited = true;
         }
@@ -287,15 +288,24 @@ namespace CLRSharp
         {
             public override string ToString()
             {
-                return "IL_" + addr.ToString("X04") +" "+code ;
+                return "IL_" + addr.ToString("X04") + " " + code;
             }
             public int addr;
             public CodeEx code;
             public int debugline = -1;
+
             public object tokenUnknown;
             public int tokenAddr_Index;
             public int tokenAddr;
-            public void InitToken(CodeBody body,object _p)
+            public ICLRType tokenType;
+            public IField tokenField;
+            public IMethod tokenMethod;
+            public int tokenI32;
+            public Int64 tokenI64;
+            public float tokenR32;
+            public double tokenR64;
+            public string tokenStr;
+            public void InitToken(ThreadContext context, CodeBody body, object _p)
             {
                 switch (code)
                 {
@@ -330,6 +340,78 @@ namespace CLRSharp
                     case CodeEx.Blt_Un_S:
                         this.tokenAddr = ((Mono.Cecil.Cil.Instruction)_p).Offset;
                         this.tokenAddr_Index = body.addr[this.tokenAddr];
+                        break;
+                    case CodeEx.Isinst:
+                    case CodeEx.Constrained:
+                    case CodeEx.Box:
+                    case CodeEx.Initobj:
+                        this.tokenType = context.GetType(_p);
+                        //this.tokenUnknown = _p;
+                        break;
+                    case CodeEx.Ldfld:
+                    case CodeEx.Ldflda:
+                    case CodeEx.Ldsfld:
+                    case CodeEx.Ldsflda:
+                    case CodeEx.Stfld:
+                    case CodeEx.Stsfld:
+                        this.tokenField = context.GetField(_p);
+                        //this.tokenUnknown = _p;
+                        break;
+                    case CodeEx.Call:
+                    case CodeEx.Callvirt:
+                    case CodeEx.Newobj:
+                    case CodeEx.Ldftn:
+                    case CodeEx.Ldvirtftn:
+                        this.tokenMethod = context.GetMethod(_p);
+                        break;
+                    case CodeEx.Ldc_I4:
+                        this.tokenI32 = (int)_p;
+                        break;
+                    case CodeEx.Ldc_I4_S:
+                        this.tokenI32 = (int)Convert.ToDecimal(_p);
+                        break;
+                    case CodeEx.Ldc_I4_M1:
+                        this.tokenI32 = -1;
+                        break;
+                    case CodeEx.Ldc_I4_0:
+                        this.tokenI32 = 0;
+                        break;
+                    case CodeEx.Ldc_I4_1:
+                        this.tokenI32 = 1;
+                        break;
+                    case CodeEx.Ldc_I4_2:
+                        this.tokenI32 = 2;
+                        break;
+                    case CodeEx.Ldc_I4_3:
+                        this.tokenI32 = 3;
+                        break;
+                    case CodeEx.Ldc_I4_4:
+                        this.tokenI32 = 4;
+                        break;
+                    case CodeEx.Ldc_I4_5:
+                        this.tokenI32 = 5;
+                        break;
+                    case CodeEx.Ldc_I4_6:
+                        this.tokenI32 = 6;
+                        break;
+                    case CodeEx.Ldc_I4_7:
+                        this.tokenI32 = 7;
+                        break;
+                    case CodeEx.Ldc_I4_8:
+                        this.tokenI32 = 8;
+                        break;
+                    case CodeEx.Ldc_I8:
+                        this.tokenI64 =(Int64)_p;
+                        break;
+                    case CodeEx.Ldc_R4:
+                        this.tokenR32 = (float)_p;
+                        break;
+                    case CodeEx.Ldc_R8:
+                        this.tokenR64 = (double)_p;
+                        break;
+
+                    case CodeEx.Ldstr:
+                        this.tokenStr = _p as string;
                         break;
                     default:
                         this.tokenUnknown = _p;

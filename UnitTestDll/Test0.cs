@@ -13,10 +13,9 @@ namespace UnitTestDll
             int i = -1;
             int j = 0;
             if (i >= 0 && j < 2)
-            {
-                throw new Exception("not cool.");
-            }
-
+                Logger.Log("true");
+            else
+                Logger.Log("false"); // 应该输出这个
         }
         //只要有一个static void UnitTest() 函数的，就是单元测试
         public static void UnitTest_01()
