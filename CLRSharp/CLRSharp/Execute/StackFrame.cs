@@ -163,7 +163,8 @@ namespace CLRSharp
                 {
                     ICLRType t = _body.typelistForLoc[i];
 
-                    slotVar.Add(ValueOnStack.MakeVBox(t));
+                        slotVar.Add(ValueOnStack.MakeVBox(t));
+
                 }
             }
         }

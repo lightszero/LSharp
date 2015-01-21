@@ -48,6 +48,7 @@ namespace CLRSharp
         //}
         public static VBox MakeVBox(ICLRType type)
         {
+            if (type == null) return null;
             return MakeVBox(type.TypeForSystem);
         }
         //public static IBox MakeBool(bool b)

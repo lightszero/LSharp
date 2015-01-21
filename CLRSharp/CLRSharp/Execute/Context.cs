@@ -310,11 +310,19 @@ namespace CLRSharp
                 throw new NotImplementedException();
             }
 
+            ICLRType _type = null;
             ICLRType _Itype = GetType(typename);
-            typename += "[]";
-            //var _type = context.environment.GetType(typename, type.Module);
-            var _type = GetType(typename);
-
+            if (_Itype is ICLRType_Sharp)
+            {
+                _type = environment.GetType(typeof(CLRSharp.CLRSharp_Instance[]));
+            }
+            else
+            {
+                typename += "[]";
+                //var _type = context.environment.GetType(typename, type.Module);
+                _type = GetType(typename);
+            
+            }
             MethodParamList tlist = MethodParamList.const_OneParam_Int(environment);
             var m = _type.GetMethod(".ctor", tlist);
             methodCache[token.GetHashCode()] = m;
