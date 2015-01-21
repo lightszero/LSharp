@@ -78,10 +78,7 @@ namespace CLRSharp
                 }
             }
         }
-        public CodeBody CreateCodeBody(Method_Common_CLRSharp method)
-        {
-            return new CodeBody(this, method.method_CLRSharp);
-        }
+
         List<string> moduleref = new List<string>();
         public string[] GetAllTypes()
         {

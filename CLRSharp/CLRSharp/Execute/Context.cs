@@ -52,7 +52,6 @@ namespace CLRSharp
             foreach (StackFrame s in GetStackFrames())
             {
                 var pos = s._pos;
-
                 Instruction sqIns = pos;
                 while (sqIns != null && sqIns.SequencePoint == null)
                 {
@@ -493,708 +492,710 @@ namespace CLRSharp
             Mono.Collections.Generic.Collection<Mono.Cecil.Cil.Instruction> codes = body.bodyNative.Instructions;
             while (true)
             {
-                var code = stack._pos;
+                //var code = stack._pos;
+                int _pos = stack._codepos;
+                var _code = body.opCodes[_pos];
                 if (DebugLevel >= 9)
                 {
-                    environment.logger.Log(code.ToString());
+                    environment.logger.Log(_code.ToString());
                 }
-                switch (code.OpCode.Code)
+                switch (_code.code)
                 {
 
                     ///////////
                     //流程控制
 
-                    case Code.Nop:
+                    case CodeEx.Nop:
                         stack.Nop();
                         break;
-                    case Code.Ret:
+                    case CodeEx.Ret:
                         stack.Ret();
                         return;
-                    case Code.Leave:
-                        stack.Leave(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Leave:
+                        stack.Leave(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Leave_S:
+                    case CodeEx.Leave_S:
                         //stack.Ret();
-                        stack.Leave(code.Operand as Mono.Cecil.Cil.Instruction);
+                        stack.Leave(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
                     //流程控制之goto
-                    case Code.Br:
-                        stack.Br(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Br:
+                        stack.Br(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Br_S:
-                        stack.Br(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Br_S:
+                        stack.Br(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Brtrue:
-                        stack.Brtrue(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Brtrue:
+                        stack.Brtrue(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Brtrue_S:
-                        stack.Brtrue(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Brtrue_S:
+                        stack.Brtrue(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Brfalse:
-                        stack.Brfalse(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Brfalse:
+                        stack.Brfalse(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Brfalse_S:
-                        stack.Brfalse(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Brfalse_S:
+                        stack.Brfalse(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
 
                     //比较流程控制
-                    case Code.Beq:
-                        stack.Beq(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Beq:
+                        stack.Beq(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Beq_S:
-                        stack.Beq(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Beq_S:
+                        stack.Beq(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Bne_Un:
-                        stack.Bne_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Bne_Un:
+                        stack.Bne_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Bne_Un_S:
-                        stack.Bne_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Bne_Un_S:
+                        stack.Bne_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Bge:
-                        stack.Bge(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Bge:
+                        stack.Bge(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Bge_S:
-                        stack.Bge(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Bge_S:
+                        stack.Bge(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Bge_Un:
-                        stack.Bge_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Bge_Un:
+                        stack.Bge_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Bge_Un_S:
-                        stack.Bge_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Bge_Un_S:
+                        stack.Bge_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Bgt:
-                        stack.Bgt(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Bgt:
+                        stack.Bgt(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Bgt_S:
-                        stack.Bgt(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Bgt_S:
+                        stack.Bgt(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Bgt_Un:
-                        stack.Bgt_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Bgt_Un:
+                        stack.Bgt_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Bgt_Un_S:
-                        stack.Bge_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Bgt_Un_S:
+                        stack.Bge_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Ble:
-                        stack.Ble(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Ble:
+                        stack.Ble(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Ble_S:
-                        stack.Ble(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Ble_S:
+                        stack.Ble(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Ble_Un:
-                        stack.Ble_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Ble_Un:
+                        stack.Ble_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Ble_Un_S:
-                        stack.Ble_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Ble_Un_S:
+                        stack.Ble_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Blt:
-                        stack.Blt(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Blt:
+                        stack.Blt(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Blt_S:
-                        stack.Blt(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Blt_S:
+                        stack.Blt(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Blt_Un:
-                        stack.Blt_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Blt_Un:
+                        stack.Blt_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
-                    case Code.Blt_Un_S:
-                        stack.Ble_Un(code.Operand as Mono.Cecil.Cil.Instruction);
+                    case CodeEx.Blt_Un_S:
+                        stack.Ble_Un(_code.tokenUnknown as Mono.Cecil.Cil.Instruction);
                         break;
                     //逻辑计算
-                    case Code.Ceq:
+                    case CodeEx.Ceq:
                         stack.Ceq();
                         break;
-                    case Code.Cgt:
+                    case CodeEx.Cgt:
                         stack.Cgt();
                         break;
-                    case Code.Cgt_Un:
+                    case CodeEx.Cgt_Un:
                         stack.Cgt_Un();
                         break;
-                    case Code.Clt:
+                    case CodeEx.Clt:
                         stack.Clt();
                         break;
-                    case Code.Clt_Un:
+                    case CodeEx.Clt_Un:
                         stack.Clt_Un();
                         break;
-                    case Code.Ckfinite:
+                    case CodeEx.Ckfinite:
                         stack.Ckfinite();
                         break;
                     //常量加载
-                    case Code.Ldc_I4:
-                        stack.Ldc_I4((int)Convert.ToDecimal(code.Operand));
+                    case CodeEx.Ldc_I4:
+                        stack.Ldc_I4((int)Convert.ToDecimal(_code.tokenUnknown));
                         break;
-                    case Code.Ldc_I4_S:
-                        stack.Ldc_I4((int)Convert.ToDecimal(code.Operand));
+                    case CodeEx.Ldc_I4_S:
+                        stack.Ldc_I4((int)Convert.ToDecimal(_code.tokenUnknown));
                         break;
-                    case Code.Ldc_I4_M1:
+                    case CodeEx.Ldc_I4_M1:
                         stack.Ldc_I4(-1);
                         break;
-                    case Code.Ldc_I4_0:
+                    case CodeEx.Ldc_I4_0:
                         stack.Ldc_I4(0);
                         break;
-                    case Code.Ldc_I4_1:
+                    case CodeEx.Ldc_I4_1:
                         stack.Ldc_I4(1);
                         break;
-                    case Code.Ldc_I4_2:
+                    case CodeEx.Ldc_I4_2:
                         stack.Ldc_I4(2);
                         break;
-                    case Code.Ldc_I4_3:
+                    case CodeEx.Ldc_I4_3:
                         stack.Ldc_I4(3);
                         break;
-                    case Code.Ldc_I4_4:
+                    case CodeEx.Ldc_I4_4:
                         stack.Ldc_I4(4);
                         break;
-                    case Code.Ldc_I4_5:
+                    case CodeEx.Ldc_I4_5:
                         stack.Ldc_I4(5);
                         break;
-                    case Code.Ldc_I4_6:
+                    case CodeEx.Ldc_I4_6:
                         stack.Ldc_I4(6);
                         break;
-                    case Code.Ldc_I4_7:
+                    case CodeEx.Ldc_I4_7:
                         stack.Ldc_I4(7);
                         break;
-                    case Code.Ldc_I4_8:
+                    case CodeEx.Ldc_I4_8:
                         stack.Ldc_I4(8);
                         break;
-                    case Code.Ldc_I8:
-                        stack.Ldc_I8((Int64)(Convert.ToDecimal(code.Operand)));
+                    case CodeEx.Ldc_I8:
+                        stack.Ldc_I8((Int64)(Convert.ToDecimal(_code.tokenUnknown)));
                         break;
-                    case Code.Ldc_R4:
-                        stack.Ldc_R4((float)(Convert.ToDecimal(code.Operand)));
+                    case CodeEx.Ldc_R4:
+                        stack.Ldc_R4((float)(Convert.ToDecimal(_code.tokenUnknown)));
                         break;
-                    case Code.Ldc_R8:
-                        stack.Ldc_R8((double)(Convert.ToDecimal(code.Operand)));
+                    case CodeEx.Ldc_R8:
+                        stack.Ldc_R8((double)(Convert.ToDecimal(_code.tokenUnknown)));
                         break;
 
                     //定义为临时变量
-                    case Code.Stloc:
-                        stack.Stloc((int)code.Operand);
+                    case CodeEx.Stloc:
+                        stack.Stloc((int)_code.tokenUnknown);
                         break;
-                    case Code.Stloc_S:
-                        stack.Stloc(((VariableDefinition)code.Operand).Index);
+                    case CodeEx.Stloc_S:
+                        stack.Stloc(((VariableDefinition)_code.tokenUnknown).Index);
                         break;
-                    case Code.Stloc_0:
+                    case CodeEx.Stloc_0:
                         stack.Stloc(0);
                         break;
-                    case Code.Stloc_1:
+                    case CodeEx.Stloc_1:
                         stack.Stloc(1);
                         break;
-                    case Code.Stloc_2:
+                    case CodeEx.Stloc_2:
                         stack.Stloc(2);
                         break;
-                    case Code.Stloc_3:
+                    case CodeEx.Stloc_3:
                         stack.Stloc(3);
                         break;
                     //从临时变量加载
-                    case Code.Ldloc:
-                        stack.Ldloc((int)code.Operand);
+                    case CodeEx.Ldloc:
+                        stack.Ldloc((int)_code.tokenUnknown);
                         break;
-                    case Code.Ldloc_S:
-                        stack.Ldloc(((VariableDefinition)code.Operand).Index);
+                    case CodeEx.Ldloc_S:
+                        stack.Ldloc(((VariableDefinition)_code.tokenUnknown).Index);
                         break;
-                    case Code.Ldloc_0:
+                    case CodeEx.Ldloc_0:
                         stack.Ldloc(0);
                         break;
-                    case Code.Ldloc_1:
+                    case CodeEx.Ldloc_1:
                         stack.Ldloc(1);
                         break;
-                    case Code.Ldloc_2:
+                    case CodeEx.Ldloc_2:
                         stack.Ldloc(2);
                         break;
-                    case Code.Ldloc_3:
+                    case CodeEx.Ldloc_3:
                         stack.Ldloc(3);
                         break;
-                    case Code.Ldloca:
-                        stack.Ldloca(((VariableDefinition)code.Operand).Index);
+                    case CodeEx.Ldloca:
+                        stack.Ldloca(((VariableDefinition)_code.tokenUnknown).Index);
                         break;
-                    case Code.Ldloca_S:
-                        stack.Ldloca(((VariableDefinition)code.Operand).Index);
+                    case CodeEx.Ldloca_S:
+                        stack.Ldloca(((VariableDefinition)_code.tokenUnknown).Index);
                         break;
                     //加载字符串
-                    case Code.Ldstr:
-                        stack.Ldstr(code.Operand as string);
+                    case CodeEx.Ldstr:
+                        stack.Ldstr(_code.tokenUnknown as string);
                         break;
                     //呼叫函数
-                    case Code.Call:
-                        stack.Call(this, GetMethod(code.Operand), false);
+                    case CodeEx.Call:
+                        stack.Call(this, GetMethod(_code.tokenUnknown), false);
                         break;
-                    case Code.Callvirt:
-                        stack.Call(this, GetMethod(code.Operand), true);
+                    case CodeEx.Callvirt:
+                        stack.Call(this, GetMethod(_code.tokenUnknown), true);
                         break;
                     //算术指令
-                    case Code.Add:
+                    case CodeEx.Add:
                         stack.Add();
                         break;
-                    case Code.Sub:
+                    case CodeEx.Sub:
                         stack.Sub();
                         break;
-                    case Code.Mul:
+                    case CodeEx.Mul:
                         stack.Mul();
                         break;
-                    case Code.Div:
+                    case CodeEx.Div:
                         stack.Div();
                         break;
-                    case Code.Div_Un:
+                    case CodeEx.Div_Un:
                         stack.Div_Un();
                         break;
-                    case Code.Rem:
+                    case CodeEx.Rem:
                         stack.Rem();
                         break;
-                    case Code.Rem_Un:
+                    case CodeEx.Rem_Un:
                         stack.Rem_Un();
                         break;
-                    case Code.Neg:
+                    case CodeEx.Neg:
                         stack.Neg();
                         break;
 
                     //装箱
-                    case Code.Box:
-                        stack.Box(GetType(code.Operand));
+                    case CodeEx.Box:
+                        stack.Box(GetType(_code.tokenUnknown));
                         break;
-                    case Code.Unbox:
+                    case CodeEx.Unbox:
                         stack.Unbox();
                         break;
-                    case Code.Unbox_Any:
+                    case CodeEx.Unbox_Any:
                         stack.Unbox_Any();
                         break;
 
                     //加载参数
-                    case Code.Ldarg:
-                        stack.Ldarg((int)code.Operand);
+                    case CodeEx.Ldarg:
+                        stack.Ldarg((int)_code.tokenUnknown);
                         break;
-                    case Code.Ldarg_S:
-                        stack.Ldarg(GetParamPos(code.Operand));
+                    case CodeEx.Ldarg_S:
+                        stack.Ldarg(GetParamPos(_code.tokenUnknown));
                         break;
-                    case Code.Ldarg_0:
+                    case CodeEx.Ldarg_0:
                         stack.Ldarg(0);
                         break;
-                    case Code.Ldarg_1:
+                    case CodeEx.Ldarg_1:
                         stack.Ldarg(1);
                         break;
-                    case Code.Ldarg_2:
+                    case CodeEx.Ldarg_2:
                         stack.Ldarg(2);
                         break;
-                    case Code.Ldarg_3:
+                    case CodeEx.Ldarg_3:
                         stack.Ldarg(3);
                         break;
                     //转换
-                    case Code.Conv_I1:
+                    case CodeEx.Conv_I1:
                         stack.Conv_I1();
                         break;
-                    case Code.Conv_U1:
+                    case CodeEx.Conv_U1:
                         stack.Conv_U1();
                         break;
-                    case Code.Conv_I2:
+                    case CodeEx.Conv_I2:
                         stack.Conv_I2();
                         break;
-                    case Code.Conv_U2:
+                    case CodeEx.Conv_U2:
                         stack.Conv_U2();
                         break;
-                    case Code.Conv_I4:
+                    case CodeEx.Conv_I4:
                         stack.Conv_I4();
                         break;
-                    case Code.Conv_U4:
+                    case CodeEx.Conv_U4:
                         stack.Conv_U4();
                         break;
-                    case Code.Conv_I8:
+                    case CodeEx.Conv_I8:
                         stack.Conv_I8();
                         break;
-                    case Code.Conv_U8:
+                    case CodeEx.Conv_U8:
                         stack.Conv_U8();
                         break;
-                    case Code.Conv_I:
+                    case CodeEx.Conv_I:
                         stack.Conv_I();
                         break;
-                    case Code.Conv_U:
+                    case CodeEx.Conv_U:
                         stack.Conv_U();
                         break;
-                    case Code.Conv_R4:
+                    case CodeEx.Conv_R4:
                         stack.Conv_R4();
                         break;
-                    case Code.Conv_R8:
+                    case CodeEx.Conv_R8:
                         stack.Conv_R8();
                         break;
-                    case Code.Conv_R_Un:
+                    case CodeEx.Conv_R_Un:
                         stack.Conv_R_Un();
                         break;
-                    case Code.Conv_Ovf_I1:
+                    case CodeEx.Conv_Ovf_I1:
                         stack.Conv_Ovf_I1();
                         break;
-                    case Code.Conv_Ovf_U1:
+                    case CodeEx.Conv_Ovf_U1:
                         stack.Conv_Ovf_U1();
                         break;
-                    case Code.Conv_Ovf_I2:
+                    case CodeEx.Conv_Ovf_I2:
                         stack.Conv_Ovf_I2();
                         break;
-                    case Code.Conv_Ovf_U2:
+                    case CodeEx.Conv_Ovf_U2:
                         stack.Conv_Ovf_U2();
                         break;
-                    case Code.Conv_Ovf_I4:
+                    case CodeEx.Conv_Ovf_I4:
                         stack.Conv_Ovf_I4();
                         break;
-                    case Code.Conv_Ovf_U4:
+                    case CodeEx.Conv_Ovf_U4:
                         stack.Conv_Ovf_U4();
                         break;
 
-                    case Code.Conv_Ovf_I8:
+                    case CodeEx.Conv_Ovf_I8:
                         stack.Conv_Ovf_I8();
                         break;
-                    case Code.Conv_Ovf_U8:
+                    case CodeEx.Conv_Ovf_U8:
                         stack.Conv_Ovf_U8();
                         break;
-                    case Code.Conv_Ovf_I:
+                    case CodeEx.Conv_Ovf_I:
                         stack.Conv_Ovf_I();
                         break;
-                    case Code.Conv_Ovf_U:
+                    case CodeEx.Conv_Ovf_U:
                         stack.Conv_Ovf_U();
                         break;
-                    case Code.Conv_Ovf_I1_Un:
+                    case CodeEx.Conv_Ovf_I1_Un:
                         stack.Conv_Ovf_I1_Un();
                         break;
 
-                    case Code.Conv_Ovf_U1_Un:
+                    case CodeEx.Conv_Ovf_U1_Un:
                         stack.Conv_Ovf_U1_Un();
                         break;
-                    case Code.Conv_Ovf_I2_Un:
+                    case CodeEx.Conv_Ovf_I2_Un:
                         stack.Conv_Ovf_I2_Un();
                         break;
-                    case Code.Conv_Ovf_U2_Un:
+                    case CodeEx.Conv_Ovf_U2_Un:
                         stack.Conv_Ovf_U2_Un();
                         break;
-                    case Code.Conv_Ovf_I4_Un:
+                    case CodeEx.Conv_Ovf_I4_Un:
                         stack.Conv_Ovf_I4_Un();
                         break;
-                    case Code.Conv_Ovf_U4_Un:
+                    case CodeEx.Conv_Ovf_U4_Un:
                         stack.Conv_Ovf_U4_Un();
                         break;
 
-                    case Code.Conv_Ovf_I8_Un:
+                    case CodeEx.Conv_Ovf_I8_Un:
                         stack.Conv_Ovf_I8_Un();
                         break;
-                    case Code.Conv_Ovf_U8_Un:
+                    case CodeEx.Conv_Ovf_U8_Un:
                         stack.Conv_Ovf_U8_Un();
                         break;
-                    case Code.Conv_Ovf_I_Un:
+                    case CodeEx.Conv_Ovf_I_Un:
                         stack.Conv_Ovf_I_Un();
                         break;
-                    case Code.Conv_Ovf_U_Un:
+                    case CodeEx.Conv_Ovf_U_Un:
                         stack.Conv_Ovf_U_Un();
                         break;
                     //数组
-                    case Code.Newarr:
-                        stack.NewArr(this, GetNewForArray(code.Operand));
+                    case CodeEx.Newarr:
+                        stack.NewArr(this, GetNewForArray(_code.tokenUnknown));
                         break;
-                    case Code.Ldlen:
+                    case CodeEx.Ldlen:
                         stack.LdLen();
                         break;
-                    case Code.Ldelema:
-                        stack.Ldelema(code.Operand);
+                    case CodeEx.Ldelema:
+                        stack.Ldelema(_code.tokenUnknown);
                         break;
-                    case Code.Ldelem_I1:
+                    case CodeEx.Ldelem_I1:
                         stack.Ldelem_I1();
                         break;
-                    case Code.Ldelem_U1:
+                    case CodeEx.Ldelem_U1:
                         stack.Ldelem_U1();
                         break;
-                    case Code.Ldelem_I2:
+                    case CodeEx.Ldelem_I2:
                         stack.Ldelem_I2();
                         break;
-                    case Code.Ldelem_U2:
+                    case CodeEx.Ldelem_U2:
                         stack.Ldelem_U2();
                         break;
-                    case Code.Ldelem_I4:
+                    case CodeEx.Ldelem_I4:
                         stack.Ldelem_I4();
                         break;
-                    case Code.Ldelem_U4:
+                    case CodeEx.Ldelem_U4:
                         stack.Ldelem_U4();
                         break;
-                    case Code.Ldelem_I8:
+                    case CodeEx.Ldelem_I8:
                         stack.Ldelem_I8();
                         break;
-                    case Code.Ldelem_I:
+                    case CodeEx.Ldelem_I:
                         stack.Ldelem_I();
                         break;
-                    case Code.Ldelem_R4:
+                    case CodeEx.Ldelem_R4:
                         stack.Ldelem_R4();
                         break;
-                    case Code.Ldelem_R8:
+                    case CodeEx.Ldelem_R8:
                         stack.Ldelem_R8();
                         break;
-                    case Code.Ldelem_Ref:
+                    case CodeEx.Ldelem_Ref:
                         stack.Ldelem_Ref();
                         break;
-                    case Code.Ldelem_Any:
-                        stack.Ldelem_Any(code.Operand);
+                    case CodeEx.Ldelem_Any:
+                        stack.Ldelem_Any(_code.tokenUnknown);
                         break;
 
-                    case Code.Stelem_I:
+                    case CodeEx.Stelem_I:
                         stack.Stelem_I();
                         break;
-                    case Code.Stelem_I1:
+                    case CodeEx.Stelem_I1:
                         stack.Stelem_I1();
                         break;
-                    case Code.Stelem_I2:
+                    case CodeEx.Stelem_I2:
                         stack.Stelem_I2();
                         break;
-                    case Code.Stelem_I4:
+                    case CodeEx.Stelem_I4:
                         stack.Stelem_I4();
                         break;
-                    case Code.Stelem_I8:
+                    case CodeEx.Stelem_I8:
                         stack.Stelem_I8();
                         break;
-                    case Code.Stelem_R4:
+                    case CodeEx.Stelem_R4:
                         stack.Stelem_R4();
                         break;
-                    case Code.Stelem_R8:
+                    case CodeEx.Stelem_R8:
                         stack.Stelem_R8();
                         break;
-                    case Code.Stelem_Ref:
+                    case CodeEx.Stelem_Ref:
                         stack.Stelem_Ref();
                         break;
-                    case Code.Stelem_Any:
+                    case CodeEx.Stelem_Any:
                         stack.Stelem_Any();
                         break;
 
-                    case Code.Newobj:
-                        stack.NewObj(this, GetMethod(code.Operand));
+                    case CodeEx.Newobj:
+                        stack.NewObj(this, GetMethod(_code.tokenUnknown));
                         break;
 
-                    case Code.Dup:
+                    case CodeEx.Dup:
                         stack.Dup();
                         break;
-                    case Code.Pop:
+                    case CodeEx.Pop:
                         stack.Pop();
                         break;
 
-                    case Code.Ldfld:
-                        stack.Ldfld(this, GetField(code.Operand));
+                    case CodeEx.Ldfld:
+                        stack.Ldfld(this, GetField(_code.tokenUnknown));
                         break;
-                    case Code.Ldflda:
-                        stack.Ldflda(this, GetField(code.Operand));
+                    case CodeEx.Ldflda:
+                        stack.Ldflda(this, GetField(_code.tokenUnknown));
                         break;
-                    case Code.Ldsfld:
-                        stack.Ldsfld(this, GetField(code.Operand));
+                    case CodeEx.Ldsfld:
+                        stack.Ldsfld(this, GetField(_code.tokenUnknown));
                         break;
-                    case Code.Ldsflda:
-                        stack.Ldsflda(this, GetField(code.Operand));
+                    case CodeEx.Ldsflda:
+                        stack.Ldsflda(this, GetField(_code.tokenUnknown));
                         break;
-                    case Code.Stfld:
-                        stack.Stfld(this, GetField(code.Operand));
+                    case CodeEx.Stfld:
+                        stack.Stfld(this, GetField(_code.tokenUnknown));
                         break;
-                    case Code.Stsfld:
-                        stack.Stsfld(this, GetField(code.Operand));
-                        break;
-
-
-                    case Code.Constrained:
-                        stack.Constrained(this, GetType(code.Operand));
+                    case CodeEx.Stsfld:
+                        stack.Stsfld(this, GetField(_code.tokenUnknown));
                         break;
 
-                    case Code.Isinst:
-                        stack.Isinst(this, GetType(code.Operand));
-                        break;
-                    case Code.Ldtoken:
-                        stack.Ldtoken(this, GetToken(code.Operand));
+
+                    case CodeEx.Constrained:
+                        stack.Constrained(this, GetType(_code.tokenUnknown));
                         break;
 
-                    case Code.Ldftn:
-                        stack.Ldftn(this, GetMethod(code.Operand));
+                    case CodeEx.Isinst:
+                        stack.Isinst(this, GetType(_code.tokenUnknown));
                         break;
-                    case Code.Ldvirtftn:
-                        stack.Ldvirtftn(this, GetMethod(code.Operand));
+                    case CodeEx.Ldtoken:
+                        stack.Ldtoken(this, GetToken(_code.tokenUnknown));
                         break;
-                    case Code.Ldarga:
-                        stack.Ldarga(this, code.Operand);
+
+                    case CodeEx.Ldftn:
+                        stack.Ldftn(this, GetMethod(_code.tokenUnknown));
                         break;
-                    case Code.Ldarga_S:
-                        stack.Ldarga(this, code.Operand);
+                    case CodeEx.Ldvirtftn:
+                        stack.Ldvirtftn(this, GetMethod(_code.tokenUnknown));
                         break;
-                    case Code.Calli:
-                        stack.Calli(this, code.Operand);
+                    case CodeEx.Ldarga:
+                        stack.Ldarga(this, _code.tokenUnknown);
+                        break;
+                    case CodeEx.Ldarga_S:
+                        stack.Ldarga(this, _code.tokenUnknown);
+                        break;
+                    case CodeEx.Calli:
+                        stack.Calli(this, _code.tokenUnknown);
                         break;
                     ///下面是还没有处理的指令
-                    case Code.Break:
-                        stack.Break(this, code.Operand);
+                    case CodeEx.Break:
+                        stack.Break(this, _code.tokenUnknown);
                         break;
-                    case Code.Starg_S:
-                        stack.Starg_S(this, code.Operand);
+                    case CodeEx.Starg_S:
+                        stack.Starg_S(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldnull:
+                    case CodeEx.Ldnull:
                         stack.Ldnull();
                         break;
-                    case Code.Jmp:
-                        stack.Jmp(this, code.Operand);
+                    case CodeEx.Jmp:
+                        stack.Jmp(this, _code.tokenUnknown);
                         break;
-                    case Code.Switch:
-                        stack.Switch(this, code.Operand as Mono.Cecil.Cil.Instruction[]);
+                    case CodeEx.Switch:
+                        stack.Switch(this, _code.tokenUnknown as Mono.Cecil.Cil.Instruction[]);
                         break;
-                    case Code.Ldind_I1:
-                        stack.Ldind_I1(this, code.Operand);
+                    case CodeEx.Ldind_I1:
+                        stack.Ldind_I1(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldind_U1:
-                        stack.Ldind_U1(this, code.Operand);
+                    case CodeEx.Ldind_U1:
+                        stack.Ldind_U1(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldind_I2:
-                        stack.Ldind_I2(this, code.Operand);
+                    case CodeEx.Ldind_I2:
+                        stack.Ldind_I2(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldind_U2:
-                        stack.Ldind_U2(this, code.Operand);
+                    case CodeEx.Ldind_U2:
+                        stack.Ldind_U2(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldind_I4:
-                        stack.Ldind_I4(this, code.Operand);
+                    case CodeEx.Ldind_I4:
+                        stack.Ldind_I4(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldind_U4:
-                        stack.Ldind_U4(this, code.Operand);
+                    case CodeEx.Ldind_U4:
+                        stack.Ldind_U4(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldind_I8:
-                        stack.Ldind_I8(this, code.Operand);
+                    case CodeEx.Ldind_I8:
+                        stack.Ldind_I8(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldind_I:
-                        stack.Ldind_I(this, code.Operand);
+                    case CodeEx.Ldind_I:
+                        stack.Ldind_I(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldind_R4:
-                        stack.Ldind_R4(this, code.Operand);
+                    case CodeEx.Ldind_R4:
+                        stack.Ldind_R4(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldind_R8:
-                        stack.Ldind_R8(this, code.Operand);
+                    case CodeEx.Ldind_R8:
+                        stack.Ldind_R8(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldind_Ref:
-                        stack.Ldind_Ref(this, code.Operand);
+                    case CodeEx.Ldind_Ref:
+                        stack.Ldind_Ref(this, _code.tokenUnknown);
                         break;
-                    case Code.Stind_Ref:
-                        stack.Stind_Ref(this, code.Operand);
+                    case CodeEx.Stind_Ref:
+                        stack.Stind_Ref(this, _code.tokenUnknown);
                         break;
-                    case Code.Stind_I1:
-                        stack.Stind_I1(this, code.Operand);
+                    case CodeEx.Stind_I1:
+                        stack.Stind_I1(this, _code.tokenUnknown);
                         break;
-                    case Code.Stind_I2:
-                        stack.Stind_I2(this, code.Operand);
+                    case CodeEx.Stind_I2:
+                        stack.Stind_I2(this, _code.tokenUnknown);
                         break;
-                    case Code.Stind_I4:
-                        stack.Stind_I4(this, code.Operand);
+                    case CodeEx.Stind_I4:
+                        stack.Stind_I4(this, _code.tokenUnknown);
                         break;
-                    case Code.Stind_I8:
-                        stack.Stind_I8(this, code.Operand);
+                    case CodeEx.Stind_I8:
+                        stack.Stind_I8(this, _code.tokenUnknown);
                         break;
-                    case Code.Stind_R4:
-                        stack.Stind_R4(this, code.Operand);
+                    case CodeEx.Stind_R4:
+                        stack.Stind_R4(this, _code.tokenUnknown);
                         break;
-                    case Code.Stind_R8:
-                        stack.Stind_R8(this, code.Operand);
+                    case CodeEx.Stind_R8:
+                        stack.Stind_R8(this, _code.tokenUnknown);
                         break;
-                    case Code.And:
-                        stack.And(this, code.Operand);
+                    case CodeEx.And:
+                        stack.And(this, _code.tokenUnknown);
                         break;
-                    case Code.Or:
-                        stack.Or(this, code.Operand);
+                    case CodeEx.Or:
+                        stack.Or(this, _code.tokenUnknown);
                         break;
-                    case Code.Xor:
-                        stack.Xor(this, code.Operand);
+                    case CodeEx.Xor:
+                        stack.Xor(this, _code.tokenUnknown);
                         break;
-                    case Code.Shl:
-                        stack.Shl(this, code.Operand);
+                    case CodeEx.Shl:
+                        stack.Shl(this, _code.tokenUnknown);
                         break;
-                    case Code.Shr:
-                        stack.Shr(this, code.Operand);
+                    case CodeEx.Shr:
+                        stack.Shr(this, _code.tokenUnknown);
                         break;
-                    case Code.Shr_Un:
-                        stack.Shr_Un(this, code.Operand);
+                    case CodeEx.Shr_Un:
+                        stack.Shr_Un(this, _code.tokenUnknown);
                         break;
-                    case Code.Not:
-                        stack.Not(this, code.Operand);
+                    case CodeEx.Not:
+                        stack.Not(this, _code.tokenUnknown);
                         break;
-                    case Code.Cpobj:
-                        stack.Cpobj(this, code.Operand);
+                    case CodeEx.Cpobj:
+                        stack.Cpobj(this, _code.tokenUnknown);
                         break;
-                    case Code.Ldobj:
-                        stack.Ldobj(this, code.Operand);
+                    case CodeEx.Ldobj:
+                        stack.Ldobj(this, _code.tokenUnknown);
                         break;
-                    case Code.Castclass:
-                        stack.Castclass(this, code.Operand);
+                    case CodeEx.Castclass:
+                        stack.Castclass(this, _code.tokenUnknown);
                         break;
-                    case Code.Throw:
-                        stack.Throw(this, code.Operand);
+                    case CodeEx.Throw:
+                        stack.Throw(this, _code.tokenUnknown);
                         break;
-                    case Code.Stobj:
-                        stack.Stobj(this, code.Operand);
+                    case CodeEx.Stobj:
+                        stack.Stobj(this, _code.tokenUnknown);
                         break;
-                    case Code.Refanyval:
-                        stack.Refanyval(this, code.Operand);
+                    case CodeEx.Refanyval:
+                        stack.Refanyval(this, _code.tokenUnknown);
                         break;
-                    case Code.Mkrefany:
-                        stack.Mkrefany(this, code.Operand);
-                        break;
-
-                    case Code.Add_Ovf:
-                        stack.Add_Ovf(this, code.Operand);
-                        break;
-                    case Code.Add_Ovf_Un:
-                        stack.Add_Ovf_Un(this, code.Operand);
-                        break;
-                    case Code.Mul_Ovf:
-                        stack.Mul_Ovf(this, code.Operand);
-                        break;
-                    case Code.Mul_Ovf_Un:
-                        stack.Mul_Ovf_Un(this, code.Operand);
-                        break;
-                    case Code.Sub_Ovf:
-                        stack.Sub_Ovf(this, code.Operand);
-                        break;
-                    case Code.Sub_Ovf_Un:
-                        stack.Sub_Ovf_Un(this, code.Operand);
-                        break;
-                    case Code.Endfinally:
-                        stack.Endfinally(this, code.Operand);
-                        break;
-                    case Code.Stind_I:
-                        stack.Stind_I(this, code.Operand);
-                        break;
-                    case Code.Arglist:
-                        stack.Arglist(this, code.Operand);
+                    case CodeEx.Mkrefany:
+                        stack.Mkrefany(this, _code.tokenUnknown);
                         break;
 
-                    case Code.Starg:
-                        stack.Starg(this, code.Operand);
+                    case CodeEx.Add_Ovf:
+                        stack.Add_Ovf(this, _code.tokenUnknown);
                         break;
-                    case Code.Localloc:
-                        stack.Localloc(this, code.Operand);
+                    case CodeEx.Add_Ovf_Un:
+                        stack.Add_Ovf_Un(this, _code.tokenUnknown);
                         break;
-                    case Code.Endfilter:
-                        stack.Endfilter(this, code.Operand);
+                    case CodeEx.Mul_Ovf:
+                        stack.Mul_Ovf(this, _code.tokenUnknown);
                         break;
-                    case Code.Unaligned:
-                        stack.Unaligned(this, code.Operand);
+                    case CodeEx.Mul_Ovf_Un:
+                        stack.Mul_Ovf_Un(this, _code.tokenUnknown);
                         break;
-                    case Code.Volatile:
-                        stack.Volatile(this, code.Operand);
+                    case CodeEx.Sub_Ovf:
+                        stack.Sub_Ovf(this, _code.tokenUnknown);
                         break;
-                    case Code.Tail:
-                        stack.Tail(this, code.Operand);
+                    case CodeEx.Sub_Ovf_Un:
+                        stack.Sub_Ovf_Un(this, _code.tokenUnknown);
                         break;
-                    case Code.Initobj:
-                        stack.Initobj(this, this.GetType(code.Operand));
+                    case CodeEx.Endfinally:
+                        stack.Endfinally(this, _code.tokenUnknown);
                         break;
-                    case Code.Cpblk:
-                        stack.Cpblk(this, code.Operand);
+                    case CodeEx.Stind_I:
+                        stack.Stind_I(this, _code.tokenUnknown);
                         break;
-                    case Code.Initblk:
-                        stack.Initblk(this, code.Operand);
+                    case CodeEx.Arglist:
+                        stack.Arglist(this, _code.tokenUnknown);
                         break;
-                    case Code.No:
-                        stack.No(this, code.Operand);
+
+                    case CodeEx.Starg:
+                        stack.Starg(this, _code.tokenUnknown);
                         break;
-                    case Code.Rethrow:
-                        stack.Rethrow(this, code.Operand);
+                    case CodeEx.Localloc:
+                        stack.Localloc(this, _code.tokenUnknown);
                         break;
-                    case Code.Sizeof:
-                        stack.Sizeof(this, code.Operand);
+                    case CodeEx.Endfilter:
+                        stack.Endfilter(this, _code.tokenUnknown);
                         break;
-                    case Code.Refanytype:
-                        stack.Refanytype(this, code.Operand);
+                    case CodeEx.Unaligned:
+                        stack.Unaligned(this, _code.tokenUnknown);
                         break;
-                    case Code.Readonly:
-                        stack.Readonly(this, code.Operand);
+                    case CodeEx.Volatile:
+                        stack.Volatile(this, _code.tokenUnknown);
+                        break;
+                    case CodeEx.Tail:
+                        stack.Tail(this, _code.tokenUnknown);
+                        break;
+                    case CodeEx.Initobj:
+                        stack.Initobj(this, this.GetType(_code.tokenUnknown));
+                        break;
+                    case CodeEx.Cpblk:
+                        stack.Cpblk(this, _code.tokenUnknown);
+                        break;
+                    case CodeEx.Initblk:
+                        stack.Initblk(this, _code.tokenUnknown);
+                        break;
+                    case CodeEx.No:
+                        stack.No(this, _code.tokenUnknown);
+                        break;
+                    case CodeEx.Rethrow:
+                        stack.Rethrow(this, _code.tokenUnknown);
+                        break;
+                    case CodeEx.Sizeof:
+                        stack.Sizeof(this, _code.tokenUnknown);
+                        break;
+                    case CodeEx.Refanytype:
+                        stack.Refanytype(this, _code.tokenUnknown);
+                        break;
+                    case CodeEx.Readonly:
+                        stack.Readonly(this, _code.tokenUnknown);
                         break;
                     default:
-                        throw new Exception("未实现的OpCode:" + code.OpCode.Code);
+                        throw new Exception("未实现的OpCode:" + _code.code);
                 }
             }
 

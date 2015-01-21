@@ -36,8 +36,27 @@ namespace CLRSharp
             this.Name = name;
             this.IsStatic = IsStatic;
         }
-        public Mono.Cecil.Cil.Instruction _pos = null;
-
+        Mono.Cecil.Cil.Instruction _posold;
+        public Mono.Cecil.Cil.Instruction _pos
+        {
+            get
+            {
+                return _posold;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    _codepos = -1;
+                }
+                else
+                {
+                    _codepos = _body.addr[value.Offset];
+                }
+                _posold = value;
+            }
+        }
+        public int _codepos = 0;
         public class MyCalcStack : Stack<object>
         {
             Queue<VBox> unused = new Queue<VBox>();
@@ -220,7 +239,7 @@ namespace CLRSharp
                         }
 
                     }
-                    if (pp is VBox&&!bCLR)
+                    if (pp is VBox && !bCLR)
                     {
                         pp = (pp as VBox).BoxDefine();
                     }
@@ -316,6 +335,7 @@ namespace CLRSharp
         //栈操作
         public void Nop()
         {
+            _codepos++;
             _pos = _pos.Next;
         }
         public void Dup()
