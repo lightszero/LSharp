@@ -953,14 +953,22 @@ namespace CLRSharp
         {
 
             object n1 = stackCalc.Pop();
-            if (n1 is int)
+            if(n1 is VBox)
             {
-                stackCalc.Push(~(int)n1);
+                VBox v = n1 as VBox;
+                var obj = v.Clone();
+                obj.Neg();
+                stackCalc.Push(obj);
+            }
+            else if (n1 is int)
+            {
+                stackCalc.Push(-(int)n1);
             }
             else if (n1 is Int64)
             {
-                stackCalc.Push(~(Int64)n1);
+                stackCalc.Push(-(Int64)n1);
             }
+
             else
             {
                 stackCalc.Push(n1);

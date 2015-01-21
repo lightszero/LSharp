@@ -8,6 +8,16 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_Change()
+        {
+            int i = 1;
+            i = -i;
+            if (i != -1)
+            {
+                Logger.Log("" + i);
+                throw new Exception();
+            }
+        }
         public static void UnitTest_V3()
         {
             Vector3 v = new Vector3(45, 5, 0);

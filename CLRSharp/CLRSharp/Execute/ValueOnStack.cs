@@ -492,6 +492,21 @@ namespace CLRSharp
                     break;
             }
         }
+        public void Neg()
+        {
+            switch (typeStack)
+            {
+                case NumberOnStack.Int32:
+                    v32 = -v32;
+                    break;
+                case NumberOnStack.Int64:
+                    v64 = -v64;
+                    break;
+                case NumberOnStack.Double:
+                    vDF = -vDF;
+                    break;
+            }
+        }
         public void Mod(VBox right)
         {
             switch (typeStack)
@@ -538,17 +553,17 @@ namespace CLRSharp
                     {
                         v32 = ((bool)value) ? 1 : 0;
                     }
-                    else if(value is int)
+                    else if (value is int)
                     {
                         v32 = (int)value;
                     }
-                    else if(value is short)
+                    else if (value is short)
                     {
                         v32 = (short)value;
                     }
                     else
                     {
-                        v32 =(int) Convert.ToDecimal(value);
+                        v32 = (int)Convert.ToDecimal(value);
                     }
                     break;
                 case NumberOnStack.Int64:
