@@ -9,6 +9,21 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_ListExt2()
+        {
+            List<int> a = new List<int>();
+            a.Add(1);
+            a.Add(22);
+            a.Add(3);
+            a.Sort((l, r) =>
+                {
+                    return r - l;
+                });
+            foreach(var i in a)
+            {
+                Logger.Log("i=" + i);
+            }
+        }
         public static void UnitTest_ListExt()
         {
             //GameObject obj = new GameObject();

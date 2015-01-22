@@ -168,7 +168,12 @@ namespace CLRSharp
         {
             Action act = () =>
             {
-                return (TRet)_method.Invoke(context, _this, new object[] { }, true, true);
+                var o = _method.Invoke(context, _this, new object[] { }, true, true);
+                if (o is VBox)
+                {
+                    o = (o as VBox).BoxDefine();
+                }
+                return (TRet)o;
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -180,7 +185,12 @@ namespace CLRSharp
         {
             Action act = (T1 p1) =>
             {
-                return (TRet)_method.Invoke(context, _this, new object[] { p1 }, true, true);
+                var o = _method.Invoke(context, _this, new object[] { p1 }, true, true);
+                if (o is VBox)
+                {
+                    o = (o as VBox).BoxDefine();
+                }
+                return (TRet)o;
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -192,7 +202,12 @@ namespace CLRSharp
         {
             Action act = (T1 p1, T2 p2) =>
             {
-                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2 }, true, true);
+                var o = _method.Invoke(context, _this, new object[] { p1, p2 }, true, true);
+                if (o is VBox)
+                {
+                    o = (o as VBox).BoxDefine();
+                }
+                return (TRet)o;
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -204,7 +219,12 @@ namespace CLRSharp
         {
             Action act = (T1 p1, T2 p2, T3 p3) =>
             {
-                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2, p3 }, true, true);
+                object o = _method.Invoke(context, _this, new object[] { p1, p2, p3 }, true, true);
+                if (o is VBox)
+                {
+                    o = (o as VBox).BoxDefine();
+                }
+                return (TRet)o;
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
@@ -216,7 +236,12 @@ namespace CLRSharp
         {
             Action act = (T1 p1, T2 p2, T3 p3, T4 p4) =>
             {
-                return (TRet)_method.Invoke(context, _this, new object[] { p1, p2, p3, p4 }, true, true);
+                object o = _method.Invoke(context, _this, new object[] { p1, p2, p3, p4 }, true, true);
+                if (o is VBox)
+                {
+                    o = (o as VBox).BoxDefine();
+                }
+                return (TRet)o;
             };
             return Delegate.CreateDelegate(deletype, act.Target, act.Method);
         }
