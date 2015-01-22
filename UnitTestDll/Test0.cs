@@ -3,11 +3,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnitTest;
+using UnityEngine;
 namespace UnitTestDll
 {
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_ListExt()
+        {
+            //GameObject obj = new GameObject();
+            //GameObject obj2 = new GameObject();
+            //List<int> int1 = new List<int>();
+            //int ii = 1;
+            Test02 t = new Test02();
+            t.LogOut2(0, 1, 2, 333, 444, 5);
+        }
+        
         public static void UnitTest_ListInit()
         {
             List<int> lst = new List<int>();

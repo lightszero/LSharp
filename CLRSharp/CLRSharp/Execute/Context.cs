@@ -644,7 +644,7 @@ namespace CLRSharp
                         stack.Ldc_I4(5);
                         break;
                     case CodeEx.Ldc_I4_6:
-                        stack.Ldc_I4(6); 
+                        stack.Ldc_I4(6);
                         break;
                     case CodeEx.Ldc_I4_7:
                         stack.Ldc_I4(7);
@@ -756,10 +756,17 @@ namespace CLRSharp
 
                     //加载参数
                     case CodeEx.Ldarg:
-                        stack.Ldarg(_code.tokenI32);
+                        if (body.bodyNative.Method.IsStatic)
+                            stack.Ldarg(_code.tokenI32);
+                        else
+                            stack.Ldarg(_code.tokenI32 + 1);
+
                         break;
                     case CodeEx.Ldarg_S:
-                        stack.Ldarg(_code.tokenI32);
+                        if (body.bodyNative.Method.IsStatic)
+                            stack.Ldarg(_code.tokenI32);
+                        else
+                            stack.Ldarg(_code.tokenI32 + 1);
                         break;
                     case CodeEx.Ldarg_0:
                         stack.Ldarg(0);

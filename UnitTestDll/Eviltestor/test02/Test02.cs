@@ -4,9 +4,28 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnitTest;
+using UnityEngine;
 
 class Test02
 {
+    public void LogOut(GameObject obj, GameObject obj2, int p0, int p1, int p2, int p3, int p4, int p5)
+    {
+        Logger.Log("p0=" + p0);
+        Logger.Log("p1=" + p1);
+        Logger.Log("p2=" + p2);
+        Logger.Log("p3=" + p3);
+        Logger.Log("p4=" + p4);
+        Logger.Log("p5=" + p5);
+    }
+    public void LogOut2(int p0, int p1, int p2, int p3, int p4, int p5)
+    {
+        Logger.Log("p0=" + p0);
+        Logger.Log("p1=" + p1);
+        Logger.Log("p2=" + p2);
+        Logger.Log("p3=" + p3);
+        Logger.Log("p4=" + p4);
+        Logger.Log("p5=" + p5);
+    }
     public Action<int> testdele;
     public static void Run()
     
