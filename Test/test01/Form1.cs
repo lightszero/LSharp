@@ -79,18 +79,29 @@ namespace test01
 
             //请注意，不要在初始化之后，再修改ParamList的内容
             CLRSharp.MethodParamList list = CLRSharp.MethodParamList.Make(
-         
+
                         env.GetType(typeof(int)),
                         env.GetType(typeof(string))
-                   
+
                 );
             CLRSharp.IMethod method03 = wantType.GetMethod("Test3", list);
             CallMethod(method03, typeObj, 345, "abbc");
+
+            //获取TestClass.CreateMyI函数
+            //public static Interface.IMyType CreateMyI()
+            //{
+            //    return new myi();
+            //}
+            CLRSharp.IMethod method04 = wantType.GetMethod("CreateMyI", CLRSharp.MethodParamList.constEmpty());
+            var obj = method04.Invoke(context, null, null);
+            Interface.IMyType got = obj as Interface.IMyType;
+            //执行他其实返回的是脚本的类型，但是可以让他自动转型成 程序认识的类型
+
         }
 
-        void CallMethod(CLRSharp.IMethod method,object _this,params object[] _params)
+        void CallMethod(CLRSharp.IMethod method, object _this, params object[] _params)
         {
-            CLRSharp.ThreadContext context=CLRSharp.ThreadContext.activeContext;
+            CLRSharp.ThreadContext context = CLRSharp.ThreadContext.activeContext;
             method.Invoke(context, _this, _params);
         }
 
@@ -143,7 +154,7 @@ namespace test01
         }
         public static void UseType()
         {
-            if(__type!=null)
+            if (__type != null)
             {
                 Form1.gthis.Log(__type.GetName() + ":" + __type.GetDesc());
             }

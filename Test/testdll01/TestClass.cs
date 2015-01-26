@@ -42,10 +42,10 @@ namespace HoxFixCode
         public void Test3(int abc, string def)
         {
             Console.WriteLine(def + "=" + abc);
-            Interface.SetMyType(CreateCrossBind());
+            Interface.SetMyType(CreateMyI());
             Interface.UseType();
         }
-        public Interface.IMyType CreateCrossBind()
+        public static Interface.IMyType CreateMyI()
         {
             return new myi();
         }

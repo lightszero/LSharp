@@ -334,7 +334,16 @@ namespace CLRSharp
                 context.ExecuteFunc(this, inst, _params);
                 return inst;
             }
-            return context.ExecuteFunc(this, _this, _params);
+            var obj =context.ExecuteFunc(this, _this, _params);
+            if(obj is CLRSharp_Instance && ReturnType is ICLRType_System)
+            {
+                var bind = context.environment.GetCrossBind((ReturnType as ICLRType_System).TypeForSystem);
+                if(bind!=null)
+                {
+                    obj = bind.CreateBind(obj as CLRSharp_Instance);
+                }
+            }
+            return obj;
         }
         public object Invoke(ThreadContext context, object _this, object[] _params)
         {
