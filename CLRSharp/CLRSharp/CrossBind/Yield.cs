@@ -31,9 +31,8 @@ namespace CLRSharp
                 var context = ThreadContext.activeContext;
                 var _type = context.environment.GetType(typeof(IEnumerable));
                 var _method = this.inst.type.GetMethod(_type.FullName+"."+"GetEnumerator", MethodParamList.constEmpty());
-                var obj = _method.Invoke(context, inst, null) as CLRSharp_Instance;
-
-                return context.environment.GetCrossBind(typeof(IEnumerator)).CreateBind(obj) as IEnumerator;
+                object obj = _method.Invoke(context, inst, null);
+                return obj as IEnumerator;
             }
         }
     }
