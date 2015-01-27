@@ -954,7 +954,7 @@ namespace CLRSharp
         {
 
             object n1 = stackCalc.Pop();
-            if(n1 is VBox)
+            if (n1 is VBox)
             {
                 VBox v = n1 as VBox;
                 var obj = v.Clone();
@@ -1213,8 +1213,10 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Array array = stackCalc.Pop() as Array;
-            stackCalc.Push(array.GetValue(index));
+            sbyte[] array = stackCalc.Pop() as sbyte[];
+            var box = ValueOnStack.MakeVBox(NumberType.SBYTE);
+            box.v32 = array[index];
+            stackCalc.Push(box); 
             _codepos++;
         }
         public void Ldelem_U1()
@@ -1229,8 +1231,10 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Array array = stackCalc.Pop() as Array;
-            stackCalc.Push(array.GetValue(index));
+            byte[] array = stackCalc.Pop() as byte[];
+            var box = ValueOnStack.MakeVBox(NumberType.BYTE);
+            box.v32 = array[index];
+            stackCalc.Push(box); 
             _codepos++;
         }
 
@@ -1246,8 +1250,10 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Array array = stackCalc.Pop() as Array;
-            stackCalc.Push(array.GetValue(index));
+            Int16[] array = stackCalc.Pop() as Int16[];
+            var box = ValueOnStack.MakeVBox(NumberType.INT16);
+            box.v32 = array[index];
+            stackCalc.Push(box);
             _codepos++;
         }
         public void Ldelem_U2()
@@ -1262,8 +1268,11 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Array array = stackCalc.Pop() as Array;
-            stackCalc.Push(array.GetValue(index));
+            UInt16[] array = stackCalc.Pop() as UInt16[];
+            var box = ValueOnStack.MakeVBox(NumberType.UINT16);
+            box.v32 = array[index];
+            stackCalc.Push(box);
+
             _codepos++;
         }
         public void Ldelem_I4()
@@ -1278,15 +1287,28 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Array array = stackCalc.Pop() as Array;
-            stackCalc.Push(array.GetValue(index));
+            int[] array = stackCalc.Pop() as int[];
+            var box = ValueOnStack.MakeVBox(NumberType.INT32);
+            box.v32 = array[index];
+            stackCalc.Push(box);
             _codepos++;
         }
         public void Ldelem_U4()
         {
-            int index = (int)stackCalc.Pop();
-            Array array = stackCalc.Pop() as Array;
-            stackCalc.Push(array.GetValue(index));
+            var indexobj = stackCalc.Pop();
+            int index = 0;
+            if ((indexobj is VBox))
+            {
+                index = (indexobj as VBox).ToInt();
+            }
+            else
+            {
+                index = (int)indexobj;
+            }
+            uint[] array = stackCalc.Pop() as uint[];
+            var box = ValueOnStack.MakeVBox(NumberType.UINT32);
+            box.v32 = (int)array[index];
+            stackCalc.Push(box);
             _codepos++;
         }
 
@@ -1302,8 +1324,10 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Array array = stackCalc.Pop() as Array;
-            stackCalc.Push(array.GetValue(index));
+            Int64[] array = stackCalc.Pop() as Int64[];
+            var box = ValueOnStack.MakeVBox(NumberType.INT64);
+            box.v64 = array[index];
+            stackCalc.Push(box);
             _codepos++;
         }
         public void Ldelem_I()
@@ -1318,8 +1342,10 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Array array = stackCalc.Pop() as Array;
-            stackCalc.Push(array.GetValue(index));
+            int[] array = stackCalc.Pop() as int[];
+            var box = ValueOnStack.MakeVBox(NumberType.INT32);
+            box.v32 = array[index];
+            stackCalc.Push(box);
             _codepos++;
         }
         public void Ldelem_R4()
@@ -1334,8 +1360,10 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Array array = stackCalc.Pop() as Array;
-            stackCalc.Push(array.GetValue(index));
+            float[] array = stackCalc.Pop() as float[];
+            var box = ValueOnStack.MakeVBox(NumberType.FLOAT);
+            box.vDF = array[index];
+            stackCalc.Push(box);
             _codepos++;
         }
         public void Ldelem_R8()
@@ -1350,8 +1378,10 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Array array = stackCalc.Pop() as Array;
-            stackCalc.Push(array.GetValue(index));
+            double[] array = stackCalc.Pop() as double[];
+            var box = ValueOnStack.MakeVBox(NumberType.DOUBLE);
+            box.vDF = array[index];
+            stackCalc.Push(box);
             _codepos++;
         }
         public void Ldelem_Ref()
@@ -2216,7 +2246,7 @@ namespace CLRSharp
         }
         public void Not()
         {
-            
+
             VBox n1 = stackCalc.Pop() as VBox;
             n1.Not();
             stackCalc.Push(n1);

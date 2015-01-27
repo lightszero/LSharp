@@ -9,7 +9,7 @@ namespace UnitTestDll
 {
     class Test_ByLynn
     {
-        public static void Test_01()
+        public static void UnitTest_01()
         {
             int[] arr = new int[10];
             int[] arr2 = new int[11];
