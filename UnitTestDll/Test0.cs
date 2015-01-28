@@ -9,6 +9,19 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_Arr()
+        {
+            var vectors = new Vector3[] { 
+                new Vector3(335, 253, 0),
+                new Vector3(335, 2533, 0), 
+                new Vector3(335, 25332, 0)};
+
+            foreach(var v in vectors)
+            {
+                Logger.Log("v=" + v.y);
+            }
+        }
+
         public static void UnitTest_Float()
         {
             Test0 t = new Test0();

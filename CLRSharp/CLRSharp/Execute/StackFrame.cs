@@ -720,7 +720,8 @@ namespace CLRSharp
         {
             loc,//本地变量槽
             arg,//参数槽
-            field//成员变量
+            field,//成员变量
+            Array,
         }
         public class RefObj
         {
@@ -730,6 +731,7 @@ namespace CLRSharp
             //public ICLRType _clrtype;
             public IField _field;
             public object _this;
+            public Array _array;
             public RefObj(StackFrame frame, int pos, RefType type)
             {
                 this.frame = frame;
@@ -743,7 +745,12 @@ namespace CLRSharp
                 this._field = field;
                 this._this = _this;
             }
-
+            public RefObj(Array array, int index)
+            {
+                this.type = RefType.Array;
+                this._array = array;
+                this.pos = index;
+            }
             public void Set(object obj)
             {
                 if (type == RefType.arg)
@@ -761,6 +768,10 @@ namespace CLRSharp
                 else if (type == RefType.field)
                 {
                     _field.Set(_this, obj);
+                }
+                else if (type == RefType.Array)
+                {
+                    _array.SetValue(obj, pos);
                 }
 
             }
@@ -781,6 +792,10 @@ namespace CLRSharp
                 else if (type == RefType.field)
                 {
                     return _field.Get(_this);
+                }
+                else if (type == RefType.Array)
+                {
+                    return _array.GetValue(pos);
                 }
                 return null;
             }
@@ -1198,7 +1213,21 @@ namespace CLRSharp
         }
         public void Ldelema(object obj)
         {
-            throw new NotImplementedException();
+            var indexobj = stackCalc.Pop();
+            int index = 0;
+            if ((indexobj is VBox))
+            {
+                index = (indexobj as VBox).ToInt();
+            }
+            else
+            {
+                index = (int)indexobj;
+            }
+            Array array = stackCalc.Pop() as Array;
+
+
+            stackCalc.Push(new RefObj(array, index));
+            _codepos++;
             //_codepos++;
         }
         public void Ldelem_I1()
@@ -2260,7 +2289,9 @@ namespace CLRSharp
         }
         public void Ldobj(ThreadContext context, object obj)
         {
-            stackCalc.Push(obj);
+            var pos = stackCalc.Pop() as RefObj;
+
+            stackCalc.Push(pos.Get());
 
             _codepos++;
         }
@@ -2292,9 +2323,10 @@ namespace CLRSharp
         }
         public void Stobj(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            var v = stackCalc.Pop();
+            var addr = stackCalc.Pop() as RefObj;
+            addr.Set(v);
+            _codepos++;
         }
         public void Refanyval(ThreadContext context, object obj)
         {

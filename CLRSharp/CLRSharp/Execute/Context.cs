@@ -483,7 +483,7 @@ namespace CLRSharp
             }
             if (ehNear != null)
             {
-                frame.Ldobj(this, err);
+                frame.stackCalc.Push(err);
                 frame.SetCodePos(ehNear.HandlerStart.Offset);// ._pos = ehNear.HandlerStart;
                 RunCodeWithTry(body, frame);
                 return true;
