@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UnitTestDll.SimU3D
 {
-    class TestU3D : CLScriptExt.P1
+    class TestU3D
     {
         public static void UnitTest_01()
         {
@@ -20,7 +20,7 @@ namespace UnitTestDll.SimU3D
             }
         }
     }
-    class TT:CLScriptExt.P1
+    class TT
     {
         Transform tra = null;
         public void Test()
