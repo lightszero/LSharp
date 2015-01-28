@@ -10,6 +10,8 @@ namespace test01
 {
     public partial class Form1 : Form, CLRSharp.ICLRSharp_Logger
     {
+
+
         public static Form1 gthis = null;
         public Form1()
         {

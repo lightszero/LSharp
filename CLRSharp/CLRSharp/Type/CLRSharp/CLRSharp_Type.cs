@@ -74,8 +74,10 @@ namespace CLRSharp
                     }
                     else
                     {//继承了其他系统类型
-                        env.logger.Log("ScriptType:" + Name + " Based On a SystemType:" + BaseType.Name);
+                        env.logger.Log_Error("ScriptType:" + Name + " Based On a SystemType:" + BaseType.Name);
                         HasSysBase = true;
+                        throw new Exception("不得继承系统类型，脚本类型系统和脚本类型系统是隔离的");
+
                     }
                 }
                 if (type_CLRSharp.HasInterfaces)
@@ -87,7 +89,10 @@ namespace CLRSharp
                         if (itype is ICLRType_System)
                         {
                             //继承了其他系统类型
-                            env.logger.Log("ScriptType:" + Name + " Based On a SystemType:" + itype.Name);
+                            if (env.GetCrossBind((itype as ICLRType_System).TypeForSystem) == null)
+                            {
+                                env.logger.Log_Warning("ScriptType:" + Name + " Based On a SystemType:" + itype.Name);
+                            }
                             HasSysBase = true;
                         }
                         _Interfaces.Add(itype);
@@ -334,11 +339,11 @@ namespace CLRSharp
                 context.ExecuteFunc(this, inst, _params);
                 return inst;
             }
-            var obj =context.ExecuteFunc(this, _this, _params);
-            if(obj is CLRSharp_Instance && ReturnType is ICLRType_System)
+            var obj = context.ExecuteFunc(this, _this, _params);
+            if (obj is CLRSharp_Instance && ReturnType is ICLRType_System)
             {
                 var bind = context.environment.GetCrossBind((ReturnType as ICLRType_System).TypeForSystem);
-                if(bind!=null)
+                if (bind != null)
                 {
                     obj = bind.CreateBind(obj as CLRSharp_Instance);
                 }

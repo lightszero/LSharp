@@ -369,6 +369,9 @@ namespace CLRSharp
         {
             if (token is Mono.Cecil.FieldDefinition || token is Mono.Cecil.FieldReference)
             {
+                var def = token as Mono.Cecil.FieldDefinition;
+                if (def != null && def.Name[0] == '$') return null;
+                //都是用来初始化数组的方法，忽略
 
                 return GetField(token);
 
