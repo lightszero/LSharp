@@ -9,6 +9,16 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_Out()
+        {
+            Color32 c = new Color32(2, 2, 3, 5);
+            byte b = 0;
+            c.GetA(out b);
+            Logger.Log("a=" + b);
+            c.GetB(ref b);
+            Logger.Log("b=" + b);
+
+        }
         public static void UnitTest_Arr()
         {
             var vectors = new Vector3[] { 

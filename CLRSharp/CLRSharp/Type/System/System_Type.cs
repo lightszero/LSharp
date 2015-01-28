@@ -296,6 +296,30 @@ namespace CLRSharp
             }
             else
             {
+                Dictionary<int, object> hasref = new Dictionary<int, object>();
+                object[] _outp = null;
+                if (_params != null && _params.Length > 0)
+                {
+                    _outp = new object[_params.Length];
+                    var _paramsdef = method_System.GetParameters();
+                    for (int i = 0; i < _params.Length; i++)
+                    {
+                        if (_params[i] is CLRSharp.StackFrame.RefObj)
+                        {
+                            object v = (_params[i] as CLRSharp.StackFrame.RefObj).Get();
+                            if (v is VBox)
+                            {
+                                v = (v as VBox).BoxDefine();
+                            }
+                            hasref[i] = v;
+                            _outp[i] = v;
+                        }
+                        else
+                        {
+                            _outp[i] = _params[i];
+                        }
+                    }
+                }
                 //if (method_System.DeclaringType.IsSubclassOf(typeof(Delegate)))//直接用Delegate.Invoke,会导致转到本机代码再回来
                 ////会导致错误堆栈不方便观察,但是也没办法直接调用，只能手写一些常用类型
                 //{
@@ -306,7 +330,19 @@ namespace CLRSharp
                 //}
                 //else
                 {
-                    return method_System.Invoke(_this, _params);
+                    var _out = method_System.Invoke(_this, _outp);
+                    foreach (var _ref in hasref)
+                    {
+                        if (_ref.Value is VBox)
+                        {
+                            (_ref.Value as VBox).SetDirect(_outp[_ref.Key]);
+                        }
+                        else
+                        {
+                            (_params[_ref.Key] as CLRSharp.StackFrame.RefObj).Set(_outp[_ref.Key]);
+                        }
+                    }
+                    return _out;
                 }
             }
 
@@ -318,7 +354,7 @@ namespace CLRSharp
             {
                 return Invoke(context, _this, _params);
             }
-            catch(Exception err)
+            catch (Exception err)
             {
                 if (context == null) context = ThreadContext.activeContext;
                 if (context == null)

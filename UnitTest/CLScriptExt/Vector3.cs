@@ -18,6 +18,15 @@ namespace CLScriptExt
         public byte g;
         public byte b;
         public byte a;
+        public void GetA(out byte _byte)
+        {
+            _byte =a;
+        }
+        public void GetB(ref byte _byte)
+        {
+            _byte = b;
+        }
+
         public override string ToString()
         {
             return r+","+g+","+b+","+a;
