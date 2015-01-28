@@ -91,7 +91,7 @@ namespace CLRSharp
                             //继承了其他系统类型
                             if (env.GetCrossBind((itype as ICLRType_System).TypeForSystem) == null)
                             {
-                                env.logger.Log_Warning("ScriptType:" + Name + " Based On a SystemType:" + itype.Name);
+                                env.logger.Log_Warning("警告:没有CrossBind的情况下直接继承\nScriptType:" + Name + " Based On a SystemInterface:" + itype.Name);
                             }
                             HasSysBase = true;
                         }

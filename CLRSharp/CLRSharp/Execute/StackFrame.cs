@@ -248,7 +248,7 @@ namespace CLRSharp
                             }
                             else
                             {
-                                pp = (_this as CLRSharp_Instance).system_base;
+                                pp = inst.system_base;
                                 //如果没有绑定器，尝试直接使用System_base;
                             }
                             //context.environment.logger.Log("这里有一个需要映射的类型");
