@@ -58,10 +58,22 @@ namespace Mono.Cecil.Pdb {
 	}
 
 
+    public class GuidCompare:IEqualityComparer<Guid>
+    {
 
+        public bool Equals(Guid x, Guid y)
+        {
+            return x == y;
+        }
+
+        public int GetHashCode(Guid obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
 	static class GuidMapping {
 
-		static readonly Dictionary<Guid, DocumentLanguage> guid_language = new Dictionary<Guid, DocumentLanguage> ();
+        static readonly Dictionary<Guid, DocumentLanguage> guid_language = new Dictionary<Guid, DocumentLanguage>(new GuidCompare());
 		static readonly Dictionary<DocumentLanguage, Guid> language_guid = new Dictionary<DocumentLanguage, Guid> ();
 
 		static GuidMapping ()
