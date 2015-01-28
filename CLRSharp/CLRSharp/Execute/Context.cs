@@ -1125,7 +1125,7 @@ namespace CLRSharp
                         stack.Ldobj(this, _code.tokenUnknown);
                         break;
                     case CodeEx.Castclass:
-                        stack.Castclass(this, _code.tokenUnknown);
+                        stack.Castclass(this, _code.tokenType);
                         break;
                     case CodeEx.Throw:
                         stack.Throw(this, _code.tokenUnknown);

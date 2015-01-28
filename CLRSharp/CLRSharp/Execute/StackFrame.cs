@@ -1216,7 +1216,7 @@ namespace CLRSharp
             sbyte[] array = stackCalc.Pop() as sbyte[];
             var box = ValueOnStack.MakeVBox(NumberType.SBYTE);
             box.v32 = array[index];
-            stackCalc.Push(box); 
+            stackCalc.Push(box);
             _codepos++;
         }
         public void Ldelem_U1()
@@ -1234,7 +1234,7 @@ namespace CLRSharp
             byte[] array = stackCalc.Pop() as byte[];
             var box = ValueOnStack.MakeVBox(NumberType.BYTE);
             box.v32 = array[index];
-            stackCalc.Push(box); 
+            stackCalc.Push(box);
             _codepos++;
         }
 
@@ -2264,11 +2264,25 @@ namespace CLRSharp
 
             _codepos++;
         }
-        public void Castclass(ThreadContext context, object obj)
+        public void Castclass(ThreadContext context, ICLRType _type)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            if (_type is ICLRType_System)
+            {
+                var obj = stackCalc.Peek();
+                if (obj != null)
+                {
+                    var ssypt = (_type as ICLRType_System).TypeForSystem;
+                    if (obj.GetType().IsSubclassOf(ssypt) == false)
+                    {
+                        throw new Exception("不可转换");
+                    }
+
+                }
+            }
+
+
+            //throw new NotImplementedException(t.ToString());
+            _codepos++;
         }
         public void Throw(ThreadContext context, object obj)
         {

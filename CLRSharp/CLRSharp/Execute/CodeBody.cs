@@ -346,6 +346,7 @@ namespace CLRSharp
                     case CodeEx.Constrained:
                     case CodeEx.Box:
                     case CodeEx.Initobj:
+                    case CodeEx.Castclass:
                         this.tokenType = context.GetType(_p);
                         //this.tokenUnknown = _p;
                         break;

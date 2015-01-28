@@ -51,7 +51,7 @@ namespace UnitTestDll.Eviltestor
             foreach (var item in dicNameToBlock)
             {
                 Logger.Log("key=" + item.Key);
-                Block bb = item.Value as Block;
+                Block bb = (Block)item.Value;// as Block;
                 Logger.Log("bb.name=" + bb.blockName);
             }
 
