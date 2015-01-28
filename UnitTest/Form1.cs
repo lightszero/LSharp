@@ -26,7 +26,15 @@ namespace UnitTest
 
             env = new CLRSharp.CLRSharp_Environment(this);
             this.Text += " L# Ver:" + env.version;
-            env.LoadModule(ms, mspdb,new Mono.Cecil.Pdb.PdbReaderProvider());
+            try
+            {
+                env.LoadModule(ms, mspdb, new Mono.Cecil.Pdb.PdbReaderProvider());
+            }
+            catch (Exception err)
+            {
+                this.Log_Error(err.ToString());
+                this.Log_Error("模块未加载完成，请检查错误");
+            }
             var types = env.GetAllTypes();
             foreach (var t in types)
             {
@@ -49,11 +57,11 @@ namespace UnitTest
                     {
                         TreeNode nt = new TreeNode("NestedTypes");
                         node.Nodes.Add(nt);
-                        foreach(var ttt in tclr.type_CLRSharp.NestedTypes)
+                        foreach (var ttt in tclr.type_CLRSharp.NestedTypes)
                         {
                             TreeNode snt = new TreeNode(ttt.Name);
                             nt.Nodes.Add(snt);
-                            if(ttt.HasMethods)
+                            if (ttt.HasMethods)
                             {
                                 foreach (var m in ttt.Methods)
                                 {
@@ -152,7 +160,7 @@ namespace UnitTest
                     foreach (Mono.Cecil.Cil.ExceptionHandler v in method.Body.ExceptionHandlers)
                     {
                         TreeNode var = new TreeNode(v.ToString());
-                        eh.Nodes.Add(v.HandlerType+" "+v.CatchType+"("+v.HandlerStart+","+v.HandlerEnd+")");
+                        eh.Nodes.Add(v.HandlerType + " " + v.CatchType + "(" + v.HandlerStart + "," + v.HandlerEnd + ")");
                     }
                 }
                 TreeNode code = new TreeNode("Code");
@@ -235,9 +243,9 @@ namespace UnitTest
                 Log("----RunErr----");
                 Log_Error(err.ToString());
                 MessageBox.Show(
-                    "=DumpInfo FirstLine Is Error Pos.=\n"+
+                    "=DumpInfo FirstLine Is Error Pos.=\n" +
                     CLRSharp.ThreadContext.activeContext.Dump()
-                    +"================err===============\n"+err.Message);
+                    + "================err===============\n" + err.Message);
             }
         }
 
@@ -249,11 +257,11 @@ namespace UnitTest
         private void button3_Click(object sender, EventArgs e)
         {
             Mono.Cecil.MethodDefinition d = this.treeView2.Tag as Mono.Cecil.MethodDefinition;
-            object obj = RunTest(d,false,true);
+            object obj = RunTest(d, false, true);
             Log("----RunOK----" + obj);
 
         }
-        object RunTest(Mono.Cecil.MethodDefinition d, bool LogStep = false,bool notry=false)
+        object RunTest(Mono.Cecil.MethodDefinition d, bool LogStep = false, bool notry = false)
         {
             if (d == null) throw new Exception("null method call");
             var type = env.GetType(d.DeclaringType.FullName);
@@ -266,10 +274,10 @@ namespace UnitTest
         private void button4_Click(object sender, EventArgs e)
         {
             var types = env.GetAllTypes();
-            foreach(var t in types)
+            foreach (var t in types)
             {
-                CLRSharp.ICLRType_Sharp type =env.GetType(t) as CLRSharp.ICLRType_Sharp;
-                if(type!=null)
+                CLRSharp.ICLRType_Sharp type = env.GetType(t) as CLRSharp.ICLRType_Sharp;
+                if (type != null)
                     type.ResetStaticInstace();
             }
             int testcount = 0;
@@ -285,7 +293,7 @@ namespace UnitTest
                         testcount++;
                         try
                         {
-                            
+
                             object obj = RunTest(m);
                             method.BackColor = Color.YellowGreen;
                             succcount++;

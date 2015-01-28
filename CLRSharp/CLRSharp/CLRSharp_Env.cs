@@ -40,14 +40,6 @@ namespace CLRSharp
             {
                 module.ReadSymbols(debugInfoLoader.GetSymbolReader(module, pdbStream));
             }
-            //mapModule[module.Name] = module;
-            if (module.HasTypes)
-            {
-                foreach (var t in module.Types)
-                {
-                    mapType[t.FullName] = new Type_Common_CLRSharp(this, t);
-                }
-            }
             if (module.HasAssemblyReferences)
             {
                 foreach (var ar in module.AssemblyReferences)
@@ -56,6 +48,17 @@ namespace CLRSharp
                         moduleref.Add(ar.Name);
                 }
             }
+            //mapModule[module.Name] = module;
+            if (module.HasTypes)
+            {
+                foreach (var t in module.Types)
+                {
+
+                        mapType[t.FullName] = new Type_Common_CLRSharp(this, t);
+
+                }
+            }
+
         }
         public List<System.Reflection.Assembly> assemblylist;
         public void AddSerachAssembly(System.Reflection.Assembly assembly)
