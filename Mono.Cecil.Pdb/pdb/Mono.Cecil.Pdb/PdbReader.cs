@@ -43,7 +43,7 @@ namespace Mono.Cecil.Pdb {
 
 		readonly Stream pdb_file;
 		readonly Dictionary<string, Document> documents = new Dictionary<string, Document> ();
-		readonly Dictionary<uint, PdbFunction> functions = new Dictionary<uint, PdbFunction> ();
+		readonly Dictionary<uint, PdbFunction> functions = new Dictionary<uint, PdbFunction> (new uintCompare());
 
 		internal PdbReader (Stream file)
 		{
