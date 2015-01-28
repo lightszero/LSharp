@@ -9,6 +9,17 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_Float()
+        {
+            Test0 t = new Test0();
+            Vector3 v3 = new Vector3();
+            t.CalFloat(v3);
+        }
+
+        void CalFloat(Vector3 v3)
+        {
+            float midy = (1 - v3.y) / 1;
+        }
         public static void UnitTest_ListExt2()
         {
             List<int> a = new List<int>();

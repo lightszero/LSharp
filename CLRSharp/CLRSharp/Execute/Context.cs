@@ -783,6 +783,20 @@ namespace CLRSharp
                     case CodeEx.Ldarg_3:
                         stack.Ldarg(3);
                         break;
+                    case CodeEx.Ldarga:
+                        if (body.bodyNative.Method.IsStatic)
+                            stack.Ldarga(_code.tokenI32);
+                        else
+                            stack.Ldarga(_code.tokenI32 + 1);
+
+                        break;
+                    case CodeEx.Ldarga_S:
+                        if (body.bodyNative.Method.IsStatic)
+                            stack.Ldarga(_code.tokenI32);
+                        else
+                            stack.Ldarga(_code.tokenI32 + 1);
+
+                        break;
                     //转换
                     case CodeEx.Conv_I1:
                         stack.Conv_I1();
@@ -1009,12 +1023,7 @@ namespace CLRSharp
                     case CodeEx.Ldvirtftn:
                         stack.Ldvirtftn(this, _code.tokenMethod);
                         break;
-                    case CodeEx.Ldarga:
-                        stack.Ldarga(_code.tokenI32);
-                        break;
-                    case CodeEx.Ldarga_S:
-                        stack.Ldarga(_code.tokenI32);
-                        break;
+
                     case CodeEx.Calli:
                         stack.Calli(this, _code.tokenUnknown);
                         break;
