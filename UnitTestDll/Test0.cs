@@ -9,8 +9,15 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public enum EUIPanelID
+        {
+            NULL=0,
+            INT1=1,
+            INT2,
+        };
         public static void UnitTest_Out()
         {
+            EUIPanelID id = EUIPanelID.INT1;
             Color32 c = new Color32(2, 2, 3, 5);
             byte b = 0;
             c.GetA(out b);

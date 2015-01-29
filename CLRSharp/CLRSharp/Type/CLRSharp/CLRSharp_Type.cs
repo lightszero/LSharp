@@ -68,7 +68,7 @@ namespace CLRSharp
                 BaseType = env.GetType(type_CLRSharp.BaseType.FullName);
                 if (BaseType is ICLRType_System)
                 {
-                    if (BaseType.TypeForSystem == typeof(object))
+                    if (BaseType.TypeForSystem == typeof(object) || BaseType.TypeForSystem ==typeof(System.Enum))
                     {//都是这样，无所谓
                         BaseType = null;
                     }
