@@ -31,6 +31,10 @@ namespace CLScriptExt
         {
             return r+","+g+","+b+","+a;
         }
+        public void TestType(Type t)
+        {
+            UnitTest.Logger.Log("type=" + t);
+        }
     }
     public struct TT
     {

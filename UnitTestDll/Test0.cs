@@ -9,6 +9,15 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_Type()
+        {
+            Color32 c = new Color32(2, 2, 3, 5);
+            c.TestType(typeof(Color32));
+        }
+        public struct MyS
+        {
+            public int i;
+        }
         public enum EUIPanelID
         {
             NULL=0,

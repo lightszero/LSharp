@@ -1,4 +1,7 @@
 ﻿A Pure C# IL Runner,Run DLL as a Script.直接解析执行IL的脚本引擎
+	L#是FB引擎系列的一部分
+	欢迎访问FB引擎主站http://www.FBact.com
+	欢迎加入讨论QQ群：223823428
 	用途，Unity3D热更（包括IOS平台）等
 	Alpha阶段，欢迎小白鼠踩坑
 	更新日志：
