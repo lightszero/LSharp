@@ -10,6 +10,9 @@ namespace UnitTestDll
         //只要有一个静态函数包含UnitTest名称的，就作为单元测试
         public static void UnitTest_7001()
         {
+            int[] ints3 = new int[] { 1, 2, 3 };
+            int v = ints3[0];// = 44;
+            Logger.Log("=" + v);
             //7001 array
             List<List<int>> list = new List<List<int>>();
             list.Add(new List<int>());
@@ -25,9 +28,7 @@ namespace UnitTestDll
             ints2[1] = 44;
             Logger.Log("=" + ints2[1]);
 
-            int[] ints3 = new int[] { 55, 55, 55 };
-            ints3[1] = 44;
-            Logger.Log("=" + ints3[1]);
+
         }
         public static void UnitTest_7002()
         {

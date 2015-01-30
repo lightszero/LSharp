@@ -213,6 +213,110 @@ namespace CLRSharp
 
             return ret;
         }
+        void FillArray(object array,byte[] bytes)
+        {
+            if (array is byte[])
+            {
+                byte[] arr = array as byte[];
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    arr[i] = bytes[i];
+                }
+            }
+            else if (array is sbyte[])
+            {
+                sbyte[] arr = array as sbyte[];
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    arr[i] = (sbyte)bytes[i];
+                }
+            }
+            else if (array is Int16[])
+            {
+                int step = 2;
+                Int16[] arr = array as Int16[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = BitConverter.ToInt16(bytes, i * step);
+                }
+            }
+            else if (array is UInt16[])
+            {
+                int step = 2;
+                UInt16[] arr = array as UInt16[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = BitConverter.ToUInt16(bytes, i * step);
+                }
+            }
+            else if (array is char[])
+            {
+                int step = 2;
+                char[] arr = array as char[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = (char)BitConverter.ToUInt16(bytes, i * step);
+                }
+            }
+            else if(array is int[])
+            {
+                int step = 4;
+                int[] arr = array as int[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = BitConverter.ToInt32(bytes, i * step);
+                }
+            } 
+            else if (array is uint[])
+            {
+                int step = 4;
+                uint[] arr = array as uint[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = BitConverter.ToUInt32(bytes, i * step);
+                }
+            }
+            else if (array is Int64[])
+            {
+                int step = 8;
+                Int64[] arr = array as Int64[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = BitConverter.ToInt64(bytes, i * step);
+                }
+            }
+            else if (array is UInt64[])
+            {
+                int step = 8;
+                UInt64[] arr = array as UInt64[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = BitConverter.ToUInt64(bytes, i * step);
+                }
+            }
+            else if (array is float[])
+            {
+                int step = 4;
+                float[] arr = array as float[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = BitConverter.ToSingle(bytes, i * step);
+                }
+            }
+            else if (array is double[])
+            {
+                int step = 8;
+                double[] arr = array as double[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = BitConverter.ToDouble(bytes, i * step);
+                }
+            }
+            else
+            {
+                throw new NotImplementedException("array=" + array.GetType());
+            }
+        }
         //流程控制
         public void Call(ThreadContext context, IMethod _clrmethod, bool bVisual)
         {
@@ -287,6 +391,7 @@ namespace CLRSharp
             }
             if (_clrmethod.DeclaringType.FullName.Contains("System.Runtime.CompilerServices.RuntimeHelpers") && _clrmethod.Name.Contains("InitializeArray"))
             {
+                FillArray(_pp[0], _pp[1] as byte[]);
                 _codepos++;
                 return;
             }
