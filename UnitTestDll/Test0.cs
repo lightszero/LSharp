@@ -11,6 +11,8 @@ namespace UnitTestDll
     {
         public static void UnitTest_Type()
         {
+            string str = "abcd";
+            char ccc = str[0];
             Color32 c = new Color32(2, 2, 3, 5);
             c.TestType(typeof(Color32));
         }

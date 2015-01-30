@@ -608,6 +608,10 @@ namespace CLRSharp
                     {
                         v32 = (short)value;
                     }
+                    else if(value is char)
+                    {
+                        v32 = (char)value;
+                    }
                     else
                     {
                         v32 = (int)Convert.ToDecimal(value);
