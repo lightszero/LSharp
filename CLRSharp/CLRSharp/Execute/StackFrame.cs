@@ -259,6 +259,10 @@ namespace CLRSharp
                     {
                         pp = (pp as VBox).BoxDefine();
                     }
+                    if(pp is ICLRType_System)
+                    {
+                        pp = (pp as ICLRType_System).TypeForSystem;
+                    }
                     if ((pp is int) && (pType.TypeForSystem != typeof(int) && pType.TypeForSystem != typeof(object)))
                     {
                         var _vbox = ValueOnStack.MakeVBox(pType);
