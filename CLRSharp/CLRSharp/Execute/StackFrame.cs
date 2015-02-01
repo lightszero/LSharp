@@ -213,7 +213,7 @@ namespace CLRSharp
 
             return ret;
         }
-        void FillArray(object array,byte[] bytes)
+        void FillArray(object array, byte[] bytes)
         {
             if (array is byte[])
             {
@@ -258,7 +258,7 @@ namespace CLRSharp
                     arr[i] = (char)BitConverter.ToUInt16(bytes, i * step);
                 }
             }
-            else if(array is int[])
+            else if (array is int[])
             {
                 int step = 4;
                 int[] arr = array as int[];
@@ -266,7 +266,7 @@ namespace CLRSharp
                 {
                     arr[i] = BitConverter.ToInt32(bytes, i * step);
                 }
-            } 
+            }
             else if (array is uint[])
             {
                 int step = 4;
@@ -363,7 +363,7 @@ namespace CLRSharp
                     {
                         pp = (pp as VBox).BoxDefine();
                     }
-                    if(pp is ICLRType_System)
+                    if (pp is ICLRType_System)
                     {
                         pp = (pp as ICLRType_System).TypeForSystem;
                     }
@@ -2412,7 +2412,8 @@ namespace CLRSharp
                 if (obj != null)
                 {
                     var ssypt = (_type as ICLRType_System).TypeForSystem;
-                    if (obj.GetType().IsSubclassOf(ssypt) == false)
+
+                    if (obj.GetType().IsSubclassOf(ssypt) == false && ssypt.IsSubclassOf(typeof(Delegate)) == false)
                     {
                         throw new Exception("不可转换");
                     }

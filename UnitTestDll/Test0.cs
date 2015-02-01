@@ -9,6 +9,18 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_delegate()
+        {
+            Action calBak = new Action(target1);
+            calBak += target2;
+        }
+
+        static void target1()
+        {
+        }
+        static void target2()
+        {
+        }
         public static void UnitTest_Type()
         {
             string str = "abcd";
