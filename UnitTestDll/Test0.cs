@@ -11,7 +11,7 @@ namespace UnitTestDll
     {
         public static void UnitTest_delegate()
         {
-            Action calBak = new Action(target1);
+            TestDele.myup calBak = new TestDele.myup(target1);
             calBak += target2;
         }
 

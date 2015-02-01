@@ -2412,11 +2412,13 @@ namespace CLRSharp
                 if (obj != null)
                 {
                     var ssypt = (_type as ICLRType_System).TypeForSystem;
+                    var otype = obj.GetType();
 
-                    if (obj.GetType().IsSubclassOf(ssypt) == false && ssypt.IsSubclassOf(typeof(Delegate)) == false)
+                    if (otype != ssypt && obj.GetType().IsSubclassOf(ssypt) == false)
                     {
                         throw new Exception("不可转换");
                     }
+
 
                 }
             }
