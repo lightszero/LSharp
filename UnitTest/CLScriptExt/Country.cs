@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UnitTest;
 
 namespace CLScriptExt
 {
@@ -12,6 +13,10 @@ namespace CLScriptExt
     };
     public class UserData
     {
+        public static void ShowContry(Country c)
+        {
+            Logger.Log(c.ToString());
+        }
         public static UserData g_this = new UserData();
         public static UserData Instance()
         {

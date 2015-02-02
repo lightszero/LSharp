@@ -9,6 +9,10 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static void UnitTest_passEnum()
+        {
+            UserData.ShowContry(Country.Chinese);
+        }
         public static void UnitTest_delegate()
         {
             TestDele.myup calBak = new TestDele.myup(target1);

@@ -304,7 +304,7 @@ namespace CLRSharp
                     var _paramsdef = method_System.GetParameters();
                     for (int i = 0; i < _params.Length; i++)
                     {
-                        if (_params[i] is CLRSharp.StackFrame.RefObj)
+                        if (_params[i] is CLRSharp.StackFrame.RefObj)//特殊处理outparam
                         {
                             object v = (_params[i] as CLRSharp.StackFrame.RefObj).Get();
                             if (v is VBox)
@@ -313,6 +313,11 @@ namespace CLRSharp
                             }
                             hasref[i] = v;
                             _outp[i] = v;
+                        }
+                        else if (_paramsdef[i].ParameterType.IsEnum)//特殊处理枚举
+                        {
+                            var ms = _paramsdef[i].ParameterType.GetMethods();
+                            _outp[i] = Enum.ToObject(_paramsdef[i].ParameterType, _params[i]);
                         }
                         else
                         {
