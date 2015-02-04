@@ -189,6 +189,21 @@ namespace CLRSharp
             }
             return null;
         }
+        public IMethod[] GetMethods(string funcname)
+        {
+            List<IMethod> methods = new List<IMethod>();
+            if (type_CLRSharp.HasMethods)
+            {
+                foreach (var m in type_CLRSharp.Methods)
+                {
+                    if (m.Name != funcname) continue;
+                   
+                     methods.Add(new Method_Common_CLRSharp(this, m));
+                    
+                }
+            }
+            return methods.ToArray();
+        }
         public object InitObj()
         {
             return new CLRSharp_Instance(this);
