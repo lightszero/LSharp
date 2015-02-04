@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CLRSharp
 {
-    
+
     public class CLRSharp_Environment : ICLRSharp_Environment
     {
         public string version
@@ -54,7 +54,7 @@ namespace CLRSharp
                 foreach (var t in module.Types)
                 {
 
-                        mapType[t.FullName] = new Type_Common_CLRSharp(this, t);
+                    mapType[t.FullName] = new Type_Common_CLRSharp(this, t);
 
                 }
             }
@@ -172,7 +172,13 @@ namespace CLRSharp
                                 checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
                                 var subtype = GetType(checkname);
                                 subTypes.Add(subtype);
-                                if (subtype is ICLRType_Sharp) subtype = GetType(typeof(CLRSharp_Instance));
+
+                                if (!subtype.IsEnum() && subtype is ICLRType_Sharp)
+                                {
+
+                                    subtype = GetType(typeof(CLRSharp_Instance));
+                                }
+
                                 outname += "[" + subtype.FullNameWithAssembly + "],";
                                 lastsplitpos = i;
                             }
@@ -231,7 +237,7 @@ namespace CLRSharp
             bool b = mapType.TryGetValue(systemType.FullName, out type);
             if (!b)
             {
-                type = new Type_Common_System(this, systemType,  null);
+                type = new Type_Common_System(this, systemType, null);
                 mapType[systemType.FullName] = type;
             }
             return type;

@@ -10,6 +10,10 @@ namespace CLRSharp
         {
             get
             {
+                if(_isenum)
+                {
+                    return typeof(int);
+                }
                 return typeof(CLRSharp_Instance);
             }
         }
@@ -63,12 +67,16 @@ namespace CLRSharp
         {
             this.env = env;
             this.type_CLRSharp = type;
+            if(type.IsEnum)
+            {
+                _isenum = true;
+            }
             if (type_CLRSharp.BaseType != null)
             {
                 BaseType = env.GetType(type_CLRSharp.BaseType.FullName);
                 if (BaseType is ICLRType_System)
                 {
-                    if (BaseType.TypeForSystem == typeof(object) || BaseType.TypeForSystem == typeof(ValueType) || BaseType.TypeForSystem == typeof(System.Enum))
+                    if (BaseType.TypeForSystem == typeof(Enum)|| BaseType.TypeForSystem == typeof(object) || BaseType.TypeForSystem == typeof(ValueType) || BaseType.TypeForSystem == typeof(System.Enum))
                     {//都是这样，无所谓
                         BaseType = null;
                     }
@@ -149,6 +157,10 @@ namespace CLRSharp
         {
             get
             {
+                if(_isenum)
+                {
+                    return env.GetType(typeof(int)).FullNameWithAssembly;
+                }
                 return type_CLRSharp.FullName;// +"," + type_CLRSharp.Module.Name;
             }
         }
@@ -257,6 +269,11 @@ namespace CLRSharp
                 abc[i] = type_CLRSharp.Fields[i].Name;
             }
             return abc;
+        }
+        bool _isenum = false;
+        public bool IsEnum()
+        {
+            return _isenum;
         }
     }
     public class Method_Common_CLRSharp : IMethod_Sharp

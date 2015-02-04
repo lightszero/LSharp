@@ -120,6 +120,10 @@ namespace CLRSharp
             }
             return names;
         }
+        public bool IsEnum()
+        {
+            return TypeForSystem.IsEnum;
+        }
     }
     class Field_Common_System : IField
     {

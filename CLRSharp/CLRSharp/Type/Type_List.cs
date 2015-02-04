@@ -100,7 +100,12 @@ namespace CLRSharp
                     }
                     //else
                     {
-                        this.Add(env.GetType(paramname));
+                        var type = env.GetType(paramname);
+                        if(type.IsEnum())
+                        {
+                            type = env.GetType(type.TypeForSystem);
+                        }
+                        this.Add(type);
                     }
 
                 }
@@ -111,8 +116,12 @@ namespace CLRSharp
             foreach (var p in ps)
             {
                 string paramname = p.VariableType.FullName;
-
-                this.Add(env.GetType(paramname));
+                var type = env.GetType(paramname);
+                if (type!=null&&type.IsEnum())
+                {
+                    type = env.GetType(type.TypeForSystem);
+                }
+                this.Add(type);
 
             }
         }
@@ -141,7 +150,12 @@ namespace CLRSharp
                         paramname = typegen.GenericArguments[index].FullName;
                     }
                 }
-                this.Add(env.GetType(paramname));
+                var type = env.GetType(paramname);
+                if (type.IsEnum())
+                {
+                    type = env.GetType(type.TypeForSystem);
+                }
+                this.Add(type);
             }
         }
 

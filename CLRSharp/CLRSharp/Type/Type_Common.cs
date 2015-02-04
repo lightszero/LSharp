@@ -49,6 +49,9 @@ namespace CLRSharp
         {
             get;
         }
+
+        bool IsEnum();
+            
     }
     public interface ICLRType_Sharp : ICLRType
     {
