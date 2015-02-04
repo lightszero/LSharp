@@ -223,9 +223,28 @@ namespace CLRSharp
                 }
                 if (t != null)
                 {
+                    //之所以做这么扭曲的设计，是因为Unity的Type.Fullname 实现错误，导致在Unity环境Type.FullName不一致
+                    if (t.FullName.Contains("CLRSharp.CLRSharp_Instance") == false)
+                    {
+                        b = mapType.TryGetValue(t.FullName, out type);
+                        if (b)
+                        {
+                            //mapType[fullname] = type;
+                            return type;
+                        }
+                        type = new Type_Common_System(this, t, subTypes.ToArray());
+                        mapType[t.FullName] = type;
+                        return type;
+                    }
+                    else
+                    { 
+                    
+                    }
                     type = new Type_Common_System(this, t, subTypes.ToArray());
+                    mapType[fullname] = type;
+                    //mapType[t.FullName] = type;
                 }
-                mapType[fullname] = type;
+
             }
             return type;
         }
