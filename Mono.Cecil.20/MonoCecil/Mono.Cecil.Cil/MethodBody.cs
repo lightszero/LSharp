@@ -76,7 +76,7 @@ namespace Mono.Cecil.Cil {
 		}
 
 		public bool HasExceptionHandlers {
-			get { return !exceptions.IsNullOrEmpty (); }
+			get { return !Mixin.IsNullOrEmpty (exceptions); }
 		}
 
 		public Collection<ExceptionHandler> ExceptionHandlers {
@@ -84,7 +84,7 @@ namespace Mono.Cecil.Cil {
 		}
 
 		public bool HasVariables {
-			get { return !variables.IsNullOrEmpty (); }
+			get { return !Mixin.IsNullOrEmpty (variables); }
 		}
 
 		public Collection<VariableDefinition> Variables {

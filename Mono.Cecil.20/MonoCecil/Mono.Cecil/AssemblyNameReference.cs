@@ -88,26 +88,26 @@ namespace Mono.Cecil
 
         public bool HasPublicKey
         {
-            get { return attributes.GetAttributes((uint)AssemblyAttributes.PublicKey); }
-            set { attributes = attributes.SetAttributes((uint)AssemblyAttributes.PublicKey, value); }
+            get { return Mixin.GetAttributes(attributes,(uint)AssemblyAttributes.PublicKey); }
+            set { attributes =Mixin.SetAttributes(attributes,(uint)AssemblyAttributes.PublicKey, value); }
         }
 
         public bool IsSideBySideCompatible
         {
-            get { return attributes.GetAttributes((uint)AssemblyAttributes.SideBySideCompatible); }
-            set { attributes = attributes.SetAttributes((uint)AssemblyAttributes.SideBySideCompatible, value); }
+            get { return Mixin.GetAttributes(attributes,(uint)AssemblyAttributes.SideBySideCompatible); }
+            set { attributes =Mixin.SetAttributes(attributes,(uint)AssemblyAttributes.SideBySideCompatible, value); }
         }
 
         public bool IsRetargetable
         {
-            get { return attributes.GetAttributes((uint)AssemblyAttributes.Retargetable); }
-            set { attributes = attributes.SetAttributes((uint)AssemblyAttributes.Retargetable, value); }
+            get { return Mixin.GetAttributes(attributes,(uint)AssemblyAttributes.Retargetable); }
+            set { attributes =Mixin.SetAttributes(attributes,(uint)AssemblyAttributes.Retargetable, value); }
         }
 
         public bool IsWindowsRuntime
         {
-            get { return attributes.GetAttributes((uint)AssemblyAttributes.WindowsRuntime); }
-            set { attributes = attributes.SetAttributes((uint)AssemblyAttributes.WindowsRuntime, value); }
+            get { return Mixin.GetAttributes(attributes,(uint)AssemblyAttributes.WindowsRuntime); }
+            set { attributes =Mixin.SetAttributes(attributes,(uint)AssemblyAttributes.WindowsRuntime, value); }
         }
 
         public byte[] PublicKey
@@ -116,7 +116,7 @@ namespace Mono.Cecil
             set
             {
                 public_key = value;
-                HasPublicKey = !public_key.IsNullOrEmpty();
+                HasPublicKey = !Mixin.IsNullOrEmpty(public_key);
                 public_key_token = Empty<byte>.Array;
                 full_name = null;
             }
@@ -126,7 +126,7 @@ namespace Mono.Cecil
         {
             get
             {
-                if (public_key_token.IsNullOrEmpty() && !public_key.IsNullOrEmpty())
+                if (Mixin.IsNullOrEmpty(public_key_token) && !Mixin.IsNullOrEmpty(public_key))
                 {
                     var hash = HashPublicKey();
                     // we need the last 8 bytes in reverse order
@@ -194,7 +194,7 @@ namespace Mono.Cecil
                 builder.Append("PublicKeyToken=");
 
                 var pk_token = PublicKeyToken;
-                if (!pk_token.IsNullOrEmpty() && pk_token.Length > 0)
+                if (!Mixin.IsNullOrEmpty(pk_token) && pk_token.Length > 0)
                 {
                     for (int i = 0; i < pk_token.Length; i++)
                     {

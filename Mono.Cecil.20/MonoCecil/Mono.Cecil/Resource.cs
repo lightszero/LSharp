@@ -56,13 +56,13 @@ namespace Mono.Cecil {
 		#region ManifestResourceAttributes
 
 		public bool IsPublic {
-			get { return attributes.GetMaskedAttributes ((uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Public); }
-			set { attributes = attributes.SetMaskedAttributes ((uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Public, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Public); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Public, value); }
 		}
 
 		public bool IsPrivate {
-			get { return attributes.GetMaskedAttributes ((uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Private); }
-			set { attributes = attributes.SetMaskedAttributes ((uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Private, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Private); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(uint) ManifestResourceAttributes.VisibilityMask, (uint) ManifestResourceAttributes.Private, value); }
 		}
 
 		#endregion

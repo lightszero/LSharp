@@ -85,7 +85,7 @@ namespace Mono.Cecil {
 					return other_methods.Count > 0;
 
 				InitializeMethods ();
-				return !other_methods.IsNullOrEmpty ();
+				return !Mixin.IsNullOrEmpty (other_methods);
 			}
 		}
 
@@ -108,24 +108,24 @@ namespace Mono.Cecil {
 				if (custom_attributes != null)
 					return custom_attributes.Count > 0;
 
-				return this.GetHasCustomAttributes (Module);
+                return Mixin.GetHasCustomAttributes(this, Module);
 			}
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, Module)); }
+            get { return custom_attributes ?? (Mixin.GetCustomAttributes(this, ref custom_attributes, Module)); }
 		}
 
 		#region EventAttributes
 
 		public bool IsSpecialName {
-			get { return attributes.GetAttributes ((ushort) EventAttributes.SpecialName); }
-			set { attributes = attributes.SetAttributes ((ushort) EventAttributes.SpecialName, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) EventAttributes.SpecialName); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) EventAttributes.SpecialName, value); }
 		}
 
 		public bool IsRuntimeSpecialName {
-			get { return attributes.GetAttributes ((ushort) FieldAttributes.RTSpecialName); }
-			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.RTSpecialName, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) FieldAttributes.RTSpecialName); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) FieldAttributes.RTSpecialName, value); }
 		}
 
 		#endregion
@@ -155,7 +155,7 @@ namespace Mono.Cecil {
 					|| remove_method != null)
 					return;
 
-				if (!module.HasImage ())
+                if (!Mixin.HasImage(module))
 					return;
 
 				module.Read (this, (@event, reader) => reader.ReadMethods (@event));

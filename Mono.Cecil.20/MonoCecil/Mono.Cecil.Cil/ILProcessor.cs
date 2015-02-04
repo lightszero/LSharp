@@ -88,7 +88,7 @@ namespace Mono.Cecil.Cil {
 				return Instruction.Create (opcode, body.Variables [value]);
 
 			if (opcode.OperandType == OperandType.ShortInlineArg)
-				return Instruction.Create (opcode, body.GetParameter (value));
+				return Instruction.Create (opcode, Mixin.GetParameter (body,value));
 
 			return Instruction.Create (opcode, value);
 		}
@@ -99,7 +99,7 @@ namespace Mono.Cecil.Cil {
 				return Instruction.Create (opcode, body.Variables [value]);
 
 			if (opcode.OperandType == OperandType.InlineArg)
-				return Instruction.Create (opcode, body.GetParameter (value));
+				return Instruction.Create (opcode, Mixin.GetParameter (body,value));
 
 			return Instruction.Create (opcode, value);
 		}

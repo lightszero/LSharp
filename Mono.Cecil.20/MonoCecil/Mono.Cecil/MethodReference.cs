@@ -31,184 +31,209 @@ using System.Text;
 
 using Mono.Collections.Generic;
 
-namespace Mono.Cecil {
+namespace Mono.Cecil
+{
 
-	public class MethodReference : MemberReference, IMethodSignature, IGenericParameterProvider, IGenericContext {
+    public class MethodReference : MemberReference, IMethodSignature, IGenericParameterProvider, IGenericContext
+    {
 
-		internal ParameterDefinitionCollection parameters;
-		MethodReturnType return_type;
+        internal ParameterDefinitionCollection parameters;
+        MethodReturnType return_type;
 
-		bool has_this;
-		bool explicit_this;
-		MethodCallingConvention calling_convention;
-		internal Collection<GenericParameter> generic_parameters;
+        bool has_this;
+        bool explicit_this;
+        MethodCallingConvention calling_convention;
+        internal Collection<GenericParameter> generic_parameters;
 
-		public virtual bool HasThis {
-			get { return has_this; }
-			set { has_this = value; }
-		}
+        public virtual bool HasThis
+        {
+            get { return has_this; }
+            set { has_this = value; }
+        }
 
-		public virtual bool ExplicitThis {
-			get { return explicit_this; }
-			set { explicit_this = value; }
-		}
+        public virtual bool ExplicitThis
+        {
+            get { return explicit_this; }
+            set { explicit_this = value; }
+        }
 
-		public virtual MethodCallingConvention CallingConvention {
-			get { return calling_convention; }
-			set { calling_convention = value; }
-		}
+        public virtual MethodCallingConvention CallingConvention
+        {
+            get { return calling_convention; }
+            set { calling_convention = value; }
+        }
 
-		public virtual bool HasParameters {
-			get { return !parameters.IsNullOrEmpty (); }
-		}
+        public virtual bool HasParameters
+        {
+            get { return !Mixin.IsNullOrEmpty(parameters); }
+        }
 
-		public virtual Collection<ParameterDefinition> Parameters {
-			get {
-				if (parameters == null)
-					parameters = new ParameterDefinitionCollection (this);
+        public virtual Collection<ParameterDefinition> Parameters
+        {
+            get
+            {
+                if (parameters == null)
+                    parameters = new ParameterDefinitionCollection(this);
 
-				return parameters;
-			}
-		}
+                return parameters;
+            }
+        }
 
-		IGenericParameterProvider IGenericContext.Type {
-			get {
-				var declaring_type = this.DeclaringType;
-				var instance = declaring_type as GenericInstanceType;
-				if (instance != null)
-					return instance.ElementType;
+        IGenericParameterProvider IGenericContext.Type
+        {
+            get
+            {
+                var declaring_type = this.DeclaringType;
+                var instance = declaring_type as GenericInstanceType;
+                if (instance != null)
+                    return instance.ElementType;
 
-				return declaring_type;
-			}
-		}
+                return declaring_type;
+            }
+        }
 
-		IGenericParameterProvider IGenericContext.Method {
-			get { return this; }
-		}
+        IGenericParameterProvider IGenericContext.Method
+        {
+            get { return this; }
+        }
 
-		GenericParameterType IGenericParameterProvider.GenericParameterType {
-			get { return GenericParameterType.Method; }
-		}
+        GenericParameterType IGenericParameterProvider.GenericParameterType
+        {
+            get { return GenericParameterType.Method; }
+        }
 
-		public virtual bool HasGenericParameters {
-			get { return !generic_parameters.IsNullOrEmpty (); }
-		}
+        public virtual bool HasGenericParameters
+        {
+            get { return !Mixin.IsNullOrEmpty(generic_parameters); }
+        }
 
-		public virtual Collection<GenericParameter> GenericParameters {
-			get {
-				if (generic_parameters != null)
-					return generic_parameters;
+        public virtual Collection<GenericParameter> GenericParameters
+        {
+            get
+            {
+                if (generic_parameters != null)
+                    return generic_parameters;
 
-				return generic_parameters = new GenericParameterCollection (this);
-			}
-		}
+                return generic_parameters = new GenericParameterCollection(this);
+            }
+        }
 
-		public TypeReference ReturnType {
-			get {
-				var return_type = MethodReturnType;
-				return return_type != null ? return_type.ReturnType : null;
-			}
-			set {
-				var return_type = MethodReturnType;
-				if (return_type != null)
-					return_type.ReturnType = value;
-			}
-		}
+        public TypeReference ReturnType
+        {
+            get
+            {
+                var return_type = MethodReturnType;
+                return return_type != null ? return_type.ReturnType : null;
+            }
+            set
+            {
+                var return_type = MethodReturnType;
+                if (return_type != null)
+                    return_type.ReturnType = value;
+            }
+        }
 
-		public virtual MethodReturnType MethodReturnType {
-			get { return return_type; }
-			set { return_type = value; }
-		}
+        public virtual MethodReturnType MethodReturnType
+        {
+            get { return return_type; }
+            set { return_type = value; }
+        }
 
-		public override string FullName {
-			get {
-				var builder = new StringBuilder ();
-				builder.Append (ReturnType.FullName)
-					.Append (" ")
-					.Append (MemberFullName ());
-				this.MethodSignatureFullName (builder);
-				return builder.ToString ();
-			}
-		}
+        public override string FullName
+        {
+            get
+            {
+                var builder = new StringBuilder();
+                builder.Append(ReturnType.FullName)
+                    .Append(" ")
+                    .Append(MemberFullName());
+                Mixin.MethodSignatureFullName(this, builder);
+                return builder.ToString();
+            }
+        }
 
-		public virtual bool IsGenericInstance {
-			get { return false; }
-		}
+        public virtual bool IsGenericInstance
+        {
+            get { return false; }
+        }
 
-		internal override bool ContainsGenericParameter {
-			get {
-				if (this.ReturnType.ContainsGenericParameter || base.ContainsGenericParameter)
-					return true;
+        internal override bool ContainsGenericParameter
+        {
+            get
+            {
+                if (this.ReturnType.ContainsGenericParameter || base.ContainsGenericParameter)
+                    return true;
 
-				var parameters = this.Parameters;
+                var parameters = this.Parameters;
 
-				for (int i = 0; i < parameters.Count; i++)
-					if (parameters [i].ParameterType.ContainsGenericParameter)
-						return true;
+                for (int i = 0; i < parameters.Count; i++)
+                    if (parameters[i].ParameterType.ContainsGenericParameter)
+                        return true;
 
-				return false;
-			}
-		}
+                return false;
+            }
+        }
 
-		internal MethodReference ()
-		{
-			this.return_type = new MethodReturnType (this);
-			this.token = new MetadataToken (TokenType.MemberRef);
-		}
+        internal MethodReference()
+        {
+            this.return_type = new MethodReturnType(this);
+            this.token = new MetadataToken(TokenType.MemberRef);
+        }
 
-		public MethodReference (string name, TypeReference returnType)
-			: base (name)
-		{
-			if (returnType == null)
-				throw new ArgumentNullException ("returnType");
+        public MethodReference(string name, TypeReference returnType)
+            : base(name)
+        {
+            if (returnType == null)
+                throw new ArgumentNullException("returnType");
 
-			this.return_type = new MethodReturnType (this);
-			this.return_type.ReturnType = returnType;
-			this.token = new MetadataToken (TokenType.MemberRef);
-		}
+            this.return_type = new MethodReturnType(this);
+            this.return_type.ReturnType = returnType;
+            this.token = new MetadataToken(TokenType.MemberRef);
+        }
 
-		public MethodReference (string name, TypeReference returnType, TypeReference declaringType)
-			: this (name, returnType)
-		{
-			if (declaringType == null)
-				throw new ArgumentNullException ("declaringType");
+        public MethodReference(string name, TypeReference returnType, TypeReference declaringType)
+            : this(name, returnType)
+        {
+            if (declaringType == null)
+                throw new ArgumentNullException("declaringType");
 
-			this.DeclaringType = declaringType;
-		}
+            this.DeclaringType = declaringType;
+        }
 
-		public virtual MethodReference GetElementMethod ()
-		{
-			return this;
-		}
+        public virtual MethodReference GetElementMethod()
+        {
+            return this;
+        }
 
-		public virtual MethodDefinition Resolve ()
-		{
-			var module = this.Module;
-			if (module == null)
-				throw new NotSupportedException ();
+        public virtual MethodDefinition Resolve()
+        {
+            var module = this.Module;
+            if (module == null)
+                throw new NotSupportedException();
 
-			return module.Resolve (this);
-		}
-	}
+            return module.Resolve(this);
+        }
+    }
 
-	static partial class Mixin {
+    static partial class Mixin
+    {
 
-		public static bool IsVarArg (this IMethodSignature self)
-		{
-			return (self.CallingConvention & MethodCallingConvention.VarArg) != 0;
-		}
+        public static bool IsVarArg(IMethodSignature self)
+        {
+            return (self.CallingConvention & MethodCallingConvention.VarArg) != 0;
+        }
 
-		public static int GetSentinelPosition (this IMethodSignature self)
-		{
-			if (!self.HasParameters)
-				return -1;
+        public static int GetSentinelPosition(IMethodSignature self)
+        {
+            if (!self.HasParameters)
+                return -1;
 
-			var parameters = self.Parameters;
-			for (int i = 0; i < parameters.Count; i++)
-				if (parameters [i].ParameterType.IsSentinel)
-					return i;
+            var parameters = self.Parameters;
+            for (int i = 0; i < parameters.Count; i++)
+                if (parameters[i].ParameterType.IsSentinel)
+                    return i;
 
-			return -1;
-		}
-	}
+            return -1;
+        }
+    }
 }

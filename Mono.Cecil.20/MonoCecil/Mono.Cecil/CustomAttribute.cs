@@ -111,7 +111,7 @@ namespace Mono.Cecil {
 			get {
 				Resolve ();
 
-				return !arguments.IsNullOrEmpty ();
+				return !Mixin.IsNullOrEmpty (arguments);
 			}
 		}
 
@@ -127,7 +127,7 @@ namespace Mono.Cecil {
 			get {
 				Resolve ();
 
-				return !fields.IsNullOrEmpty ();
+				return !Mixin.IsNullOrEmpty (fields);
 			}
 		}
 
@@ -143,7 +143,7 @@ namespace Mono.Cecil {
 			get {
 				Resolve ();
 
-				return !properties.IsNullOrEmpty ();
+				return !Mixin.IsNullOrEmpty (properties);
 			}
 		}
 

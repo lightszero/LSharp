@@ -89,7 +89,7 @@ namespace Microsoft.Cci.Pdb {
 
       If this is true, then we are guaranteed to visit every bucket in
       exactly hashsize probes, since the least common multiple of hashsize
-      and h2(key) will be hashsize * h2(key).  (This is the first number
+      and h2(key) will be hashsize * h2(key).  ( This is the first number
       where adding h2 to h1 mod hashsize will be 0 and we will search the
       same bucket twice).
 

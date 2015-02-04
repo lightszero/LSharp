@@ -40,7 +40,7 @@ namespace Mono.Cecil {
 
 	static partial class Mixin {
 
-		public static bool ContainsGenericParameter (this IGenericInstance self)
+		public static bool ContainsGenericParameter (IGenericInstance self)
 		{
 			var arguments = self.GenericArguments;
 
@@ -51,7 +51,7 @@ namespace Mono.Cecil {
 			return false;
 		}
 
-		public static void GenericInstanceFullName (this IGenericInstance self, StringBuilder builder)
+		public static void GenericInstanceFullName (IGenericInstance self, StringBuilder builder)
 		{
 			builder.Append ("<");
 			var arguments = self.GenericArguments;

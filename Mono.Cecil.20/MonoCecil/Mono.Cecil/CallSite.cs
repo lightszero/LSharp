@@ -96,7 +96,7 @@ namespace Mono.Cecil {
 			get {
 				var signature = new StringBuilder ();
 				signature.Append (ReturnType.FullName);
-				this.MethodSignatureFullName (signature);
+				Mixin.MethodSignatureFullName (this,signature);
 				return signature.ToString ();
 			}
 		}

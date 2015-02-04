@@ -40,14 +40,14 @@ namespace Mono.Cecil {
 		internal static object NotResolved = new object ();
 
 		public static void ResolveConstant (
-			this IConstantProvider self,
+			IConstantProvider self,
 			ref object constant,
 			ModuleDefinition module)
 		{
 			lock (module.SyncRoot) {
 				if (constant != Mixin.NotResolved)
 					return;
-				if (module.HasImage ())
+				if (Mixin.HasImage (module))
 					constant = module.Read (self, (provider, reader) => reader.ReadConstant (provider));
 				else
 					constant = Mixin.NoValue;
