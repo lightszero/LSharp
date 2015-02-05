@@ -218,7 +218,7 @@ namespace Mono.Cecil
             get
             {
                 if (metadata_resolver == null)
-                    Interlocked.CompareExchange(ref metadata_resolver, new MetadataResolver(this.AssemblyResolver), null);
+                    metadata_resolver=new MetadataResolver(this.AssemblyResolver);
 
                 return metadata_resolver;
             }
@@ -229,7 +229,7 @@ namespace Mono.Cecil
             get
             {
                 if (type_system == null)
-                    Interlocked.CompareExchange(ref type_system, TypeSystem.CreateTypeSystem(this), null);
+                    type_system = TypeSystem.CreateTypeSystem(this);
                 return type_system;
             }
         }
