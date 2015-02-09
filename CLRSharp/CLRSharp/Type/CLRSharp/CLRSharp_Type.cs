@@ -10,7 +10,7 @@ namespace CLRSharp
         {
             get
             {
-                if(_isenum)
+                if (_isenum)
                 {
                     return typeof(int);
                 }
@@ -67,7 +67,7 @@ namespace CLRSharp
         {
             this.env = env;
             this.type_CLRSharp = type;
-            if(type.IsEnum)
+            if (type.IsEnum)
             {
                 _isenum = true;
             }
@@ -76,7 +76,7 @@ namespace CLRSharp
                 BaseType = env.GetType(type_CLRSharp.BaseType.FullName);
                 if (BaseType is ICLRType_System)
                 {
-                    if (BaseType.TypeForSystem == typeof(Enum)|| BaseType.TypeForSystem == typeof(object) || BaseType.TypeForSystem == typeof(ValueType) || BaseType.TypeForSystem == typeof(System.Enum))
+                    if (BaseType.TypeForSystem == typeof(Enum) || BaseType.TypeForSystem == typeof(object) || BaseType.TypeForSystem == typeof(ValueType) || BaseType.TypeForSystem == typeof(System.Enum))
                     {//都是这样，无所谓
                         BaseType = null;
                     }
@@ -157,7 +157,7 @@ namespace CLRSharp
         {
             get
             {
-                if(_isenum)
+                if (_isenum)
                 {
                     return env.GetType(typeof(int)).FullNameWithAssembly;
                 }
@@ -197,9 +197,19 @@ namespace CLRSharp
                 foreach (var m in type_CLRSharp.Methods)
                 {
                     if (m.Name != funcname) continue;
-                   
-                     methods.Add(new Method_Common_CLRSharp(this, m));
-                    
+                    methods.Add(new Method_Common_CLRSharp(this, m));
+                }
+            }
+            return methods.ToArray();
+        }
+        public IMethod[] GetAllMethods()
+        {
+            List<IMethod> methods = new List<IMethod>();
+            if (type_CLRSharp.HasMethods)
+            {
+                foreach (var m in type_CLRSharp.Methods)
+                {
+                    methods.Add(new Method_Common_CLRSharp(this, m));
                 }
             }
             return methods.ToArray();

@@ -85,6 +85,22 @@ namespace CLRSharp
 
             return methods.ToArray();
         }
+        public IMethod[] GetAllMethods()
+        {
+            List<IMethod> methods = new List<IMethod>();
+            {
+                var __methods = TypeForSystem.GetMethods();
+                foreach (var m in __methods)
+                {
+                    //if (m.Name == funcname)
+                    {
+                        methods.Add(new Method_Common_System(this, m));
+                    }
+                }
+            }
+
+            return methods.ToArray();
+        }
         public object InitObj()
         {
             return Activator.CreateInstance(TypeForSystem);

@@ -31,7 +31,7 @@ namespace CLRSharp
         //funcname==".ctor" 表示构造函数
         IMethod GetMethod(string funcname, MethodParamList types);
         IMethod[] GetMethods(string funcname);
-
+        IMethod[] GetAllMethods();
         object InitObj();
         /// <summary>
         /// 获取模板函数
