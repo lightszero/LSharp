@@ -20,6 +20,15 @@ namespace UnitTestDll
 
             bool bo = dict.ContainsKey(EUIPanelID.INT1);
         }
+        
+        public static void UnitTest_02()
+        {
+            Test_02(EUIPanelID.INT1);
+        }
+        static void Test_02(EUIPanelID id)
+        {
+            Logger.Log("test_enum.UnitTest_02");
+        }
     }
 
 
