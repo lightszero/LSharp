@@ -176,10 +176,22 @@ namespace CLRSharp
                         bool match = true;
                         for (int i = 0; i < ((types == null) ? 0 : types.Count); i++)
                         {
-                            if (env.GetType(m.Parameters[i].ParameterType.FullName) != types[i])
+                            var envtype = env.GetType(m.Parameters[i].ParameterType.FullName);
+                            if (envtype.IsEnum())
                             {
-                                match = false;
-                                break;
+                                if (envtype.TypeForSystem != types[i].TypeForSystem)
+                                {
+                                    match = false;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if (envtype != types[i])
+                                {
+                                    match = false;
+                                    break;
+                                }
                             }
                         }
                         if (match)
