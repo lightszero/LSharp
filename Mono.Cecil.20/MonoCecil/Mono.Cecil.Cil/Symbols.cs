@@ -111,7 +111,7 @@ namespace Mono.Cecil.Cil {
 		internal MetadataToken method_token;
 		internal MetadataToken local_var_token;
 		internal Collection<VariableDefinition> variables;
-		internal Collection<InstructionSymbol> instructions;
+		public Collection<InstructionSymbol> instructions;
 
 		public bool HasVariables {
 			get { return !Mixin.IsNullOrEmpty (variables); }

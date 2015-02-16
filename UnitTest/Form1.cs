@@ -21,14 +21,17 @@ namespace UnitTest
         {
             var bytes = System.IO.File.ReadAllBytes("UnitTestDll.dll");
             var bytespdb = System.IO.File.ReadAllBytes("UnitTestDll.pdb");
+            //var bytesmdb = System.IO.File.ReadAllBytes("UnitTestDll.dll.mdb");//现在支持mdb了
             System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes);
             System.IO.MemoryStream mspdb = new System.IO.MemoryStream(bytespdb);
+            //System.IO.MemoryStream msmdb = new System.IO.MemoryStream(bytesmdb);
 
             env = new CLRSharp.CLRSharp_Environment(this);
             this.Text += " L# Ver:" + env.version;
             try
             {
                 env.LoadModule(ms, mspdb, new Mono.Cecil.Pdb.PdbReaderProvider());
+                //env.LoadModule(ms, msmdb, new Mono.Cecil.Mdb.MdbReaderProvider());
             }
             catch (Exception err)
             {
