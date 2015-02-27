@@ -32,13 +32,17 @@ namespace UnitTestDll
             Logger.Log("test_enum.UnitTest_02");
         }
 
-        static void UnitTest_03(EUIPanelID id)
+        static void UnitTest_03()
         {
-            Type type = typeof(EUIPanelID);
+            //system type  和 l# type  不能一起搞
+            //Type type = typeof(EUIPanelID);
         }
-        static void UnitTest_04(EUIPanelID id)
+
+
+        static void UnitTest_07()
         {
-            string name = typeof(EUIPanelID).GetEnumName(id);
+            LinkedList<EUIPanelID> ll = new LinkedList<EUIPanelID>();
+            bool b = ll.Contains(EUIPanelID.INT1);
         }
 
     }
