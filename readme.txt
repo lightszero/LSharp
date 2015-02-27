@@ -5,6 +5,8 @@
 	用途，Unity3D热更（包括IOS平台）等
 	Beta阶段，有一定动手能力的小伙伴，已经可以将它用于实战
 	更新日志：
+2015-02-27 V0.42Beta
+	修正了一处搜索缺陷，查找LinkedList查找失败
 2015-02-16 V0.41Beta
 	增加了Mdb的支持，通过反编译MonoDevelop中的mono.cecil.mdb实现
 2015-02-13 V0.40.1Beta

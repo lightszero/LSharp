@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.41Beta";
+                return "0.42Beta";
             }
         }
         public ICLRSharp_Logger logger
@@ -46,6 +46,8 @@ namespace CLRSharp
                 {
                     if (moduleref.Contains(ar.Name) == false)
                         moduleref.Add(ar.Name);
+                    if (moduleref.Contains(ar.FullName) == false)
+                        moduleref.Add(ar.FullName);
                 }
             }
             //mapModule[module.Name] = module;

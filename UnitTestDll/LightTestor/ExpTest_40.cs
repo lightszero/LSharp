@@ -18,6 +18,8 @@ namespace UnitTestDll
         //只要有一个静态函数包含UnitTest名称的，就作为单元测试
         public static object UnitTest_4001()
         {
+            LinkedList<int> ints2 = new LinkedList<int>();
+
             //4001 loops
 
             int b = 50;
