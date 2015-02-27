@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnitTest;
+using System.Reflection;
 
 namespace UnitTestDll
 {
@@ -30,6 +31,32 @@ namespace UnitTestDll
         {
             Logger.Log("test_enum.UnitTest_02");
         }
+
+        static void UnitTest_03(EUIPanelID id)
+        {
+            Type type = typeof(EUIPanelID);
+        }
+        static void UnitTest_04(EUIPanelID id)
+        {
+            string name = typeof(EUIPanelID).GetEnumName(id);
+        }
+
+        class classA
+        {
+        }
+
+        static void UnitTest_05()
+        {
+            classA a = (classA)Activator.CreateInstance(typeof(classA));
+        }
+
+        static void UnitTest_06()
+        {
+            Type type = typeof(classA);
+            ConstructorInfo info = type.GetConstructor(Type.EmptyTypes);
+            classA a = (classA)info.Invoke(null);
+        }
+
     }
 
 
