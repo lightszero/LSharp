@@ -41,22 +41,6 @@ namespace UnitTestDll
             string name = typeof(EUIPanelID).GetEnumName(id);
         }
 
-        class classA
-        {
-        }
-
-        static void UnitTest_05()
-        {
-            classA a = (classA)Activator.CreateInstance(typeof(classA));
-        }
-
-        static void UnitTest_06()
-        {
-            Type type = typeof(classA);
-            ConstructorInfo info = type.GetConstructor(Type.EmptyTypes);
-            classA a = (classA)info.Invoke(null);
-        }
-
     }
 
 
