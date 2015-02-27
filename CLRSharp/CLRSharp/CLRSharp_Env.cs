@@ -149,7 +149,10 @@ namespace CLRSharp
                                 checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
                                 var subtype = GetType(checkname);
                                 subTypes.Add(subtype);
-                                if (subtype is ICLRType_Sharp) subtype = GetType(typeof(CLRSharp_Instance));
+                                if (!subtype.IsEnum() && subtype is ICLRType_Sharp)
+                                {
+                                    subtype = GetType(typeof(CLRSharp_Instance));
+                                }
                                 outname += "[" + subtype.FullNameWithAssembly + "]";
                                 lastsplitpos = i;
                             }
@@ -221,6 +224,7 @@ namespace CLRSharp
                         }
                     }
                 }
+
                 if (t != null)
                 {
                     //之所以做这么扭曲的设计，是因为Unity的Type.Fullname 实现错误，导致在Unity环境Type.FullName不一致
@@ -237,8 +241,8 @@ namespace CLRSharp
                         return type;
                     }
                     else
-                    { 
-                    
+                    {
+
                     }
                     type = new Type_Common_System(this, t, subTypes.ToArray());
                     mapType[fullname] = type;

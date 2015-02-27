@@ -34,7 +34,7 @@ namespace UnitTestDll
 
         static void UnitTest_03()
         {
-            //system type  和 l# type  不能一起搞
+            //system type  �?l# type  不能一起搞
             //Type type = typeof(EUIPanelID);
         }
 
