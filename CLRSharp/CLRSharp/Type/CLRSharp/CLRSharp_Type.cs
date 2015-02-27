@@ -91,15 +91,33 @@ namespace CLRSharp
                 if (type_CLRSharp.HasInterfaces)
                 {
                     _Interfaces = new List<ICLRType>();
+                    bool bWarning = true;
                     foreach (var i in type_CLRSharp.Interfaces)
                     {
                         var itype = env.GetType(i.FullName);
                         if (itype is ICLRType_System)
                         {
                             //继承了其他系统类型
-                            if (env.GetCrossBind((itype as ICLRType_System).TypeForSystem) == null)
+                            Type ts = (itype as ICLRType_System).TypeForSystem;
+
+                            if (bWarning & env.GetCrossBind(ts) == null)
                             {
-                                env.logger.Log_Warning("警告:没有CrossBind的情况下直接继承\nScriptType:" + Name + " Based On a SystemInterface:" + itype.Name);
+                               
+                                if (ts.IsInterface)
+                                {
+                                    foreach(var t in ts.GetInterfaces())
+                                    {
+                                        if(env.GetCrossBind(t)!=null)
+                                        {
+                                            bWarning = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (bWarning)
+                                {
+                                    env.logger.Log_Warning("警告:没有CrossBind的情况下直接继承\nScriptType:" + Name + " Based On a SystemInterface:" + itype.Name);
+                                }
                             }
                             HasSysBase = true;
                         }

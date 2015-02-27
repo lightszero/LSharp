@@ -10,8 +10,8 @@ namespace CLRSharp
         public Type Type
         {
             get { return typeof(IEnumerable); }
-        }
 
+        }
         public object CreateBind(CLRSharp_Instance inst)
         {
             return new Base_IEnumerable(inst);
