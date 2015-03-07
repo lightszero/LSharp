@@ -6,6 +6,20 @@ using UnitTest;
 using UnityEngine;
 namespace UnitTestDll
 {
+    public class UlngTest
+    {
+        public ulong aaa = 15645613;
+
+        public static void DoUINt64(ulong a)
+        {
+            UnitTest.Logger.Log("a=" + a);
+        }
+        public static void UnitTest_UInt64()
+        {
+            UlngTest tt = new UlngTest();
+            UlngTest.DoUINt64(tt.aaa);
+        }
+    }
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
