@@ -442,6 +442,8 @@ namespace CLRSharp
 
                     case CodeEx.Ldarga:
                     case CodeEx.Ldarga_S:
+                    case CodeEx.Starg:
+                    case CodeEx.Starg_S:
                         this.tokenI32 = (_p as Mono.Cecil.ParameterDefinition).Index;
                         break;
                     case CodeEx.Switch:

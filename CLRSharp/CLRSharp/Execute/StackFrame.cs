@@ -2162,6 +2162,18 @@ namespace CLRSharp
 
             _codepos++;
         }
+
+        public void Starg(ThreadContext context, int p)
+        {
+            object _this = stackCalc.Pop();
+            if(_this is VBox)
+            {
+                _this = (_this as VBox).Clone();
+            }
+            this._params[p] = _this;
+            _codepos++;
+            //_codepos++;
+        }
         //public void Ldarga(ThreadContext context, object obj)
         //{
         //    int pos=            (obj as Mono.Cecil.ParameterDefinition).Index;
@@ -2184,12 +2196,7 @@ namespace CLRSharp
             throw new NotImplementedException(t.ToString());
             //_codepos++;
         }
-        public void Starg_S(ThreadContext context, object obj)
-        {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
-        }
+
         public void Ldnull()
         {
             stackCalc.Push(null);
@@ -2508,12 +2515,6 @@ namespace CLRSharp
             //_codepos++;
         }
 
-        public void Starg(ThreadContext context, object obj)
-        {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
-        }
         public void Localloc(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
