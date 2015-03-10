@@ -1351,10 +1351,26 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            sbyte[] array = stackCalc.Pop() as sbyte[];
-            var box = ValueOnStack.MakeVBox(NumberType.SBYTE);
-            box.v32 = array[index];
-            stackCalc.Push(box);
+            var _array = stackCalc.Pop();
+            if(_array is sbyte[])
+            {
+                sbyte[] array = _array as sbyte[];;
+                var box = ValueOnStack.MakeVBox(NumberType.SBYTE);
+                box.v32 = array[index];
+                stackCalc.Push(box);
+            }
+            else if(_array is bool[])
+            {
+                bool[] array = _array as bool[];;
+                var box = ValueOnStack.MakeVBox(NumberType.BOOL);
+                box.v32 = array[index]==true?1:0;
+                stackCalc.Push(box);
+            }
+            else
+            {
+                throw new Exception("not support.this array i1");
+            }
+
             _codepos++;
         }
         public void Ldelem_U1()
