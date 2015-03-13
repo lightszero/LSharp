@@ -42,15 +42,13 @@ namespace UnitTestDll
             i += 1;
         }
         //test char[]
-        public static void UnitTest_02()
+        public static void UnitTest_03()
         {
             char[] arr = new char[3] { 'a', 'b', 'c' };
-            Logger.Log(arr[0]);
+            char b3 = arr[0];
+            Logger.Log(b3.ToString());
         }
-        static void Test_02(EUIPanelID id)
-        {
-            Logger.Log("test_enum.UnitTest_02");
-        }
+
     }
 
 

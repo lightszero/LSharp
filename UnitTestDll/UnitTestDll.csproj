@@ -63,6 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test_ByLynn.cs" />
     <Compile Include="test_enum.cs" />
+    <Compile Include="test_string_switch.cs" />
     <Compile Include="没有实现的IL.cs" />
   </ItemGroup>
   <ItemGroup>
