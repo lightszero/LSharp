@@ -1422,10 +1422,21 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            UInt16[] array = stackCalc.Pop() as UInt16[];
-            var box = ValueOnStack.MakeVBox(NumberType.UINT16);
-            box.v32 = array[index];
-            stackCalc.Push(box);
+            var _array = stackCalc.Pop();
+            if (_array is UInt16[])
+            {
+                UInt16[] array = _array as UInt16[];
+                var box = ValueOnStack.MakeVBox(NumberType.UINT16);
+                box.v32 = array[index];
+                stackCalc.Push(box);
+            }
+            else
+            {
+                char[] array = _array as char[];
+                var box = ValueOnStack.MakeVBox(NumberType.CHAR);
+                box.v32 = array[index];
+                stackCalc.Push(box);
+            }
 
             _codepos++;
         }
