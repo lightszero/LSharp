@@ -1039,6 +1039,9 @@ namespace CLRSharp
                         else
                             stack.Starg(this, _code.tokenI32 + 1);
                         break;
+                    case CodeEx.Volatile:
+                        stack.Volatile();
+                        break;
                     ///下面是还没有处理的指令
                     case CodeEx.Break:
                         stack.Break(this, _code.tokenUnknown);
@@ -1188,9 +1191,7 @@ namespace CLRSharp
                     case CodeEx.Unaligned:
                         stack.Unaligned(this, _code.tokenUnknown);
                         break;
-                    case CodeEx.Volatile:
-                        stack.Volatile(this, _code.tokenUnknown);
-                        break;
+
                     case CodeEx.Tail:
                         stack.Tail(this, _code.tokenUnknown);
                         break;

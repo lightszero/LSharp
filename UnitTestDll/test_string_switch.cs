@@ -44,11 +44,44 @@ namespace UnitTestDll
         //test char[]
         public static void UnitTest_03()
         {
-            char[] arr = new char[3] { 'a', 'b', 'c' };
+            uint[] Result = new uint[3] { 1, 1, 1 };
+
+            //Result = new UInt32[3] { 1, 1, 1 };
+            Result[1] = 100;
+
+            char[] arr = new char[3] { '1', '2', '3' };
+            arr[1] = '2';
             char b3 = arr[0];
             Logger.Log(b3.ToString());
         }
-
+        public static void UnitTest_04()
+        {
+            uint[] arr = new uint[3] ;
+            arr[1] = 1;
+            uint b3 = arr[0];
+            Logger.Log(b3.ToString());
+        }
+        public static void UnitTest_05()
+        {
+            ushort[] arr = new ushort[3] ;
+            arr[1] = 1;
+            ushort b3 = arr[0];
+            Logger.Log(b3.ToString());
+        }
+        public static void UnitTest_06()
+        {
+            ulong[] arr = new ulong[3];
+            arr[1] = 1;
+            ulong b3 = arr[0];
+            Logger.Log(b3.ToString());
+        }
+        public static void UnitTest_07()
+        {
+            byte[] arr = new byte[3];
+            arr[1] = 1;
+            byte b3 = arr[0];
+            Logger.Log(b3.ToString());
+        }
     }
 
 

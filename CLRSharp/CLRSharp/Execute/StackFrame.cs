@@ -2560,12 +2560,16 @@ namespace CLRSharp
             throw new NotImplementedException(t.ToString());
             //_codepos++;
         }
-        public void Volatile(ThreadContext context, object obj)
+        public void Volatile()
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            _codepos++;
         }
+        //ThreadContext context, object obj)
+        //{
+        //    Type t = obj.GetType();
+        //    throw new NotImplementedException(t.ToString());
+        //    //_codepos++;
+        //}
         public void Tail(ThreadContext context, object obj)
         {
             Type t = obj.GetType();

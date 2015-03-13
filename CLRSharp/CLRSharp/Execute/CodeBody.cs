@@ -463,6 +463,8 @@ namespace CLRSharp
                     case CodeEx.Ldarg_S:
                         this.tokenI32 = (_p as Mono.Cecil.ParameterReference).Index;
                         break;
+                    case CodeEx.Volatile:
+                        break;
                     default:
                         this.tokenUnknown = _p;
                         break;
