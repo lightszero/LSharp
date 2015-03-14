@@ -1,3 +1,5 @@
 这个目录提供ForUnity的资源库
 以前的DLL均已删除，查找到了Mono.Cecil无法在Unity环境下编译的原因，直接插入代码即可。
+ForUnity项目仅为Helloworld目的，代码不会同步更新。
+请自己根据需要处理
 
