@@ -464,7 +464,12 @@ namespace CLRSharp
         }
         public void Dup()
         {
-            stackCalc.Push(stackCalc.Peek());
+            var v = stackCalc.Peek();
+            if(v is VBox)
+            {
+                v = (v as VBox).Clone();
+            }
+            stackCalc.Push(v);
             _codepos++;
         }
         public void Pop()
