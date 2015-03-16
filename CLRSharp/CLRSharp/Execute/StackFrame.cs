@@ -1357,18 +1357,18 @@ namespace CLRSharp
                 index = (int)indexobj;
             }
             var _array = stackCalc.Pop();
-            if(_array is sbyte[])
+            if (_array is sbyte[])
             {
-                sbyte[] array = _array as sbyte[];;
+                sbyte[] array = _array as sbyte[]; ;
                 var box = ValueOnStack.MakeVBox(NumberType.SBYTE);
                 box.v32 = array[index];
                 stackCalc.Push(box);
             }
-            else if(_array is bool[])
+            else if (_array is bool[])
             {
-                bool[] array = _array as bool[];;
+                bool[] array = _array as bool[]; ;
                 var box = ValueOnStack.MakeVBox(NumberType.BOOL);
-                box.v32 = array[index]==true?1:0;
+                box.v32 = array[index] == true ? 1 : 0;
                 stackCalc.Push(box);
             }
             else
@@ -1588,29 +1588,30 @@ namespace CLRSharp
         }
         public void Stelem_I()
         {
-            var obj = stackCalc.Pop();
-            int value = 0;
-            if (obj is VBox)
-            {
-                value = (obj as VBox).ToInt();
-            }
-            else
-            {
-                value = (Int32)obj;
-            }
-            var indexobj = stackCalc.Pop();
-            int index = 0;
-            if ((indexobj is VBox))
-            {
-                index = (indexobj as VBox).ToInt();
-            }
-            else
-            {
-                index = (int)indexobj;
-            }
-            var array = stackCalc.Pop() as Int32[];
-            array[index] = value;
-            _codepos++;
+            Stelem_I4();
+            //var obj = stackCalc.Pop();
+            //int value = 0;
+            //if (obj is VBox)
+            //{
+            //    value = (obj as VBox).ToInt();
+            //}
+            //else
+            //{
+            //    value = (Int32)obj;
+            //}
+            //var indexobj = stackCalc.Pop();
+            //int index = 0;
+            //if ((indexobj is VBox))
+            //{
+            //    index = (indexobj as VBox).ToInt();
+            //}
+            //else
+            //{
+            //    index = (int)indexobj;
+            //}
+            //var array = stackCalc.Pop() as Int32[];
+            //array[index] = value;
+            //_codepos++;
         }
         public void Stelem_I1()
         {
@@ -1634,8 +1635,17 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            var array = stackCalc.Pop() as sbyte[];
-            array[index] = (sbyte)value;
+            var array = stackCalc.Pop();
+            if (array is sbyte[])
+            {
+                (array as sbyte[])[index] = (sbyte)value;
+            }
+            else if(array is bool[])
+            {
+                (array as bool[])[index] = value>0;
+
+            }
+
             _codepos++;
         }
         public void Stelem_I2()
@@ -1669,6 +1679,10 @@ namespace CLRSharp
             {
                 (array as Int16[])[index] = (Int16)value;
             }
+            else if (array is UInt16[])
+            {
+                (array as UInt16[])[index] = (UInt16)value;
+            }
 
             _codepos++;
         }
@@ -1694,8 +1708,20 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            var array = stackCalc.Pop() as Int32[];
-            array[index] = (Int32)value;
+            var _array = stackCalc.Pop();
+            if (_array is Int32[])
+            {
+
+                var array = _array as Int32[];
+                array[index] = (Int32)value;
+
+            }
+            else if (_array is UInt32[])
+            {
+                var array = _array as UInt32[];
+                array[index] = (UInt32)value;
+
+            }
             _codepos++;
         }
         public void Stelem_I8()
@@ -1720,8 +1746,20 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            var array = stackCalc.Pop() as Int64[];
-            array[index] = value;
+            var _array = stackCalc.Pop();
+            if (_array is Int64[])
+            {
+
+                var array = _array as Int64[];
+                array[index] = (Int64)value;
+
+            }
+            else if (_array is UInt64[])
+            {
+                var array = _array as UInt64[];
+                array[index] = (UInt64)value;
+
+            }
             _codepos++;
         }
         public void Stelem_R4()
@@ -2198,7 +2236,7 @@ namespace CLRSharp
         public void Starg(ThreadContext context, int p)
         {
             object _this = stackCalc.Pop();
-            if(_this is VBox)
+            if (_this is VBox)
             {
                 _this = (_this as VBox).Clone();
             }
