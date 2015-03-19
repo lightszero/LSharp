@@ -45,17 +45,13 @@ namespace UnitTestDll
                     break;
                 }
             }
-            List<int> ints = new List<int>();
-            ints.Add(1);
-            ints.Add(2);
-            ints.Add(3);
-            int p = 0;
-            Logger.Log("what?" + ints[p++]);
-            for (int j = 0; j < ints.Count; j++)
-            {
+            sbyte[] ints = new sbyte[3];
+            ints[0] = 1;
+            ints[1] = 2;
+            ints[2] = 3;
+            ints[1]++;
+            ints[2]++;
 
-                Logger.Log(j + "," + 0);
-            }
 
             foreach (int k in ints)
             {

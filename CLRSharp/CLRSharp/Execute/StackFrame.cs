@@ -465,7 +465,7 @@ namespace CLRSharp
         public void Dup()
         {
             var v = stackCalc.Peek();
-            if(v is VBox)
+            if (v is VBox)
             {
                 v = (v as VBox).Clone();
             }
@@ -1026,17 +1026,39 @@ namespace CLRSharp
         public void Add()
         {
             VBox n2 = stackCalc.Pop() as VBox;
-            VBox n1 = stackCalc.Pop() as VBox;
-            n1.Add(n2);
-            stackCalc.Push(n1);
+            object n1 = stackCalc.Pop();
+            if(n1 is VBox)
+            {
+                VBox n_1 = n1 as VBox;
+                n_1.Add(n2);
+                stackCalc.Push(n_1);
+            }
+            else
+            {
+                VBox n_1 = ValueOnStack.MakeVBox(n1.GetType());
+                n_1.SetDirect(n1);
+                n_1.Add(n2);
+                stackCalc.Push(n_1.BoxDefine());
+            }
             _codepos++;
         }
         public void Sub()
         {
             VBox n2 = stackCalc.Pop() as VBox;
-            VBox n1 = stackCalc.Pop() as VBox;
-            n1.Sub(n2);
-            stackCalc.Push(n1);
+            object n1 = stackCalc.Pop();
+            if (n1 is VBox)
+            {
+                VBox n_1 = n1 as VBox;
+                n_1.Sub(n2);
+                stackCalc.Push(n_1);
+            }
+            else
+            {
+                VBox n_1 = ValueOnStack.MakeVBox(n1.GetType());
+                n_1.SetDirect(n1);
+                n_1.Sub(n2);
+                stackCalc.Push(n_1.BoxDefine());
+            }
             _codepos++;
         }
         public void Mul()
@@ -1640,9 +1662,9 @@ namespace CLRSharp
             {
                 (array as sbyte[])[index] = (sbyte)value;
             }
-            else if(array is bool[])
+            else if (array is bool[])
             {
-                (array as bool[])[index] = value>0;
+                (array as bool[])[index] = value > 0;
 
             }
 

@@ -1,0 +1,13 @@
+﻿<Properties StartupItem="UnitTest\UnitTest.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="test\test01\Form1.Designer.cs">
+    <Files>
+      <File FileName="test\test01\Form1.cs" Line="1" Column="1" />
+      <File FileName="test\test01\Form1.Designer.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
