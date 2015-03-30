@@ -8,6 +8,13 @@ using UnitTest;
 
     public class TestClass
     {
+        public TestClass()
+        {
+        }
+
+        public TestClass(byte b)
+        {
+        }
 
         public string name
         {
@@ -44,5 +51,14 @@ using UnitTest;
         public static bool TF(bool b)
         {
             return b;
+        }
+
+        public static void TestObjectArg(Object o)
+        {
+            bool b = (bool)o;
+        }
+
+        public static void TestByteArg(byte b)
+        {
         }
     }
