@@ -29,46 +29,51 @@
 
 using Mono.Collections.Generic;
 
-namespace Mono.Cecil {
+namespace Mono.Cecil
+{
 
-	public interface IGenericParameterProvider : IMetadataTokenProvider {
+    public interface IGenericParameterProvider : IMetadataTokenProvider
+    {
 
-		bool HasGenericParameters { get; }
-		bool IsDefinition { get; }
-		ModuleDefinition Module { get; }
-		Collection<GenericParameter> GenericParameters { get; }
-		GenericParameterType GenericParameterType { get; }
-	}
+        bool HasGenericParameters { get; }
+        bool IsDefinition { get; }
+        ModuleDefinition Module { get; }
+        Collection<GenericParameter> GenericParameters { get; }
+        GenericParameterType GenericParameterType { get; }
+    }
 
-	public enum GenericParameterType {
-		Type,
-		Method
-	}
+    public enum GenericParameterType
+    {
+        Type,
+        Method
+    }
 
-	interface IGenericContext {
+    interface IGenericContext
+    {
 
-		bool IsDefinition { get; }
-		IGenericParameterProvider Type { get; }
-		IGenericParameterProvider Method { get; }
-	}
+        bool IsDefinition { get; }
+        IGenericParameterProvider Type { get; }
+        IGenericParameterProvider Method { get; }
+    }
 
-	static partial class Mixin {
+    static partial class Mixin
+    {
 
-		public static bool GetHasGenericParameters (
-			this IGenericParameterProvider self,
-			ModuleDefinition module)
-		{
-			return module.HasImage () && module.Read (self, (provider, reader) => reader.HasGenericParameters (provider));
-		}
+        public static bool GetHasGenericParameters(
+            IGenericParameterProvider self,
+            ModuleDefinition module)
+        {
+            return Mixin.HasImage(module) && module.Read(self, (provider, reader) => reader.HasGenericParameters(provider));
+        }
 
-		public static Collection<GenericParameter> GetGenericParameters (
-			this IGenericParameterProvider self,
-			ref Collection<GenericParameter> collection,
-			ModuleDefinition module)
-		{
-			return module.HasImage ()
-				? module.Read (ref collection, self, (provider, reader) => reader.ReadGenericParameters (provider))
-				: collection = new GenericParameterCollection (self);
-		}
-	}
+        public static Collection<GenericParameter> GetGenericParameters(
+            IGenericParameterProvider self,
+            ref Collection<GenericParameter> collection,
+            ModuleDefinition module)
+        {
+            return Mixin.HasImage(module)
+                ? module.Read(ref collection, self, (provider, reader) => reader.ReadGenericParameters(provider))
+                : collection = new GenericParameterCollection(self);
+        }
+    }
 }

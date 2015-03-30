@@ -18,6 +18,11 @@ namespace UnitTestDll
         //只要有一个静态函数包含UnitTest名称的，就作为单元测试
         public static object UnitTest_4001()
         {
+            int ii = 0;
+            int pp = ii++;
+            Logger.Log("p=" + pp);
+            LinkedList<int> ints2 = new LinkedList<int>();
+
             //4001 loops
 
             int b = 50;
@@ -40,15 +45,13 @@ namespace UnitTestDll
                     break;
                 }
             }
-            List<int> ints = new List<int>();
-            ints.Add(1);
-            ints.Add(2);
-            ints.Add(3);
-            for (int j = 0; j < ints.Count; j++)
-            {
+            sbyte[] ints = new sbyte[3];
+            ints[0] = 1;
+            ints[1] = 2;
+            ints[2] = 3;
+            ints[1]++;
+            ints[2]++;
 
-                Logger.Log(j + "," + 0);
-            }
 
             foreach (int k in ints)
             {

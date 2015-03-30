@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mono.Cecil.Pdb</RootNamespace>
     <AssemblyName>Mono.Cecil.Pdb</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -69,7 +69,6 @@
     <Compile Include="pdb\Mono.Cecil.Pdb\SymDocumentWriter.cs" />
     <Compile Include="pdb\Mono.Cecil.Pdb\SymWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="System.Runtime.CompilerServices\ExtensionAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mono.Cecil.20\Mono.Cecil.20.csproj">

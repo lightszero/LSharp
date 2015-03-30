@@ -312,6 +312,15 @@ namespace CLRSharp
                     arr[i] = BitConverter.ToDouble(bytes, i * step);
                 }
             }
+            else if (array is bool[])
+            {
+                int step = 1;
+                bool[] arr = array as bool[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = BitConverter.ToBoolean(bytes, i * step);
+                }
+            }
             else
             {
                 throw new NotImplementedException("array=" + array.GetType());
@@ -464,7 +473,12 @@ namespace CLRSharp
         }
         public void Dup()
         {
-            stackCalc.Push(stackCalc.Peek());
+            var v = stackCalc.Peek();
+            if (v is VBox)
+            {
+                v = (v as VBox).Clone();
+            }
+            stackCalc.Push(v);
             _codepos++;
         }
         public void Pop()
@@ -488,10 +502,24 @@ namespace CLRSharp
                 else ev = (int)obj;
                 obj = Enum.ToObject(type.TypeForSystem, ev);
             }
-            else
+            else 
             {
                 if (box != null)
-                    obj = box.BoxDefine();
+                {
+                    var tcode = ValueOnStack.GetTypeCode(type.TypeForSystem);
+                    if (tcode == box.type)
+                    {
+
+
+                        obj = box.BoxDefine();
+                    }
+                    else
+                    {
+                        var nbox = new VBox(box.typeStack, tcode);
+                        nbox.Set(box);
+                        obj = nbox.BoxDefine();
+                    }
+                }
             }
             stackCalc.Push(obj);
             _codepos++;
@@ -1021,17 +1049,39 @@ namespace CLRSharp
         public void Add()
         {
             VBox n2 = stackCalc.Pop() as VBox;
-            VBox n1 = stackCalc.Pop() as VBox;
-            n1.Add(n2);
-            stackCalc.Push(n1);
+            object n1 = stackCalc.Pop();
+            if(n1 is VBox)
+            {
+                VBox n_1 = n1 as VBox;
+                n_1.Add(n2);
+                stackCalc.Push(n_1);
+            }
+            else
+            {
+                VBox n_1 = ValueOnStack.MakeVBox(n1.GetType());
+                n_1.SetDirect(n1);
+                n_1.Add(n2);
+                stackCalc.Push(n_1.BoxDefine());
+            }
             _codepos++;
         }
         public void Sub()
         {
             VBox n2 = stackCalc.Pop() as VBox;
-            VBox n1 = stackCalc.Pop() as VBox;
-            n1.Sub(n2);
-            stackCalc.Push(n1);
+            object n1 = stackCalc.Pop();
+            if (n1 is VBox)
+            {
+                VBox n_1 = n1 as VBox;
+                n_1.Sub(n2);
+                stackCalc.Push(n_1);
+            }
+            else
+            {
+                VBox n_1 = ValueOnStack.MakeVBox(n1.GetType());
+                n_1.SetDirect(n1);
+                n_1.Sub(n2);
+                stackCalc.Push(n_1.BoxDefine());
+            }
             _codepos++;
         }
         public void Mul()
@@ -1351,10 +1401,26 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            sbyte[] array = stackCalc.Pop() as sbyte[];
-            var box = ValueOnStack.MakeVBox(NumberType.SBYTE);
-            box.v32 = array[index];
-            stackCalc.Push(box);
+            var _array = stackCalc.Pop();
+            if (_array is sbyte[])
+            {
+                sbyte[] array = _array as sbyte[]; ;
+                var box = ValueOnStack.MakeVBox(NumberType.SBYTE);
+                box.v32 = array[index];
+                stackCalc.Push(box);
+            }
+            else if (_array is bool[])
+            {
+                bool[] array = _array as bool[]; ;
+                var box = ValueOnStack.MakeVBox(NumberType.BOOL);
+                box.v32 = array[index] == true ? 1 : 0;
+                stackCalc.Push(box);
+            }
+            else
+            {
+                throw new Exception("not support.this array i1");
+            }
+
             _codepos++;
         }
         public void Ldelem_U1()
@@ -1406,10 +1472,21 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            UInt16[] array = stackCalc.Pop() as UInt16[];
-            var box = ValueOnStack.MakeVBox(NumberType.UINT16);
-            box.v32 = array[index];
-            stackCalc.Push(box);
+            var _array = stackCalc.Pop();
+            if (_array is UInt16[])
+            {
+                UInt16[] array = _array as UInt16[];
+                var box = ValueOnStack.MakeVBox(NumberType.UINT16);
+                box.v32 = array[index];
+                stackCalc.Push(box);
+            }
+            else
+            {
+                char[] array = _array as char[];
+                var box = ValueOnStack.MakeVBox(NumberType.CHAR);
+                box.v32 = array[index];
+                stackCalc.Push(box);
+            }
 
             _codepos++;
         }
@@ -1556,29 +1633,30 @@ namespace CLRSharp
         }
         public void Stelem_I()
         {
-            var obj = stackCalc.Pop();
-            int value = 0;
-            if (obj is VBox)
-            {
-                value = (obj as VBox).ToInt();
-            }
-            else
-            {
-                value = (Int32)obj;
-            }
-            var indexobj = stackCalc.Pop();
-            int index = 0;
-            if ((indexobj is VBox))
-            {
-                index = (indexobj as VBox).ToInt();
-            }
-            else
-            {
-                index = (int)indexobj;
-            }
-            var array = stackCalc.Pop() as Int32[];
-            array[index] = value;
-            _codepos++;
+            Stelem_I4();
+            //var obj = stackCalc.Pop();
+            //int value = 0;
+            //if (obj is VBox)
+            //{
+            //    value = (obj as VBox).ToInt();
+            //}
+            //else
+            //{
+            //    value = (Int32)obj;
+            //}
+            //var indexobj = stackCalc.Pop();
+            //int index = 0;
+            //if ((indexobj is VBox))
+            //{
+            //    index = (indexobj as VBox).ToInt();
+            //}
+            //else
+            //{
+            //    index = (int)indexobj;
+            //}
+            //var array = stackCalc.Pop() as Int32[];
+            //array[index] = value;
+            //_codepos++;
         }
         public void Stelem_I1()
         {
@@ -1602,8 +1680,17 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            var array = stackCalc.Pop() as sbyte[];
-            array[index] = (sbyte)value;
+            var array = stackCalc.Pop();
+            if (array is sbyte[])
+            {
+                (array as sbyte[])[index] = (sbyte)value;
+            }
+            else if (array is bool[])
+            {
+                (array as bool[])[index] = value > 0;
+
+            }
+
             _codepos++;
         }
         public void Stelem_I2()
@@ -1637,6 +1724,10 @@ namespace CLRSharp
             {
                 (array as Int16[])[index] = (Int16)value;
             }
+            else if (array is UInt16[])
+            {
+                (array as UInt16[])[index] = (UInt16)value;
+            }
 
             _codepos++;
         }
@@ -1662,8 +1753,20 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            var array = stackCalc.Pop() as Int32[];
-            array[index] = (Int32)value;
+            var _array = stackCalc.Pop();
+            if (_array is Int32[])
+            {
+
+                var array = _array as Int32[];
+                array[index] = (Int32)value;
+
+            }
+            else if (_array is UInt32[])
+            {
+                var array = _array as UInt32[];
+                array[index] = (UInt32)value;
+
+            }
             _codepos++;
         }
         public void Stelem_I8()
@@ -1688,8 +1791,20 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            var array = stackCalc.Pop() as Int64[];
-            array[index] = value;
+            var _array = stackCalc.Pop();
+            if (_array is Int64[])
+            {
+
+                var array = _array as Int64[];
+                array[index] = (Int64)value;
+
+            }
+            else if (_array is UInt64[])
+            {
+                var array = _array as UInt64[];
+                array[index] = (UInt64)value;
+
+            }
             _codepos++;
         }
         public void Stelem_R4()
@@ -2162,6 +2277,18 @@ namespace CLRSharp
 
             _codepos++;
         }
+
+        public void Starg(ThreadContext context, int p)
+        {
+            object _this = stackCalc.Pop();
+            if (_this is VBox)
+            {
+                _this = (_this as VBox).Clone();
+            }
+            this._params[p] = _this;
+            _codepos++;
+            //_codepos++;
+        }
         //public void Ldarga(ThreadContext context, object obj)
         //{
         //    int pos=            (obj as Mono.Cecil.ParameterDefinition).Index;
@@ -2184,12 +2311,7 @@ namespace CLRSharp
             throw new NotImplementedException(t.ToString());
             //_codepos++;
         }
-        public void Starg_S(ThreadContext context, object obj)
-        {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
-        }
+
         public void Ldnull()
         {
             stackCalc.Push(null);
@@ -2508,12 +2630,6 @@ namespace CLRSharp
             //_codepos++;
         }
 
-        public void Starg(ThreadContext context, object obj)
-        {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
-        }
         public void Localloc(ThreadContext context, object obj)
         {
             Type t = obj.GetType();
@@ -2532,12 +2648,16 @@ namespace CLRSharp
             throw new NotImplementedException(t.ToString());
             //_codepos++;
         }
-        public void Volatile(ThreadContext context, object obj)
+        public void Volatile()
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            _codepos++;
         }
+        //ThreadContext context, object obj)
+        //{
+        //    Type t = obj.GetType();
+        //    throw new NotImplementedException(t.ToString());
+        //    //_codepos++;
+        //}
         public void Tail(ThreadContext context, object obj)
         {
             Type t = obj.GetType();

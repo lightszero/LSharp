@@ -31,55 +31,65 @@ using System.Text;
 
 using Mono.Collections.Generic;
 
-namespace Mono.Cecil {
+namespace Mono.Cecil
+{
 
-	public sealed class GenericInstanceMethod : MethodSpecification, IGenericInstance, IGenericContext {
+    public sealed class GenericInstanceMethod : MethodSpecification, IGenericInstance, IGenericContext
+    {
 
-		Collection<TypeReference> arguments;
+        Collection<TypeReference> arguments;
 
-		public bool HasGenericArguments {
-			get { return !arguments.IsNullOrEmpty (); }
-		}
+        public bool HasGenericArguments
+        {
+            get { return !Mixin.IsNullOrEmpty(arguments); }
+        }
 
-		public Collection<TypeReference> GenericArguments {
-			get { return arguments ?? (arguments = new Collection<TypeReference> ()); }
-		}
+        public Collection<TypeReference> GenericArguments
+        {
+            get { return arguments ?? (arguments = new Collection<TypeReference>()); }
+        }
 
-		public override bool IsGenericInstance {
-			get { return true; }
-		}
+        public override bool IsGenericInstance
+        {
+            get { return true; }
+        }
 
-		IGenericParameterProvider IGenericContext.Method {
-			get { return ElementMethod; }
-		}
+        IGenericParameterProvider IGenericContext.Method
+        {
+            get { return ElementMethod; }
+        }
 
-		IGenericParameterProvider IGenericContext.Type {
-			get { return ElementMethod.DeclaringType; }
-		}
+        IGenericParameterProvider IGenericContext.Type
+        {
+            get { return ElementMethod.DeclaringType; }
+        }
 
-		internal override bool ContainsGenericParameter {
-			get { return this.ContainsGenericParameter () || base.ContainsGenericParameter; }
-		}
+        internal override bool ContainsGenericParameter
+        {
+            get { return Mixin.ContainsGenericParameter(this) || base.ContainsGenericParameter; }
+        }
 
-		public override string FullName {
-			get {
-				var signature = new StringBuilder ();
-				var method = this.ElementMethod;
-				signature.Append (method.ReturnType.FullName)
-					.Append (" ")
-					.Append (method.DeclaringType.FullName)
-					.Append ("::")
-					.Append (method.Name);
-				this.GenericInstanceFullName (signature);
-				this.MethodSignatureFullName (signature);
-				return signature.ToString ();
+        public override string FullName
+        {
+            get
+            {
+                var signature = new StringBuilder();
+                var method = this.ElementMethod;
+                signature.Append(method.ReturnType.FullName)
+                    .Append(" ")
+                    .Append(method.DeclaringType.FullName)
+                    .Append("::")
+                    .Append(method.Name);
+                Mixin.GenericInstanceFullName(this, signature);
+                Mixin.MethodSignatureFullName(this, signature);
+                return signature.ToString();
 
-			}
-		}
+            }
+        }
 
-		public GenericInstanceMethod (MethodReference method)
-			: base (method)
-		{
-		}
-	}
+        public GenericInstanceMethod(MethodReference method)
+            : base(method)
+        {
+        }
+    }
 }

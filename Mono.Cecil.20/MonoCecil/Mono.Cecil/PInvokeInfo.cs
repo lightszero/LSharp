@@ -52,78 +52,78 @@ namespace Mono.Cecil {
 		#region PInvokeAttributes
 
 		public bool IsNoMangle {
-			get { return attributes.GetAttributes ((ushort) PInvokeAttributes.NoMangle); }
-			set { attributes = attributes.SetAttributes ((ushort) PInvokeAttributes.NoMangle, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) PInvokeAttributes.NoMangle); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) PInvokeAttributes.NoMangle, value); }
 		}
 
 		public bool IsCharSetNotSpec {
-			get { return attributes.GetMaskedAttributes((ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetNotSpec); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetNotSpec, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetNotSpec); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetNotSpec, value); }
 		}
 
 		public bool IsCharSetAnsi {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetAnsi); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetAnsi, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetAnsi); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetAnsi, value); }
 		}
 
 		public bool IsCharSetUnicode {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetUnicode); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetUnicode, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetUnicode); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetUnicode, value); }
 		}
 
 		public bool IsCharSetAuto {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetAuto); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetAuto, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetAuto); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CharSetMask, (ushort) PInvokeAttributes.CharSetAuto, value); }
 		}
 
 		public bool SupportsLastError {
-			get { return attributes.GetAttributes ((ushort) PInvokeAttributes.SupportsLastError); }
-			set { attributes = attributes.SetAttributes ((ushort) PInvokeAttributes.SupportsLastError, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) PInvokeAttributes.SupportsLastError); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) PInvokeAttributes.SupportsLastError, value); }
 		}
 
 		public bool IsCallConvWinapi {
-			get { return attributes.GetMaskedAttributes((ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvWinapi); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvWinapi, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvWinapi); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvWinapi, value); }
 		}
 
 		public bool IsCallConvCdecl {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvCdecl); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvCdecl, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvCdecl); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvCdecl, value); }
 		}
 
 		public bool IsCallConvStdCall {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvStdCall); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvStdCall, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvStdCall); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvStdCall, value); }
 		}
 
 		public bool IsCallConvThiscall {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvThiscall); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvThiscall, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvThiscall); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvThiscall, value); }
 		}
 
 		public bool IsCallConvFastcall {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvFastcall); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvFastcall, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvFastcall); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.CallConvMask, (ushort) PInvokeAttributes.CallConvFastcall, value); }
 		}
 
 		public bool IsBestFitEnabled {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.BestFitMask, (ushort) PInvokeAttributes.BestFitEnabled); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.BestFitMask, (ushort) PInvokeAttributes.BestFitEnabled, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.BestFitMask, (ushort) PInvokeAttributes.BestFitEnabled); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.BestFitMask, (ushort) PInvokeAttributes.BestFitEnabled, value); }
 		}
 
 		public bool IsBestFitDisabled {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.BestFitMask, (ushort) PInvokeAttributes.BestFitDisabled); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.BestFitMask, (ushort) PInvokeAttributes.BestFitDisabled, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.BestFitMask, (ushort) PInvokeAttributes.BestFitDisabled); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.BestFitMask, (ushort) PInvokeAttributes.BestFitDisabled, value); }
 		}
 
 		public bool IsThrowOnUnmappableCharEnabled {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.ThrowOnUnmappableCharMask, (ushort) PInvokeAttributes.ThrowOnUnmappableCharEnabled); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.ThrowOnUnmappableCharMask, (ushort) PInvokeAttributes.ThrowOnUnmappableCharEnabled, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.ThrowOnUnmappableCharMask, (ushort) PInvokeAttributes.ThrowOnUnmappableCharEnabled); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.ThrowOnUnmappableCharMask, (ushort) PInvokeAttributes.ThrowOnUnmappableCharEnabled, value); }
 		}
 
 		public bool IsThrowOnUnmappableCharDisabled {
-			get { return attributes.GetMaskedAttributes ((ushort) PInvokeAttributes.ThrowOnUnmappableCharMask, (ushort) PInvokeAttributes.ThrowOnUnmappableCharDisabled); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) PInvokeAttributes.ThrowOnUnmappableCharMask, (ushort) PInvokeAttributes.ThrowOnUnmappableCharDisabled, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) PInvokeAttributes.ThrowOnUnmappableCharMask, (ushort) PInvokeAttributes.ThrowOnUnmappableCharDisabled); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) PInvokeAttributes.ThrowOnUnmappableCharMask, (ushort) PInvokeAttributes.ThrowOnUnmappableCharDisabled, value); }
 		}
 
 		#endregion

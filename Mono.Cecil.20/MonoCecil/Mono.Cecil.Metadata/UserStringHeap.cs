@@ -30,30 +30,32 @@ using System;
 
 using Mono.Cecil.PE;
 
-namespace Mono.Cecil.Metadata {
+namespace Mono.Cecil.Metadata
+{
 
-	sealed class UserStringHeap : StringHeap {
+    sealed class UserStringHeap : StringHeap
+    {
 
-		public UserStringHeap (Section section, uint start, uint size)
-			: base (section, start, size)
-		{
-		}
+        public UserStringHeap(Section section, uint start, uint size)
+            : base(section, start, size)
+        {
+        }
 
-		protected override string ReadStringAt (uint index)
-		{
-			byte [] data = Section.Data;
-			int start = (int) (index + Offset);
+        protected override string ReadStringAt(uint index)
+        {
+            byte[] data = Section.Data;
+            int start = (int)(index + Offset);
 
-			uint length = (uint) (data.ReadCompressedUInt32 (ref start) & ~1);
-			if (length < 1)
-				return string.Empty;
+            uint length = (uint)(Mixin.ReadCompressedUInt32(data, ref start) & ~1);
+            if (length < 1)
+                return string.Empty;
 
-			var chars = new char [length / 2];
+            var chars = new char[length / 2];
 
-			for (int i = start, j = 0; i < start + length; i += 2)
-				chars [j++] = (char) (data [i] | (data [i + 1] << 8));
+            for (int i = start, j = 0; i < start + length; i += 2)
+                chars[j++] = (char)(data[i] | (data[i + 1] << 8));
 
-			return new string (chars);
-		}
-	}
+            return new string(chars);
+        }
+    }
 }

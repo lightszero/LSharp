@@ -30,7 +30,7 @@ using System.Collections.Generic;
 
 namespace Mono.Cecil.Metadata {
 
-	struct Row<T1, T2> {
+	class Row<T1, T2> {
 		internal T1 Col1;
 		internal T2 Col2;
 
@@ -41,7 +41,8 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	struct Row<T1, T2, T3> {
+    class Row<T1, T2, T3>
+    {
 		internal T1 Col1;
 		internal T2 Col2;
 		internal T3 Col3;
@@ -54,7 +55,8 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	struct Row<T1, T2, T3, T4> {
+    class Row<T1, T2, T3, T4>
+    {
 		internal T1 Col1;
 		internal T2 Col2;
 		internal T3 Col3;
@@ -69,7 +71,8 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	struct Row<T1, T2, T3, T4, T5> {
+    class Row<T1, T2, T3, T4, T5>
+    {
 		internal T1 Col1;
 		internal T2 Col2;
 		internal T3 Col3;
@@ -86,7 +89,8 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	struct Row<T1, T2, T3, T4, T5, T6> {
+    class Row<T1, T2, T3, T4, T5, T6>
+    {
 		internal T1 Col1;
 		internal T2 Col2;
 		internal T3 Col3;
@@ -105,7 +109,8 @@ namespace Mono.Cecil.Metadata {
 		}
 	}
 
-	struct Row<T1, T2, T3, T4, T5, T6, T7, T8, T9> {
+    class Row<T1, T2, T3, T4, T5, T6, T7, T8, T9>
+    {
 		internal T1 Col1;
 		internal T2 Col2;
 		internal T3 Col3;

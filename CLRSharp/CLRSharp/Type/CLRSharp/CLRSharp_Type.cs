@@ -10,6 +10,10 @@ namespace CLRSharp
         {
             get
             {
+                if (_isenum)
+                {
+                    return typeof(int);
+                }
                 return typeof(CLRSharp_Instance);
             }
         }
@@ -63,12 +67,16 @@ namespace CLRSharp
         {
             this.env = env;
             this.type_CLRSharp = type;
+            if (type.IsEnum)
+            {
+                _isenum = true;
+            }
             if (type_CLRSharp.BaseType != null)
             {
                 BaseType = env.GetType(type_CLRSharp.BaseType.FullName);
                 if (BaseType is ICLRType_System)
                 {
-                    if (BaseType.TypeForSystem == typeof(object) || BaseType.TypeForSystem == typeof(ValueType) || BaseType.TypeForSystem == typeof(System.Enum))
+                    if (BaseType.TypeForSystem == typeof(Enum) || BaseType.TypeForSystem == typeof(object) || BaseType.TypeForSystem == typeof(ValueType) || BaseType.TypeForSystem == typeof(System.Enum))
                     {//都是这样，无所谓
                         BaseType = null;
                     }
@@ -83,15 +91,33 @@ namespace CLRSharp
                 if (type_CLRSharp.HasInterfaces)
                 {
                     _Interfaces = new List<ICLRType>();
+                    bool bWarning = true;
                     foreach (var i in type_CLRSharp.Interfaces)
                     {
                         var itype = env.GetType(i.FullName);
                         if (itype is ICLRType_System)
                         {
                             //继承了其他系统类型
-                            if (env.GetCrossBind((itype as ICLRType_System).TypeForSystem) == null)
+                            Type ts = (itype as ICLRType_System).TypeForSystem;
+
+                            if (bWarning & env.GetCrossBind(ts) == null)
                             {
-                                env.logger.Log_Warning("警告:没有CrossBind的情况下直接继承\nScriptType:" + Name + " Based On a SystemInterface:" + itype.Name);
+                               
+                                if (ts.IsInterface)
+                                {
+                                    foreach(var t in ts.GetInterfaces())
+                                    {
+                                        if(env.GetCrossBind(t)!=null)
+                                        {
+                                            bWarning = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (bWarning)
+                                {
+                                    env.logger.Log_Warning("警告:没有CrossBind的情况下直接继承\nScriptType:" + Name + " Based On a SystemInterface:" + itype.Name);
+                                }
                             }
                             HasSysBase = true;
                         }
@@ -149,9 +175,14 @@ namespace CLRSharp
         {
             get
             {
+                if (_isenum)
+                {
+                    return env.GetType(typeof(int)).FullNameWithAssembly;
+                }
                 return type_CLRSharp.FullName;// +"," + type_CLRSharp.Module.Name;
             }
         }
+
         public IMethod GetMethod(string funcname, MethodParamList types)
         {
             if (type_CLRSharp.HasMethods)
@@ -164,10 +195,22 @@ namespace CLRSharp
                         bool match = true;
                         for (int i = 0; i < ((types == null) ? 0 : types.Count); i++)
                         {
-                            if (env.GetType(m.Parameters[i].ParameterType.FullName) != types[i])
+                            var envtype = env.GetType(m.Parameters[i].ParameterType.FullName);
+                            if (envtype.IsEnum())
                             {
-                                match = false;
-                                break;
+                                if (envtype.TypeForSystem != types[i].TypeForSystem)
+                                {
+                                    match = false;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if (envtype != types[i])
+                                {
+                                    match = false;
+                                    break;
+                                }
                             }
                         }
                         if (match)
@@ -176,6 +219,122 @@ namespace CLRSharp
                 }
             }
             return null;
+        }
+
+        public IMethod GetMethodOverloaded(string funcname, MethodParamList types)
+        {
+            Mono.Cecil.MethodDefinition minDistanceMethod = null;
+            List<int> minDistanceParameters = null;
+            
+            if (type_CLRSharp.HasMethods)
+            {
+                foreach (var m in type_CLRSharp.Methods)
+                {
+                    if (m.Name != funcname) continue;
+                    if ((types == null) ? !m.HasParameters : (m.Parameters.Count == types.Count))
+                    {
+                        bool match = true;
+                        List<int> currentDistanceParameters = new List<int>();
+                        
+                        for (int i = 0; i < ((types == null) ? 0 : types.Count); i++)
+                        {
+                            var envtype = env.GetType(m.Parameters[i].ParameterType.FullName);
+                            if (envtype.IsEnum())
+                            {
+                                if (envtype.TypeForSystem != types[i].TypeForSystem)
+                                {
+                                    match = false;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if (!(envtype.TypeForSystem.IsAssignableFrom(types[i].TypeForSystem))) 
+                                {
+                                    match = false;
+                                    break;
+                                }
+                                
+                                currentDistanceParameters.Add(GetInheritanceDistance(envtype.TypeForSystem, types[i].TypeForSystem));
+                                
+                            }
+                        }
+                        if (match)
+                        {
+                            if (minDistanceParameters == null) 
+                            {
+                                minDistanceMethod = m;
+                                minDistanceParameters = currentDistanceParameters;
+                            }
+                            else 
+                            {
+                                for (int i = 0; i < currentDistanceParameters.Count; i++) 
+                                {
+                                    if (currentDistanceParameters[i] < minDistanceParameters[i]) 
+                                    {
+                                        minDistanceMethod = m;
+                                        minDistanceParameters = currentDistanceParameters;
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+                
+                if (minDistanceMethod == null) 
+                {
+                    return null;
+                }
+                return new Method_Common_CLRSharp(this, minDistanceMethod);
+            }
+            
+            return null;
+        }
+        
+        public int GetInheritanceDistance(Type baseClass, Type subClass)
+        {
+            if (baseClass == subClass) 
+            {
+                return 0;
+            }
+            if (!baseClass.IsAssignableFrom (subClass)) 
+            {
+                return int.MaxValue;
+            }
+            
+            int distance = 0;
+            while ((subClass = subClass.BaseType) != baseClass) 
+            {
+                distance++;
+            }
+            return ++distance;
+        }
+
+        public IMethod[] GetMethods(string funcname)
+        {
+            List<IMethod> methods = new List<IMethod>();
+            if (type_CLRSharp.HasMethods)
+            {
+                foreach (var m in type_CLRSharp.Methods)
+                {
+                    if (m.Name != funcname) continue;
+                    methods.Add(new Method_Common_CLRSharp(this, m));
+                }
+            }
+            return methods.ToArray();
+        }
+        public IMethod[] GetAllMethods()
+        {
+            List<IMethod> methods = new List<IMethod>();
+            if (type_CLRSharp.HasMethods)
+            {
+                foreach (var m in type_CLRSharp.Methods)
+                {
+                    methods.Add(new Method_Common_CLRSharp(this, m));
+                }
+            }
+            return methods.ToArray();
         }
         public object InitObj()
         {
@@ -257,6 +416,11 @@ namespace CLRSharp
                 abc[i] = type_CLRSharp.Fields[i].Name;
             }
             return abc;
+        }
+        bool _isenum = false;
+        public bool IsEnum()
+        {
+            return _isenum;
         }
     }
     public class Method_Common_CLRSharp : IMethod_Sharp

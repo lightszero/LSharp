@@ -66,7 +66,7 @@ namespace Mono.Cecil.Cil {
 		}
 
 		public bool HasScopes {
-			get { return !scopes.IsNullOrEmpty (); }
+			get { return !Mixin.IsNullOrEmpty (scopes); }
 		}
 
 		public Collection<Scope> Scopes {
@@ -79,7 +79,7 @@ namespace Mono.Cecil.Cil {
 		}
 
 		public bool HasVariables {
-			get { return !variables.IsNullOrEmpty (); }
+			get { return !Mixin.IsNullOrEmpty (variables); }
 		}
 
 		public Collection<VariableDefinition> Variables {
@@ -111,10 +111,10 @@ namespace Mono.Cecil.Cil {
 		internal MetadataToken method_token;
 		internal MetadataToken local_var_token;
 		internal Collection<VariableDefinition> variables;
-		internal Collection<InstructionSymbol> instructions;
+		public Collection<InstructionSymbol> instructions;
 
 		public bool HasVariables {
-			get { return !variables.IsNullOrEmpty (); }
+			get { return !Mixin.IsNullOrEmpty (variables); }
 		}
 
 		public Collection<VariableDefinition> Variables {

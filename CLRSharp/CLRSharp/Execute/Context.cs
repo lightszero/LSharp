@@ -1027,13 +1027,26 @@ namespace CLRSharp
                     case CodeEx.Calli:
                         stack.Calli(this, _code.tokenUnknown);
                         break;
+                    case CodeEx.Starg_S:
+                        if (body.bodyNative.Method.IsStatic)
+                            stack.Starg(this, _code.tokenI32);
+                        else
+                            stack.Starg(this, _code.tokenI32 + 1);
+                        break;
+                    case CodeEx.Starg:
+                        if (body.bodyNative.Method.IsStatic)
+                            stack.Starg(this, _code.tokenI32);
+                        else
+                            stack.Starg(this, _code.tokenI32 + 1);
+                        break;
+                    case CodeEx.Volatile:
+                        stack.Volatile();
+                        break;
                     ///下面是还没有处理的指令
                     case CodeEx.Break:
                         stack.Break(this, _code.tokenUnknown);
                         break;
-                    case CodeEx.Starg_S:
-                        stack.Starg_S(this, _code.tokenUnknown);
-                        break;
+
                     case CodeEx.Ldnull:
                         stack.Ldnull();
                         break;
@@ -1168,9 +1181,7 @@ namespace CLRSharp
                         stack.Arglist(this, _code.tokenUnknown);
                         break;
 
-                    case CodeEx.Starg:
-                        stack.Starg(this, _code.tokenUnknown);
-                        break;
+
                     case CodeEx.Localloc:
                         stack.Localloc(this, _code.tokenUnknown);
                         break;
@@ -1180,9 +1191,7 @@ namespace CLRSharp
                     case CodeEx.Unaligned:
                         stack.Unaligned(this, _code.tokenUnknown);
                         break;
-                    case CodeEx.Volatile:
-                        stack.Volatile(this, _code.tokenUnknown);
-                        break;
+
                     case CodeEx.Tail:
                         stack.Tail(this, _code.tokenUnknown);
                         break;

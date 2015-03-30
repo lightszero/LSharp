@@ -1,8 +1,5 @@
 这个目录提供ForUnity的资源库
-	Mono.Cecil比较特殊，不能直接插入源码到Unity中
-ForUnity\的dll 
-	在unityeditor正常，导出ios正常
-	另外有一个支持mdb的版本
-ForUnity_WPExp\的dll 
-	在unityeditor正常，导出wp正常，未测此版本导出ios是否正常
-	这个版本没有支持mdb的组件
+以前的DLL均已删除，查找到了Mono.Cecil无法在Unity环境下编译的原因，直接插入代码即可。
+ForUnity项目仅为Helloworld目的，代码不会同步更新。
+请自己根据需要处理
+

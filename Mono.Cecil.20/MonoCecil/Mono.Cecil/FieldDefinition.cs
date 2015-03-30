@@ -124,7 +124,7 @@ namespace Mono.Cecil {
 
 		public bool HasConstant {
 			get {
-				this.ResolveConstant (ref constant, Module);
+                Mixin.ResolveConstant(this, ref constant, Module);
 
 				return constant != Mixin.NoValue;
 			}
@@ -141,12 +141,12 @@ namespace Mono.Cecil {
 				if (custom_attributes != null)
 					return custom_attributes.Count > 0;
 
-				return this.GetHasCustomAttributes (Module);
+                return Mixin.GetHasCustomAttributes(this, Module);
 			}
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, Module)); }
+            get { return custom_attributes ?? (Mixin.GetCustomAttributes(this, ref custom_attributes, Module)); }
 		}
 
 		public bool HasMarshalInfo {
@@ -154,90 +154,90 @@ namespace Mono.Cecil {
 				if (marshal_info != null)
 					return true;
 
-				return this.GetHasMarshalInfo (Module);
+                return Mixin.GetHasMarshalInfo(this, Module);
 			}
 		}
 
 		public MarshalInfo MarshalInfo {
-			get { return marshal_info ?? (this.GetMarshalInfo (ref marshal_info, Module)); }
+            get { return marshal_info ?? (Mixin.GetMarshalInfo(this, ref marshal_info, Module)); }
 			set { marshal_info = value; }
 		}
 
 		#region FieldAttributes
 
 		public bool IsCompilerControlled {
-			get { return attributes.GetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.CompilerControlled); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.CompilerControlled, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.CompilerControlled); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.CompilerControlled, value); }
 		}
 
 		public bool IsPrivate {
-			get { return attributes.GetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Private); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Private, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Private); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Private, value); }
 		}
 
 		public bool IsFamilyAndAssembly {
-			get { return attributes.GetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.FamANDAssem); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.FamANDAssem, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.FamANDAssem); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.FamANDAssem, value); }
 		}
 
 		public bool IsAssembly {
-			get { return attributes.GetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Assembly); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Assembly, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Assembly); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Assembly, value); }
 		}
 
 		public bool IsFamily {
-			get { return attributes.GetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Family); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Family, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Family); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Family, value); }
 		}
 
 		public bool IsFamilyOrAssembly {
-			get { return attributes.GetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.FamORAssem); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.FamORAssem, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.FamORAssem); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.FamORAssem, value); }
 		}
 
 		public bool IsPublic {
-			get { return attributes.GetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Public); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Public, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Public); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) FieldAttributes.FieldAccessMask, (ushort) FieldAttributes.Public, value); }
 		}
 
 		public bool IsStatic {
-			get { return attributes.GetAttributes ((ushort) FieldAttributes.Static); }
-			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.Static, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) FieldAttributes.Static); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) FieldAttributes.Static, value); }
 		}
 
 		public bool IsInitOnly {
-			get { return attributes.GetAttributes ((ushort) FieldAttributes.InitOnly); }
-			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.InitOnly, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) FieldAttributes.InitOnly); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) FieldAttributes.InitOnly, value); }
 		}
 
 		public bool IsLiteral {
-			get { return attributes.GetAttributes ((ushort) FieldAttributes.Literal); }
-			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.Literal, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) FieldAttributes.Literal); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) FieldAttributes.Literal, value); }
 		}
 
 		public bool IsNotSerialized {
-			get { return attributes.GetAttributes ((ushort) FieldAttributes.NotSerialized); }
-			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.NotSerialized, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) FieldAttributes.NotSerialized); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) FieldAttributes.NotSerialized, value); }
 		}
 
 		public bool IsSpecialName {
-			get { return attributes.GetAttributes ((ushort) FieldAttributes.SpecialName); }
-			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.SpecialName, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) FieldAttributes.SpecialName); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) FieldAttributes.SpecialName, value); }
 		}
 
 		public bool IsPInvokeImpl {
-			get { return attributes.GetAttributes ((ushort) FieldAttributes.PInvokeImpl); }
-			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.PInvokeImpl, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) FieldAttributes.PInvokeImpl); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) FieldAttributes.PInvokeImpl, value); }
 		}
 
 		public bool IsRuntimeSpecialName {
-			get { return attributes.GetAttributes ((ushort) FieldAttributes.RTSpecialName); }
-			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.RTSpecialName, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) FieldAttributes.RTSpecialName); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) FieldAttributes.RTSpecialName, value); }
 		}
 
 		public bool HasDefault {
-			get { return attributes.GetAttributes ((ushort) FieldAttributes.HasDefault); }
-			set { attributes = attributes.SetAttributes ((ushort) FieldAttributes.HasDefault, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) FieldAttributes.HasDefault); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) FieldAttributes.HasDefault, value); }
 		}
 
 		#endregion

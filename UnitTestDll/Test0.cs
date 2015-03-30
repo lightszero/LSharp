@@ -6,9 +6,57 @@ using UnitTest;
 using UnityEngine;
 namespace UnitTestDll
 {
+    public class UlngTest
+    {
+        public ulong aaa = 15645613;
+
+        public static void DoUINt64(ulong a)
+        {
+            UnitTest.Logger.Log("a=" + a);
+        }
+        public static void UnitTest_UInt64()
+        {
+            UlngTest tt = new UlngTest();
+            UlngTest.DoUINt64(tt.aaa);
+        }
+
+        private UlngTest()
+        {
+
+        }
+        public static UlngTest g_this = null;
+        public static UlngTest Instance
+        {
+            get
+            {
+                if (g_this == null)
+                {
+                    g_this = new UlngTest();
+                }
+                return g_this;
+            }
+        }
+        public void Test(int abc)
+        {
+            abc = 3;
+            Logger.Log("abc=" + abc);
+        }
+        public void Test2()
+        {
+            Logger.Log("c=3");
+        }
+    }
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+
+        public static void UnitTest_Instance()
+        {
+            UlngTest t = UlngTest.Instance;
+            Logger.Log("c1");
+            t.Test2();
+            t.Test(5);
+        }
         public static void UnitTest_passEnum()
         {
             UserData.ShowContry(Country.Chinese);

@@ -16,6 +16,7 @@ namespace UnitTestDll.SimU3D
             {
                 Logger.Log("y=" + y);
             }
+            //var vv2 = yoo2("aa","bb");
 
         }
         static IEnumerable yoo()
@@ -24,5 +25,11 @@ namespace UnitTestDll.SimU3D
             yield return "b";
             yield return "c";
         }
+        //static IEnumerator yoo2(string name,string name2)
+        //{
+        //    yield return "a";
+        //    yield return "b";
+        //    yield return "c";
+        //}
     }
 }

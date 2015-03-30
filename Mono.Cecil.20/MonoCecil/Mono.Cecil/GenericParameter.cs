@@ -90,12 +90,12 @@ namespace Mono.Cecil {
 				if (custom_attributes != null)
 					return custom_attributes.Count > 0;
 
-				return this.GetHasCustomAttributes (Module);
+                return Mixin.GetHasCustomAttributes(this, Module);
 			}
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, Module)); }
+            get { return custom_attributes ?? (Mixin.GetCustomAttributes(this, ref custom_attributes, Module)); }
 		}
 
 		public override IMetadataScope Scope {
@@ -146,33 +146,33 @@ namespace Mono.Cecil {
 		#region GenericParameterAttributes
 
 		public bool IsNonVariant {
-			get { return attributes.GetMaskedAttributes ((ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.NonVariant); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.NonVariant, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.NonVariant); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.NonVariant, value); }
 		}
 
 		public bool IsCovariant {
-			get { return attributes.GetMaskedAttributes ((ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.Covariant); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.Covariant, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.Covariant); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.Covariant, value); }
 		}
 
 		public bool IsContravariant {
-			get { return attributes.GetMaskedAttributes ((ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.Contravariant); }
-			set { attributes = attributes.SetMaskedAttributes ((ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.Contravariant, value); }
+			get { return Mixin.GetMaskedAttributes(attributes,(ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.Contravariant); }
+			set { attributes = Mixin.SetMaskedAttributes(attributes,(ushort) GenericParameterAttributes.VarianceMask, (ushort) GenericParameterAttributes.Contravariant, value); }
 		}
 
 		public bool HasReferenceTypeConstraint {
-			get { return attributes.GetAttributes ((ushort) GenericParameterAttributes.ReferenceTypeConstraint); }
-			set { attributes = attributes.SetAttributes ((ushort) GenericParameterAttributes.ReferenceTypeConstraint, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) GenericParameterAttributes.ReferenceTypeConstraint); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) GenericParameterAttributes.ReferenceTypeConstraint, value); }
 		}
 
 		public bool HasNotNullableValueTypeConstraint {
-			get { return attributes.GetAttributes ((ushort) GenericParameterAttributes.NotNullableValueTypeConstraint); }
-			set { attributes = attributes.SetAttributes ((ushort) GenericParameterAttributes.NotNullableValueTypeConstraint, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) GenericParameterAttributes.NotNullableValueTypeConstraint); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) GenericParameterAttributes.NotNullableValueTypeConstraint, value); }
 		}
 
 		public bool HasDefaultConstructorConstraint {
-			get { return attributes.GetAttributes ((ushort) GenericParameterAttributes.DefaultConstructorConstraint); }
-			set { attributes = attributes.SetAttributes ((ushort) GenericParameterAttributes.DefaultConstructorConstraint, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) GenericParameterAttributes.DefaultConstructorConstraint); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) GenericParameterAttributes.DefaultConstructorConstraint, value); }
 		}
 
 		#endregion

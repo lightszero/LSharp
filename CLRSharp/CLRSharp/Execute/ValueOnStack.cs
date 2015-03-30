@@ -618,7 +618,19 @@ namespace CLRSharp
                     }
                     break;
                 case NumberOnStack.Int64:
-                    v64 = (Int64)value;
+                    if(value is Int64)
+                    {
+                        v64 = (Int64)value;
+                    }
+                    else if(value is UInt64)
+                    {
+                        v64 = (Int64)(UInt64)value;
+                    }
+                    else
+                    {
+                        v64 = (Int64)Convert.ToDecimal(value);
+                    }
+                   
                     break;
                 case NumberOnStack.Double:
                     vDF = (double)Convert.ToDecimal(value);

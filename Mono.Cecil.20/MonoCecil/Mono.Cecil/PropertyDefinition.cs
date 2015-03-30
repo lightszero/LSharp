@@ -71,12 +71,12 @@ namespace Mono.Cecil {
 				if (custom_attributes != null)
 					return custom_attributes.Count > 0;
 
-				return this.GetHasCustomAttributes (Module);
+                return Mixin.GetHasCustomAttributes(this, Module);
 			}
 		}
 
 		public Collection<CustomAttribute> CustomAttributes {
-			get { return custom_attributes ?? (this.GetCustomAttributes (ref custom_attributes, Module)); }
+            get { return custom_attributes ?? (Mixin.GetCustomAttributes(this, ref custom_attributes, Module)); }
 		}
 
 		public MethodDefinition GetMethod {
@@ -107,7 +107,7 @@ namespace Mono.Cecil {
 					return other_methods.Count > 0;
 
 				InitializeMethods ();
-				return !other_methods.IsNullOrEmpty ();
+				return !Mixin.IsNullOrEmpty (other_methods);
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace Mono.Cecil {
 
 		public bool HasConstant {
 			get {
-				this.ResolveConstant (ref constant, Module);
+                Mixin.ResolveConstant(this, ref constant, Module);
 
 				return constant != Mixin.NoValue;
 			}
@@ -185,18 +185,18 @@ namespace Mono.Cecil {
 		#region PropertyAttributes
 
 		public bool IsSpecialName {
-			get { return attributes.GetAttributes ((ushort) PropertyAttributes.SpecialName); }
-			set { attributes = attributes.SetAttributes ((ushort) PropertyAttributes.SpecialName, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) PropertyAttributes.SpecialName); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) PropertyAttributes.SpecialName, value); }
 		}
 
 		public bool IsRuntimeSpecialName {
-			get { return attributes.GetAttributes ((ushort) PropertyAttributes.RTSpecialName); }
-			set { attributes = attributes.SetAttributes ((ushort) PropertyAttributes.RTSpecialName, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) PropertyAttributes.RTSpecialName); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) PropertyAttributes.RTSpecialName, value); }
 		}
 
 		public bool HasDefault {
-			get { return attributes.GetAttributes ((ushort) PropertyAttributes.HasDefault); }
-			set { attributes = attributes.SetAttributes ((ushort) PropertyAttributes.HasDefault, value); }
+			get { return Mixin.GetAttributes(attributes,(ushort) PropertyAttributes.HasDefault); }
+			set { attributes =Mixin.SetAttributes(attributes,(ushort) PropertyAttributes.HasDefault, value); }
 		}
 
 		#endregion
@@ -244,7 +244,7 @@ namespace Mono.Cecil {
 				if (get_method != null || set_method != null)
 					return;
 
-				if (!module.HasImage ())
+                if (!Mixin.HasImage(module))
 					return;
 
 				module.Read (this, (property, reader) => reader.ReadMethods (property));

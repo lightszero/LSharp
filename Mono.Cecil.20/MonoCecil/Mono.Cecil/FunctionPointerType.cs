@@ -102,7 +102,7 @@ namespace Mono.Cecil {
 				signature.Append (" ");
 				signature.Append (function.ReturnType.FullName);
 				signature.Append (" *");
-				this.MethodSignatureFullName (signature);
+				Mixin.MethodSignatureFullName (this,signature);
 				return signature.ToString ();
 			}
 		}

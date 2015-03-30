@@ -30,6 +30,8 @@ namespace CLRSharp
         }
         //funcname==".ctor" 表示构造函数
         IMethod GetMethod(string funcname, MethodParamList types);
+        IMethod[] GetMethods(string funcname);
+        IMethod[] GetAllMethods();
         object InitObj();
         /// <summary>
         /// 获取模板函数
@@ -39,7 +41,6 @@ namespace CLRSharp
         /// <param name="types"></param>
         /// <returns></returns>
         IMethod GetMethodT(string funcname, MethodParamList TTypes, MethodParamList types);
-
         IField GetField(string name);
         string[] GetFieldNames();
         bool IsInst(object obj);
@@ -49,6 +50,9 @@ namespace CLRSharp
         {
             get;
         }
+
+        bool IsEnum();
+            
     }
     public interface ICLRType_Sharp : ICLRType
     {

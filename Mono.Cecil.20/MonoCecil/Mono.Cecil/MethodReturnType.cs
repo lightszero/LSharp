@@ -50,7 +50,7 @@ namespace Mono.Cecil {
 		internal ParameterDefinition Parameter {
 			get {
 				if (parameter == null)
-					Interlocked.CompareExchange (ref parameter, new ParameterDefinition (return_type, method), null);
+                    parameter=new ParameterDefinition (return_type, method);
 
 				return parameter;
 			}

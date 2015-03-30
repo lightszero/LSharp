@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnitTest</RootNamespace>
     <AssemblyName>UnitTest</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -93,6 +93,10 @@
     <ProjectReference Include="..\Mono.Cecil.20\Mono.Cecil.20.csproj">
       <Project>{d3785d8b-4d85-4546-8763-47fc848c13e0}</Project>
       <Name>Mono.Cecil.20</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Cecil.Mdb\Mono.Cecil.Mdb.csproj">
+      <Project>{86f36240-e07c-4840-9c8b-9cd94c03ec62}</Project>
+      <Name>Mono.Cecil.Mdb</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Cecil.Pdb\Mono.Cecil.Pdb.csproj">
       <Project>{cea7a85f-2523-4ad0-8296-6e8e0a2e6df7}</Project>

@@ -131,7 +131,7 @@ namespace Mono.Cecil.Pdb
 
         static readonly Guid type_text = new Guid(0x5a869d0b, 0x6611, 0x11d3, 0xbd, 0x2a, 0x00, 0x00, 0xf8, 0x08, 0x49, 0xbd);
 
-        public static DocumentType ToType(this Guid guid)
+        public static DocumentType ToType(Guid guid)
         {
             if (guid == type_text)
                 return DocumentType.Text;
@@ -139,7 +139,7 @@ namespace Mono.Cecil.Pdb
             return DocumentType.Other;
         }
 
-        public static Guid ToGuid(this DocumentType type)
+        public static Guid ToGuid(DocumentType type)
         {
             if (type == DocumentType.Text)
                 return type_text;
@@ -150,7 +150,7 @@ namespace Mono.Cecil.Pdb
         static readonly Guid hash_md5 = new Guid(0x406ea660, 0x64cf, 0x4c82, 0xb6, 0xf0, 0x42, 0xd4, 0x81, 0x72, 0xa7, 0x99);
         static readonly Guid hash_sha1 = new Guid(0xff1816ec, 0xaa5e, 0x4d10, 0x87, 0xf7, 0x6f, 0x49, 0x63, 0x83, 0x34, 0x60);
 
-        public static DocumentHashAlgorithm ToHashAlgorithm(this Guid guid)
+        public static DocumentHashAlgorithm ToHashAlgorithm(Guid guid)
         {
             if (guid == hash_md5)
                 return DocumentHashAlgorithm.MD5;
@@ -161,7 +161,7 @@ namespace Mono.Cecil.Pdb
             return DocumentHashAlgorithm.None;
         }
 
-        public static Guid ToGuid(this DocumentHashAlgorithm hash_algo)
+        public static Guid ToGuid(DocumentHashAlgorithm hash_algo)
         {
             if (hash_algo == DocumentHashAlgorithm.MD5)
                 return hash_md5;
@@ -172,7 +172,7 @@ namespace Mono.Cecil.Pdb
             return new Guid();
         }
 
-        public static DocumentLanguage ToLanguage(this Guid guid)
+        public static DocumentLanguage ToLanguage(Guid guid)
         {
             DocumentLanguage language;
             if (!guid_language.TryGetValue(guid, out language))
@@ -181,7 +181,7 @@ namespace Mono.Cecil.Pdb
             return language;
         }
 
-        public static Guid ToGuid(this DocumentLanguage language)
+        public static Guid ToGuid(DocumentLanguage language)
         {
             Guid guid;
             if (!language_guid.TryGetValue(language, out guid))
@@ -192,7 +192,7 @@ namespace Mono.Cecil.Pdb
 
         static readonly Guid vendor_ms = new Guid(0x994b45c4, 0xe6e9, 0x11d2, 0x90, 0x3f, 0x00, 0xc0, 0x4f, 0xa3, 0x02, 0xa1);
 
-        public static DocumentLanguageVendor ToVendor(this Guid guid)
+        public static DocumentLanguageVendor ToVendor(Guid guid)
         {
             if (guid == vendor_ms)
                 return DocumentLanguageVendor.Microsoft;
@@ -200,7 +200,7 @@ namespace Mono.Cecil.Pdb
             return DocumentLanguageVendor.Other;
         }
 
-        public static Guid ToGuid(this DocumentLanguageVendor vendor)
+        public static Guid ToGuid(DocumentLanguageVendor vendor)
         {
             if (vendor == DocumentLanguageVendor.Microsoft)
                 return vendor_ms;

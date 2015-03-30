@@ -4,14 +4,14 @@ using System.Text;
 
 namespace CLRSharp
 {
-    
+
     public class CLRSharp_Environment : ICLRSharp_Environment
     {
         public string version
         {
             get
             {
-                return "0.39.7Beta";
+                return "0.43Beta";
             }
         }
         public ICLRSharp_Logger logger
@@ -46,6 +46,8 @@ namespace CLRSharp
                 {
                     if (moduleref.Contains(ar.Name) == false)
                         moduleref.Add(ar.Name);
+                    if (moduleref.Contains(ar.FullName) == false)
+                        moduleref.Add(ar.FullName);
                 }
             }
             //mapModule[module.Name] = module;
@@ -54,7 +56,7 @@ namespace CLRSharp
                 foreach (var t in module.Types)
                 {
 
-                        mapType[t.FullName] = new Type_Common_CLRSharp(this, t);
+                    mapType[t.FullName] = new Type_Common_CLRSharp(this, t);
 
                 }
             }
@@ -149,7 +151,10 @@ namespace CLRSharp
                                 checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
                                 var subtype = GetType(checkname);
                                 subTypes.Add(subtype);
-                                if (subtype is ICLRType_Sharp) subtype = GetType(typeof(CLRSharp_Instance));
+                                if (!subtype.IsEnum() && subtype is ICLRType_Sharp)
+                                {
+                                    subtype = GetType(typeof(CLRSharp_Instance));
+                                }
                                 outname += "[" + subtype.FullNameWithAssembly + "]";
                                 lastsplitpos = i;
                             }
@@ -172,7 +177,13 @@ namespace CLRSharp
                                 checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
                                 var subtype = GetType(checkname);
                                 subTypes.Add(subtype);
-                                if (subtype is ICLRType_Sharp) subtype = GetType(typeof(CLRSharp_Instance));
+
+                                if (!subtype.IsEnum() && subtype is ICLRType_Sharp)
+                                {
+
+                                    subtype = GetType(typeof(CLRSharp_Instance));
+                                }
+
                                 outname += "[" + subtype.FullNameWithAssembly + "],";
                                 lastsplitpos = i;
                             }
@@ -215,11 +226,31 @@ namespace CLRSharp
                         }
                     }
                 }
+
                 if (t != null)
                 {
+                    //之所以做这么扭曲的设计，是因为Unity的Type.Fullname 实现错误，导致在Unity环境Type.FullName不一致
+                    if (t.FullName.Contains("CLRSharp.CLRSharp_Instance") == false)
+                    {
+                        b = mapType.TryGetValue(t.FullName, out type);
+                        if (b)
+                        {
+                            //mapType[fullname] = type;
+                            return type;
+                        }
+                        type = new Type_Common_System(this, t, subTypes.ToArray());
+                        mapType[t.FullName] = type;
+                        return type;
+                    }
+                    else
+                    {
+
+                    }
                     type = new Type_Common_System(this, t, subTypes.ToArray());
+                    mapType[fullname] = type;
+                    //mapType[t.FullName] = type;
                 }
-                mapType[fullname] = type;
+
             }
             return type;
         }
@@ -231,7 +262,7 @@ namespace CLRSharp
             bool b = mapType.TryGetValue(systemType.FullName, out type);
             if (!b)
             {
-                type = new Type_Common_System(this, systemType,  null);
+                type = new Type_Common_System(this, systemType, null);
                 mapType[systemType.FullName] = type;
             }
             return type;
