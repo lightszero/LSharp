@@ -12,23 +12,26 @@ namespace UnitTestDll
         public static void UnitTest_Bool2Object()
         {
             TestClass.TestObjectArg(true);
+            //fixed
         }
 
         public static void UnitTest_Int2Byte()
         {
             TestClass.TestByteArg(32);
+            //no error
         }
-
         public static void UnitTest_CtorWithNoArg()
         {
             //这行代码放在Program.cs里面执行是不会报错的
-            System.Activator.CreateInstance(Type.GetType("TestClass"));
+            System.Activator.CreateInstance(Type.GetType("TestClass,UnitTest"));
+            //error assm
         }
 
         public static void UnitTest_CtorWithByteArg()
         {
             //这行代码放在Program.cs里面执行是不会报错的
-            System.Activator.CreateInstance(Type.GetType("TestClass"), new Object[] { (byte)32 });
+            System.Activator.CreateInstance(Type.GetType("TestClass,UnitTest"), new Object[] { (byte)32 });
+            //error assm
         }
     }
 }

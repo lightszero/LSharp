@@ -312,6 +312,15 @@ namespace CLRSharp
                     arr[i] = BitConverter.ToDouble(bytes, i * step);
                 }
             }
+            else if (array is bool[])
+            {
+                int step = 1;
+                bool[] arr = array as bool[];
+                for (int i = 0; i < bytes.Length / step; i++)
+                {
+                    arr[i] = BitConverter.ToBoolean(bytes, i * step);
+                }
+            }
             else
             {
                 throw new NotImplementedException("array=" + array.GetType());
@@ -493,10 +502,24 @@ namespace CLRSharp
                 else ev = (int)obj;
                 obj = Enum.ToObject(type.TypeForSystem, ev);
             }
-            else
+            else 
             {
                 if (box != null)
-                    obj = box.BoxDefine();
+                {
+                    var tcode = ValueOnStack.GetTypeCode(type.TypeForSystem);
+                    if (tcode == box.type)
+                    {
+
+
+                        obj = box.BoxDefine();
+                    }
+                    else
+                    {
+                        var nbox = new VBox(box.typeStack, tcode);
+                        nbox.Set(box);
+                        obj = nbox.BoxDefine();
+                    }
+                }
             }
             stackCalc.Push(obj);
             _codepos++;
