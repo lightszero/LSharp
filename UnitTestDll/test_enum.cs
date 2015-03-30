@@ -85,6 +85,12 @@ namespace UnitTestDll
             //tmp = m_IsDataReady[3];
 
         }
+        
+        static void UnitTest_13()
+        {
+            bool[] data = new bool[4] { true,true,true,true};
+            data[0] = false;
+        }
 
     }
 
