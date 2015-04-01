@@ -64,6 +64,7 @@
     <Compile Include="Test_ByLynn.cs" />
     <Compile Include="Test_ByDuskforest.cs" />
     <Compile Include="test_enum.cs" />
+    <Compile Include="test_RefOut.cs" />
     <Compile Include="test_string_switch.cs" />
     <Compile Include="没有实现的IL.cs" />
   </ItemGroup>
