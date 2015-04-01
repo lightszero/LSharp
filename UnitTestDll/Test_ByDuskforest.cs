@@ -33,5 +33,10 @@ namespace UnitTestDll
             System.Activator.CreateInstance(Type.GetType("TestClass,UnitTest"), new Object[] { (byte)32 });
             //error assm
         }
+
+        public static void UnitTest_2DimArray()
+        {
+            int[,] a = new int[1,1];
+        }
     }
 }
