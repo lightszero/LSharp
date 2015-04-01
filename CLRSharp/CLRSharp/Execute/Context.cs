@@ -267,10 +267,18 @@ namespace CLRSharp
             {
                 throw new NotImplementedException();
             }
+
             var typesys = GetType(typename);
             if (typesys == null)
-                throw new Exception("type can't find:" + typename);
+            {
+                typename = typename.Replace("0...", "");
+                typesys = GetType(typename);
 
+            }
+            if (typesys == null)
+            {
+                throw new Exception("type can't find:" + typename);
+            }
 
             IMethod _method = null;
             if (genlist != null)

@@ -37,6 +37,8 @@ namespace UnitTestDll
         public static void UnitTest_2DimArray()
         {
             int[,] a = new int[1,1];
+            a[0, 0] = 4;
+            Logger.Log("abc=" + a[0, 0]);
         }
     }
 }
