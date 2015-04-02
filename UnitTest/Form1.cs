@@ -16,7 +16,7 @@ namespace UnitTest
             InitializeComponent();
             g_this = this;
         }
-        CLRSharp.ICLRSharp_Environment env;
+        public CLRSharp.ICLRSharp_Environment env;
         private void Form1_Load(object sender, EventArgs e)
         {
             var bytes = System.IO.File.ReadAllBytes("UnitTestDll.dll");
@@ -97,7 +97,13 @@ namespace UnitTest
         }
         public void Log(string str)
         {
-            this.listBox1.Items.Add(str);
+            Action safecall =
+                () =>
+                {
+                    this.listBox1.Items.Add(str);
+
+                };
+            this.Invoke(safecall);
         }
 
         public void Log_Warning(string str)

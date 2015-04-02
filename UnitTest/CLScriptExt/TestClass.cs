@@ -1,8 +1,10 @@
 ﻿
+using CLRSharp;
 using System;
 using System.Collections.Generic;
 
 using System.Text;
+using System.Threading;
 using UnitTest;
 
 
@@ -60,5 +62,19 @@ using UnitTest;
 
         public static void TestByteArg(byte b)
         {
+        }
+
+        public static void StartThread(Action action)
+        {
+            Thread t = new Thread(new ThreadStart(
+                () =>
+                {
+                    if (ThreadContext.activeContext == null)
+                    {
+                        ThreadContext c = new ThreadContext(Form1.g_this.env);
+                    }
+                    action();
+                }));
+            t.Start();
         }
     }
