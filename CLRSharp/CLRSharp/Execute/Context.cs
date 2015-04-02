@@ -34,11 +34,23 @@ namespace CLRSharp
         {
             this.environment = env;
             DebugLevel = 0;
+            if (_activeContext != null)
+            {
+                env.logger.Log_Error("在同一线程上多次创建ThreadContext");
+            }
+            _activeContext = this;
+
         }
         public ThreadContext(ICLRSharp_Environment env, int DebugLevel)
         {
             this.environment = env;
             this.DebugLevel = DebugLevel;
+            if (_activeContext != null)
+            {
+                env.logger.Log_Error("在同一线程上多次创建ThreadContext");
+            }
+            _activeContext = this;
+
         }
         public Stack<StackFrame> GetStackFrames()
         {
@@ -88,7 +100,6 @@ namespace CLRSharp
         }
         public object ExecuteFunc(IMethod_Sharp method, object _this, object[] _params)
         {
-            _activeContext = this;
             if (this.DebugLevel >= 9)
             {
                 environment.logger.Log("<Call>::" + method.DeclaringType.FullName + "::" + method.Name.ToString());
@@ -267,10 +278,18 @@ namespace CLRSharp
             {
                 throw new NotImplementedException();
             }
+
             var typesys = GetType(typename);
             if (typesys == null)
-                throw new Exception("type can't find:" + typename);
+            {
+                typename = typename.Replace("0...", "");
+                typesys = GetType(typename);
 
+            }
+            if (typesys == null)
+            {
+                throw new Exception("type can't find:" + typename);
+            }
 
             IMethod _method = null;
             if (genlist != null)

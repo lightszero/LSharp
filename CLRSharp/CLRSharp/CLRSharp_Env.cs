@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.43Beta";
+                return "0.44Beta";
             }
         }
         public ICLRSharp_Logger logger

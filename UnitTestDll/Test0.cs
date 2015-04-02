@@ -10,6 +10,13 @@ namespace UnitTestDll
     {
         public ulong aaa = 15645613;
 
+        public static void UnitTest_TestThread()
+        {
+            Logger.Log("TestThread");
+
+            TestClass.StartThread(() => { Logger.Log("In thread."); });
+        }
+
         public static void DoUINt64(ulong a)
         {
             UnitTest.Logger.Log("a=" + a);
@@ -49,6 +56,23 @@ namespace UnitTestDll
     //随手写的测试用例，目标是啥也不知道
     public class Test0
     {
+        public static int[] arrI = new int[] { 1, 2, 3 };
+
+        public static void UnitTest_StaticArr()
+        {
+            int i = 0;
+            while (true)
+            {
+                if (arrI[i] != 1)
+                {
+                    throw new Exception("UnitTest_StaticArr");
+                }
+                break;
+            }
+            Logger.Log("OK");
+        }
+
+
 
         public static void UnitTest_Instance()
         {

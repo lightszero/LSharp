@@ -2415,45 +2415,80 @@ namespace CLRSharp
         }
         public void Stind_Ref(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            var o1 = stackCalc.Pop();
+            var o2 = stackCalc.Pop();
+            if(o2 is RefObj)
+            {
+                (o2 as RefObj).Set(o1);
+            }
+           
+            _codepos++;
         }
         public void Stind_I1(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            var o1 = stackCalc.Pop();
+            var o2 = stackCalc.Pop();
+            if (o2 is RefObj)
+            {
+                (o2 as RefObj).Set(o1);
+            }
+
+            _codepos++;
         }
         public void Stind_I2(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            var o1 = stackCalc.Pop();
+            var o2 = stackCalc.Pop();
+            if (o2 is RefObj)
+            {
+                (o2 as RefObj).Set(o1);
+            }
+
+            _codepos++;
         }
         public void Stind_I4(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            var o1 = stackCalc.Pop();
+            var o2 = stackCalc.Pop();
+            if (o2 is RefObj)
+            {
+                (o2 as RefObj).Set(o1);
+            }
+
+            _codepos++;
         }
         public void Stind_I8(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            var o1 = stackCalc.Pop();
+            var o2 = stackCalc.Pop();
+            if (o2 is RefObj)
+            {
+                (o2 as RefObj).Set(o1);
+            }
+
+            _codepos++;
         }
         public void Stind_R4(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            var o1 = stackCalc.Pop();
+            var o2 = stackCalc.Pop();
+            if (o2 is RefObj)
+            {
+                (o2 as RefObj).Set(o1);
+            }
+
+            _codepos++;
         }
         public void Stind_R8(ThreadContext context, object obj)
         {
-            Type t = obj.GetType();
-            throw new NotImplementedException(t.ToString());
-            //_codepos++;
+            var o1 = stackCalc.Pop();
+            var o2 = stackCalc.Pop();
+            if (o2 is RefObj)
+            {
+                (o2 as RefObj).Set(o1);
+            }
+
+            _codepos++;
         }
         public void And()
         {

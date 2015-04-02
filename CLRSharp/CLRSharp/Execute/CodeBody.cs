@@ -364,7 +364,9 @@ namespace CLRSharp
                     case CodeEx.Newobj:
                     case CodeEx.Ldftn:
                     case CodeEx.Ldvirtftn:
-                        this.tokenMethod = context.GetMethod(_p);
+
+                            this.tokenMethod = context.GetMethod(_p);
+ 
                         break;
                     case CodeEx.Ldc_I4:
                         this.tokenI32 = (int)_p;
