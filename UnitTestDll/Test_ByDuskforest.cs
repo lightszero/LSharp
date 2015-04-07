@@ -42,7 +42,16 @@ namespace UnitTestDll
 
         public static void UnitTest_ConvertReturnObject2Float()
         {
+            //在.net下不会报错，但是在unity3d下会报错，先把用例提交了
             if ((float)ReturnObject() != 0)
+            {
+                Logger.Log("100 != 0");
+            }
+        }
+        public static void UnitTest_ConvertReturnObject2Double()
+        {
+            //在.net下不会报错，但是在unity3d下会报错，先把用例提交了
+            if ((double)ReturnObject() != 0)
             {
                 Logger.Log("100 != 0");
             }
