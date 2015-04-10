@@ -303,50 +303,50 @@ namespace CLRSharp
             methodCache[token.GetHashCode()] = _method;
             return _method;
         }
-        IMethod GetNewForArray(object token)
-        {
-            IMethod __method = null;
-            if (methodCache.TryGetValue(token.GetHashCode(), out __method))
-            {
-                return __method;
-            }
-            Mono.Cecil.ModuleDefinition module = null;
-            string typename = null;
-            if (token is Mono.Cecil.TypeDefinition)
-            {
-                Mono.Cecil.TypeDefinition _def = (token as Mono.Cecil.TypeDefinition);
-                module = _def.Module;
-                typename = _def.FullName;
-            }
-            else if (token is Mono.Cecil.TypeReference)
-            {
-                Mono.Cecil.TypeReference _ref = (token as Mono.Cecil.TypeReference);
-                module = _ref.Module;
-                typename = _ref.FullName;
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+        //IMethod GetNewForArray(object token)
+        //{
+        //    IMethod __method = null;
+        //    if (methodCache.TryGetValue(token.GetHashCode(), out __method))
+        //    {
+        //        return __method;
+        //    }
+        //    Mono.Cecil.ModuleDefinition module = null;
+        //    string typename = null;
+        //    if (token is Mono.Cecil.TypeDefinition)
+        //    {
+        //        Mono.Cecil.TypeDefinition _def = (token as Mono.Cecil.TypeDefinition);
+        //        module = _def.Module;
+        //        typename = _def.FullName;
+        //    }
+        //    else if (token is Mono.Cecil.TypeReference)
+        //    {
+        //        Mono.Cecil.TypeReference _ref = (token as Mono.Cecil.TypeReference);
+        //        module = _ref.Module;
+        //        typename = _ref.FullName;
+        //    }
+        //    else
+        //    {
+        //        throw new NotImplementedException();
+        //    }
 
-            ICLRType _type = null;
-            ICLRType _Itype = GetType(typename);
-            if (_Itype is ICLRType_Sharp)
-            {
-                _type = environment.GetType(typeof(CLRSharp.CLRSharp_Instance[]));
-            }
-            else
-            {
-                typename += "[]";
-                //var _type = context.environment.GetType(typename, type.Module);
-                _type = GetType(typename);
+        //    ICLRType _type = null;
+        //    ICLRType _Itype = GetType(typename);
+        //    if (_Itype is ICLRType_Sharp)
+        //    {
+        //        _type = environment.GetType(typeof(CLRSharp.CLRSharp_Instance[]));
+        //    }
+        //    else
+        //    {
+        //        typename += "[]";
+        //        //var _type = context.environment.GetType(typename, type.Module);
+        //        _type = GetType(typename);
                 
-            }
-            MethodParamList tlist = MethodParamList.const_OneParam_Int(environment);
-            var m = _type.GetMethod(".ctor", tlist);
-            methodCache[token.GetHashCode()] = m;
-            return m;
-        }
+        //    }
+        //    MethodParamList tlist = MethodParamList.const_OneParam_Int(environment);
+        //    var m = _type.GetMethod(".ctor", tlist);
+        //    methodCache[token.GetHashCode()] = m;
+        //    return m;
+        //}
         public IField GetField(object token)
         {
             IField __field = null;
