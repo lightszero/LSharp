@@ -340,7 +340,7 @@ namespace CLRSharp
                 typename += "[]";
                 //var _type = context.environment.GetType(typename, type.Module);
                 _type = GetType(typename);
-
+                
             }
             MethodParamList tlist = MethodParamList.const_OneParam_Int(environment);
             var m = _type.GetMethod(".ctor", tlist);
@@ -921,7 +921,7 @@ namespace CLRSharp
                         break;
                     //数组
                     case CodeEx.Newarr:
-                        stack.NewArr(this, GetNewForArray(_code.tokenUnknown));
+                        stack.NewArr(this, _code.tokenType.TypeForSystem);
                         break;
                     case CodeEx.Ldlen:
                         stack.LdLen();

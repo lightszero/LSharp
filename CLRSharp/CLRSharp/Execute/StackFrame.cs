@@ -1349,7 +1349,7 @@ namespace CLRSharp
         }
 
         ////数组
-        public void NewArr(ThreadContext context, IMethod newForArray)
+        public void NewArr(ThreadContext context, Type type)
         {
             //string typename = type.FullName + "[]";
             //var _type = context.environment.GetType(typename, type.Module);
@@ -1357,7 +1357,7 @@ namespace CLRSharp
             //var m = _type.GetMethod(".ctor", tlist);
             var objv = stackCalc.Pop();
             if (objv is VBox) objv = (objv as VBox).BoxDefine();
-            var array = newForArray.Invoke(context, null, new object[] { objv });
+            var array = Array.CreateInstance(type,(int)objv);
             stackCalc.Push(array);
             _codepos++;
         }

@@ -347,6 +347,7 @@ namespace CLRSharp
                     case CodeEx.Box:
                     case CodeEx.Initobj:
                     case CodeEx.Castclass:
+                    case CodeEx.Newarr:
                         this.tokenType = context.GetType(_p);
                         //this.tokenUnknown = _p;
                         break;
