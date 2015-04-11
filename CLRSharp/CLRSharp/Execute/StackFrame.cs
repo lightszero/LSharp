@@ -1539,10 +1539,22 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Int64[] array = stackCalc.Pop() as Int64[];
-            var box = ValueOnStack.MakeVBox(NumberType.INT64);
-            box.v64 = array[index];
-            stackCalc.Push(box);
+            var obj = stackCalc.Pop();
+            UnityEngine.Debug.Log("got" + obj);
+            if (obj is Int64[])
+            {
+                Int64[] array = obj as Int64[];
+                var box = ValueOnStack.MakeVBox(NumberType.INT64);
+                box.v64 = array[index];
+                stackCalc.Push(box);
+            }
+            else
+            {
+                UInt64[] array = obj as UInt64[];
+                var box = ValueOnStack.MakeVBox(NumberType.INT64);
+                box.v64 = (long)array[index];
+                stackCalc.Push(box);
+            }
             _codepos++;
         }
         public void Ldelem_I()

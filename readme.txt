@@ -5,6 +5,9 @@
 	用途，Unity3D热更（包括IOS平台）等
 	Beta阶段，有一定动手能力的小伙伴，已经可以将它用于实战
 	更新日志：
+2015-04-11 V0.45Beta
+	同步unity unittest代码，unity5 环境下 unittest全部通过
+	https://github.com/lightszero/LSharpUnity
 2015-04-02 V0.44Beta
 	调整了一下ThreadContext机制，每个线程只需要new一次，new的同时设为活动，多new会有个警告log
 	修复了几处bug
