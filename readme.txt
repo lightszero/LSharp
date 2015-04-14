@@ -5,6 +5,8 @@
 	用途，Unity3D热更（包括IOS平台）等
 	Beta阶段，有一定动手能力的小伙伴，已经可以将它用于实战
 	更新日志：
+2015-04-14 V0.46Beta
+	修改unity5 环境下Unittest 到il2cpp绝大部分通过，不通过的要改写绕过
 2015-04-11 V0.45Beta
 	同步unity unittest代码，unity5 环境下 unittest全部通过
 	https://github.com/lightszero/LSharpUnity

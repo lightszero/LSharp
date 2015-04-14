@@ -236,72 +236,80 @@ namespace CLRSharp
         Dictionary<int, IField> fieldCache = new Dictionary<int, IField>();
         public IMethod GetMethod(object token)
         {
-            IMethod __method = null;
-            if (methodCache.TryGetValue(token.GetHashCode(), out __method))
+            try
             {
-                return __method;
-            }
-            Mono.Cecil.ModuleDefinition module = null;
-            string methodname = null;
-            string typename = null;
-            MethodParamList genlist = null;
-            MethodParamList list = null;
-            if (token is Mono.Cecil.MethodReference)
-            {
-                Mono.Cecil.MethodReference _ref = (token as Mono.Cecil.MethodReference);
-                module = _ref.Module;
-                methodname = _ref.Name;
-                typename = _ref.DeclaringType.FullName;
-                list = new MethodParamList(environment, _ref);
-                if (_ref.IsGenericInstance)
+                IMethod __method = null;
+                if (methodCache.TryGetValue(token.GetHashCode(), out __method))
                 {
-                    Mono.Cecil.GenericInstanceMethod gmethod = _ref as Mono.Cecil.GenericInstanceMethod;
-                    genlist = new MethodParamList(environment, gmethod);
-
+                    return __method;
                 }
-            }
-            else if (token is Mono.Cecil.MethodDefinition)
-            {
-                Mono.Cecil.MethodDefinition _def = token as Mono.Cecil.MethodDefinition;
-                module = _def.Module;
-                methodname = _def.Name;
-                typename = _def.DeclaringType.FullName;
-                list = new MethodParamList(environment, _def);
-                if (_def.IsGenericInstance)
+                Mono.Cecil.ModuleDefinition module = null;
+                string methodname = null;
+                string typename = null;
+                MethodParamList genlist = null;
+                MethodParamList list = null;
+                if (token is Mono.Cecil.MethodReference)
+                {
+                    Mono.Cecil.MethodReference _ref = (token as Mono.Cecil.MethodReference);
+                    module = _ref.Module;
+                    methodname = _ref.Name;
+                    typename = _ref.DeclaringType.FullName;
+                    list = new MethodParamList(environment, _ref);
+                    if (_ref.IsGenericInstance)
+                    {
+                        Mono.Cecil.GenericInstanceMethod gmethod = _ref as Mono.Cecil.GenericInstanceMethod;
+                        genlist = new MethodParamList(environment, gmethod);
+
+                    }
+                }
+                else if (token is Mono.Cecil.MethodDefinition)
+                {
+                    Mono.Cecil.MethodDefinition _def = token as Mono.Cecil.MethodDefinition;
+                    module = _def.Module;
+                    methodname = _def.Name;
+                    typename = _def.DeclaringType.FullName;
+                    list = new MethodParamList(environment, _def);
+                    if (_def.IsGenericInstance)
+                    {
+                        throw new NotImplementedException();
+                        //Mono.Cecil.GenericInstanceMethod gmethod = _def as Mono.Cecil.GenericInstanceMethod;
+                        //genlist = new MethodParamList(environment, gmethod);
+                    }
+                }
+                else
                 {
                     throw new NotImplementedException();
-                    //Mono.Cecil.GenericInstanceMethod gmethod = _def as Mono.Cecil.GenericInstanceMethod;
-                    //genlist = new MethodParamList(environment, gmethod);
                 }
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
 
-            var typesys = GetType(typename);
-            if (typesys == null)
-            {
-                typename = typename.Replace("0...", "");
-                typesys = GetType(typename);
+                var typesys = GetType(typename);
+                if (typesys == null)
+                {
+                    typename = typename.Replace("0...", "");
+                    typesys = GetType(typename);
 
-            }
-            if (typesys == null)
-            {
-                throw new Exception("type can't find:" + typename);
-            }
+                }
+                if (typesys == null)
+                {
+                    throw new Exception("type can't find:" + typename);
+                }
 
-            IMethod _method = null;
-            if (genlist != null)
-            {
-                _method = typesys.GetMethodT(methodname, genlist, list);
+                IMethod _method = null;
+                if (genlist != null)
+                {
+                    _method = typesys.GetMethodT(methodname, genlist, list);
+                }
+                else
+                {
+                    _method = typesys.GetMethod(methodname, list);
+                }
+                methodCache[token.GetHashCode()] = _method;
+                return _method;
             }
-            else
+            catch (Exception err)
             {
-                _method = typesys.GetMethod(methodname, list);
+
+                throw new Exception("Error GetMethod==<这意味着这个函数无法被L#找到>" + token, err);
             }
-            methodCache[token.GetHashCode()] = _method;
-            return _method;
         }
         //IMethod GetNewForArray(object token)
         //{
@@ -340,7 +348,7 @@ namespace CLRSharp
         //        typename += "[]";
         //        //var _type = context.environment.GetType(typename, type.Module);
         //        _type = GetType(typename);
-                
+
         //    }
         //    MethodParamList tlist = MethodParamList.const_OneParam_Int(environment);
         //    var m = _type.GetMethod(".ctor", tlist);

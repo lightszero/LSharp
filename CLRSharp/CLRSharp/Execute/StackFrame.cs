@@ -1540,7 +1540,6 @@ namespace CLRSharp
                 index = (int)indexobj;
             }
             var obj = stackCalc.Pop();
-            UnityEngine.Debug.Log("got" + obj);
             if (obj is Int64[])
             {
                 Int64[] array = obj as Int64[];

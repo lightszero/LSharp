@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.45Beta";
+                return "0.46Beta";
             }
         }
         public ICLRSharp_Logger logger
@@ -100,159 +100,166 @@ namespace CLRSharp
 
         public ICLRType GetType(string fullname)
         {
-            ICLRType type = null;
-            bool b = mapType.TryGetValue(fullname, out type);
-            if (!b)
+            try
             {
-                List<ICLRType> subTypes = new List<ICLRType>();
-                if (fullname.Contains("<>") || fullname.Contains("/"))//匿名类型
+                ICLRType type = null;
+                bool b = mapType.TryGetValue(fullname, out type);
+                if (!b)
                 {
-                    string[] subts = fullname.Split('/');
-                    ICLRType ft = GetType(subts[0]);
-                    if (ft is ICLRType_Sharp)
+                    List<ICLRType> subTypes = new List<ICLRType>();
+                    if (fullname.Contains("<>") || fullname.Contains("/"))//匿名类型
                     {
-                        for (int i = 1; i < subts.Length; i++)
+                        string[] subts = fullname.Split('/');
+                        ICLRType ft = GetType(subts[0]);
+                        if (ft is ICLRType_Sharp)
                         {
-                            ft = ft.GetNestType(this, subts[i]);
+                            for (int i = 1; i < subts.Length; i++)
+                            {
+                                ft = ft.GetNestType(this, subts[i]);
+                            }
+                            return ft;
                         }
-                        return ft;
                     }
-                }
-                string fullnameT = fullname;//.Replace('/', '+');
+                    string fullnameT = fullname;//.Replace('/', '+');
 
-                if (fullnameT.Contains("<"))
-                {
-                    string outname = "";
-                    int depth = 0;
-                    int lastsplitpos = 0;
-                    for (int i = 0; i < fullname.Length; i++)
+                    if (fullnameT.Contains("<"))
                     {
-                        string checkname = null;
-                        if (fullname[i] == '/')
+                        string outname = "";
+                        int depth = 0;
+                        int lastsplitpos = 0;
+                        for (int i = 0; i < fullname.Length; i++)
                         {
-
-                        }
-                        else if (fullname[i] == '<')
-                        {
-                            if (i != 0)
-                                depth++;
-                            if (depth == 1)//
+                            string checkname = null;
+                            if (fullname[i] == '/')
                             {
-                                lastsplitpos = i;
-                                outname += "[";
-                                continue;
+
                             }
-
-                        }
-                        else if (fullname[i] == '>')
-                        {
-                            if (depth == 1)
+                            else if (fullname[i] == '<')
                             {
-                                checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
-                                var subtype = GetType(checkname);
-                                subTypes.Add(subtype);
-                                if (!subtype.IsEnum() && subtype is ICLRType_Sharp)
+                                if (i != 0)
+                                    depth++;
+                                if (depth == 1)//
                                 {
-                                    subtype = GetType(typeof(CLRSharp_Instance));
+                                    lastsplitpos = i;
+                                    outname += "[";
+                                    continue;
                                 }
-                                outname += "[" + subtype.FullNameWithAssembly + "]";
-                                lastsplitpos = i;
+
                             }
-                            //if(depth>0)
-                            depth--;
+                            else if (fullname[i] == '>')
+                            {
+                                if (depth == 1)
+                                {
+                                    checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
+                                    var subtype = GetType(checkname);
+                                    subTypes.Add(subtype);
+                                    if (!subtype.IsEnum() && subtype is ICLRType_Sharp)
+                                    {
+                                        subtype = GetType(typeof(CLRSharp_Instance));
+                                    }
+                                    outname += "[" + subtype.FullNameWithAssembly + "]";
+                                    lastsplitpos = i;
+                                }
+                                //if(depth>0)
+                                depth--;
+                                if (depth == 0)
+                                {
+                                    outname += "]";
+                                    continue;
+                                }
+                                else if (depth < 0)
+                                {
+                                    depth = 0;
+                                }
+                            }
+                            else if (fullname[i] == ',')
+                            {
+                                if (depth == 1)
+                                {
+                                    checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
+                                    var subtype = GetType(checkname);
+                                    subTypes.Add(subtype);
+
+                                    if (!subtype.IsEnum() && subtype is ICLRType_Sharp)
+                                    {
+
+                                        subtype = GetType(typeof(CLRSharp_Instance));
+                                    }
+
+                                    outname += "[" + subtype.FullNameWithAssembly + "],";
+                                    lastsplitpos = i;
+                                }
+                            }
                             if (depth == 0)
                             {
-                                outname += "]";
-                                continue;
-                            }
-                            else if (depth < 0)
-                            {
-                                depth = 0;
+                                outname += fullnameT[i];
                             }
                         }
-                        else if (fullname[i] == ',')
-                        {
-                            if (depth == 1)
-                            {
-                                checkname = fullnameT.Substring(lastsplitpos + 1, i - lastsplitpos - 1);
-                                var subtype = GetType(checkname);
-                                subTypes.Add(subtype);
+                        fullnameT = outname;
+                        //    fullnameT = fullnameT.Replace('<', '[');
+                        //fullnameT = fullnameT.Replace('>', ']');
 
-                                if (!subtype.IsEnum() && subtype is ICLRType_Sharp)
-                                {
 
-                                    subtype = GetType(typeof(CLRSharp_Instance));
-                                }
-
-                                outname += "[" + subtype.FullNameWithAssembly + "],";
-                                lastsplitpos = i;
-                            }
-                        }
-                        if (depth == 0)
-                        {
-                            outname += fullnameT[i];
-                        }
                     }
-                    fullnameT = outname;
-                    //    fullnameT = fullnameT.Replace('<', '[');
-                    //fullnameT = fullnameT.Replace('>', ']');
+                    fullnameT = fullnameT.Replace('/', '+');
+                    System.Type t = System.Type.GetType(fullnameT);
 
-
-                }
-                fullnameT = fullnameT.Replace('/', '+');
-                System.Type t = System.Type.GetType(fullnameT);
-
-                if (t == null)
-                {
-                    if (assemblylist != null)
-                    {
-                        foreach (var i in assemblylist)
-                        {
-                            t = i.GetType(fullnameT);
-                            if (t != null)
-                                break;
-                        }
-                    }
                     if (t == null)
                     {
-                        foreach (var rm in moduleref)
+                        if (assemblylist != null)
                         {
-                            t = System.Type.GetType(fullnameT + "," + rm);
-                            if (t != null)
+                            foreach (var i in assemblylist)
                             {
-                                fullnameT = fullnameT + "," + rm;
-                                break;
+                                t = i.GetType(fullnameT);
+                                if (t != null)
+                                    break;
+                            }
+                        }
+                        if (t == null)
+                        {
+                            foreach (var rm in moduleref)
+                            {
+                                t = System.Type.GetType(fullnameT + "," + rm);
+                                if (t != null)
+                                {
+                                    fullnameT = fullnameT + "," + rm;
+                                    break;
+                                }
                             }
                         }
                     }
-                }
 
-                if (t != null)
-                {
-                    //之所以做这么扭曲的设计，是因为Unity的Type.Fullname 实现错误，导致在Unity环境Type.FullName不一致
-                    if (t.FullName.Contains("CLRSharp.CLRSharp_Instance") == false)
+                    if (t != null)
                     {
-                        b = mapType.TryGetValue(t.FullName, out type);
-                        if (b)
+                        //之所以做这么扭曲的设计，是因为Unity的Type.Fullname 实现错误，导致在Unity环境Type.FullName不一致
+                        if (t.FullName.Contains("CLRSharp.CLRSharp_Instance") == false)
                         {
-                            //mapType[fullname] = type;
+                            b = mapType.TryGetValue(t.FullName, out type);
+                            if (b)
+                            {
+                                //mapType[fullname] = type;
+                                return type;
+                            }
+                            type = new Type_Common_System(this, t, subTypes.ToArray());
+                            mapType[t.FullName] = type;
                             return type;
                         }
+                        else
+                        {
+
+                        }
                         type = new Type_Common_System(this, t, subTypes.ToArray());
-                        mapType[t.FullName] = type;
-                        return type;
+                        mapType[fullname] = type;
+                        //mapType[t.FullName] = type;
                     }
-                    else
-                    {
 
-                    }
-                    type = new Type_Common_System(this, t, subTypes.ToArray());
-                    mapType[fullname] = type;
-                    //mapType[t.FullName] = type;
                 }
-
+                return type;
             }
-            return type;
+            catch (Exception err)
+            {
+                throw new Exception("Error in getType:" + fullname, err);
+            }
         }
 
 
