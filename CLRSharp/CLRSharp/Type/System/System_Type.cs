@@ -254,9 +254,9 @@ namespace CLRSharp
         }
         public object Invoke(ThreadContext context, object _this, object[] _params, bool bVisual)
         {//对程序类型，其实我们做不到区分虚实调用。。。没办法
-            if (this.Name == "Concat" && this.DeclaringType.TypeForSystem ==typeof(string))
+            if (this.Name == "Concat" && this.DeclaringType.TypeForSystem == typeof(string))
             {//这里有一个IL2CPP的问题
-                
+
                 if (_params.Length == 1)
                 {
                     if (_params[0] == null)
@@ -349,6 +349,11 @@ namespace CLRSharp
                         else if (tsrc.IsSubclassOf(ttarget))
                         {
                             _outp[i] = _params[i];
+                        }
+                        else if (_paramsdef[i].ParameterType.IsEnum)//特殊处理枚举
+                        {
+                            var ms = _paramsdef[i].ParameterType.GetMethods();
+                            _outp[i] = Enum.ToObject(_paramsdef[i].ParameterType, _params[i]);
                         }
                         else
                         {
