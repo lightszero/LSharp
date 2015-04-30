@@ -5,6 +5,37 @@ using System.Text;
 
 namespace CLRSharp
 {
+    public class CrossBind_IDisposable : ICrossBind
+    {
+        public Type Type
+        {
+            get { return typeof(IDisposable); }
+
+        }
+        public object CreateBind(CLRSharp_Instance inst)
+        {
+            return new Base_IDisposable(inst);
+        }
+
+        class Base_IDisposable : IDisposable
+        {
+            CLRSharp_Instance inst;
+            public Base_IDisposable(CLRSharp_Instance inst)
+            {
+                this.inst = inst;
+
+            }
+
+            public void Dispose()
+            {
+                var context = ThreadContext.activeContext;
+                var _type = context.environment.GetType(typeof(IDisposable));
+                var _method = this.inst.type.GetMethod(_type.FullName + "." + "Dispose", MethodParamList.constEmpty());
+                object obj = _method.Invoke(context, inst, null);
+
+            }
+        }
+    }
     public class CrossBind_IEnumerable : ICrossBind
     {
         public Type Type

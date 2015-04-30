@@ -467,6 +467,17 @@ namespace CLRSharp
                         this.tokenI32 = (_p as Mono.Cecil.ParameterReference).Index;
                         break;
                     case CodeEx.Volatile:
+                    case CodeEx.  Ldind_I1:
+                    case CodeEx.  Ldind_U1:
+                    case CodeEx.   Ldind_I2:
+                    case CodeEx.  Ldind_U2:
+                    case CodeEx.  Ldind_I4:
+                    case CodeEx.  Ldind_U4:
+                    case CodeEx.  Ldind_I8:
+                    case CodeEx.   Ldind_I:
+                    case CodeEx.  Ldind_R4:
+                    case CodeEx.  Ldind_R8:
+                    case CodeEx.  Ldind_Ref:
                         break;
                     default:
                         this.tokenUnknown = _p;

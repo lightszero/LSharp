@@ -1084,37 +1084,37 @@ namespace CLRSharp
                         stack.Switch(this, _code.tokenAddr_Switch);
                         break;
                     case CodeEx.Ldind_I1:
-                        stack.Ldind_I1(this, _code.tokenUnknown);
+                        stack.Ldind_I1();
                         break;
                     case CodeEx.Ldind_U1:
-                        stack.Ldind_U1(this, _code.tokenUnknown);
+                        stack.Ldind_U1();
                         break;
                     case CodeEx.Ldind_I2:
-                        stack.Ldind_I2(this, _code.tokenUnknown);
+                        stack.Ldind_I2();
                         break;
                     case CodeEx.Ldind_U2:
-                        stack.Ldind_U2(this, _code.tokenUnknown);
+                        stack.Ldind_U2();
                         break;
                     case CodeEx.Ldind_I4:
-                        stack.Ldind_I4(this, _code.tokenUnknown);
+                        stack.Ldind_I4();
                         break;
                     case CodeEx.Ldind_U4:
-                        stack.Ldind_U4(this, _code.tokenUnknown);
+                        stack.Ldind_U4();
                         break;
                     case CodeEx.Ldind_I8:
-                        stack.Ldind_I8(this, _code.tokenUnknown);
+                        stack.Ldind_I8();
                         break;
                     case CodeEx.Ldind_I:
-                        stack.Ldind_I(this, _code.tokenUnknown);
+                        stack.Ldind_I();
                         break;
                     case CodeEx.Ldind_R4:
-                        stack.Ldind_R4(this, _code.tokenUnknown);
+                        stack.Ldind_R4();
                         break;
                     case CodeEx.Ldind_R8:
-                        stack.Ldind_R8(this, _code.tokenUnknown);
+                        stack.Ldind_R8();
                         break;
                     case CodeEx.Ldind_Ref:
-                        stack.Ldind_Ref(this, _code.tokenUnknown);
+                        stack.Ldind_Ref();
                         break;
                     case CodeEx.Stind_Ref:
                         stack.Stind_Ref(this, _code.tokenUnknown);

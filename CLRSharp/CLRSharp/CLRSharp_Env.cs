@@ -11,7 +11,7 @@ namespace CLRSharp
         {
             get
             {
-                return "0.46Beta";
+                return "0.47Beta";
             }
         }
         public ICLRSharp_Logger logger
@@ -26,7 +26,8 @@ namespace CLRSharp
 
             this.RegCrossBind(new CrossBind_IEnumerable());
             this.RegCrossBind(new CrossBind_IEnumerator());
-        }
+            this.RegCrossBind(new CrossBind_IDisposable());
+       }
         Dictionary<string, ICLRType> mapType = new Dictionary<string, ICLRType>();
         //public Dictionary<string, Mono.Cecil.ModuleDefinition> mapModule = new Dictionary<string, Mono.Cecil.ModuleDefinition>();
         public void LoadModule(System.IO.Stream dllStream)
