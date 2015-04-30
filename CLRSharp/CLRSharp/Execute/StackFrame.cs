@@ -2583,7 +2583,6 @@ namespace CLRSharp
         {
             var o1 = stackCalc.Pop();
             var o2 = stackCalc.Pop();
-            UnityEngine.Debug.Log(o1 + "," + o2);
             if (o2 is RefObj)
             {
                 (o2 as RefObj).Set(o1 is VBox ? (o1 as VBox).BoxDefine() : o1);

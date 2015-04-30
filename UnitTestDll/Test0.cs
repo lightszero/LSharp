@@ -19,6 +19,7 @@ namespace UnitTestDll
 
         public static void DoUINt64(ulong a)
         {
+            TestClass tc = new TestClass(1);
             UnitTest.Logger.Log("a=" + a);
         }
         public static void UnitTest_UInt64()
