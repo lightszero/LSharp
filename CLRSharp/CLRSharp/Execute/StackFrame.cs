@@ -858,17 +858,26 @@ namespace CLRSharp
             {
                 slotVar.Add(null);
             }
-            VBox box = slotVar[pos] as VBox;
-            if (box == null)
+            if (v != null && v.GetType().IsValueType)
             {
-                slotVar[pos] = v;
+                var mm = v.GetType().GetMethod("MemberwiseClone", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                slotVar[pos] = mm.Invoke(v, null);
             }
             else
             {
-                if (v is VBox)
-                    box.Set(v as VBox);
+                VBox box = slotVar[pos] as VBox;
+                if (box == null)
+                {
+
+                    slotVar[pos] = v;
+                }
                 else
-                    box.SetDirect(v);
+                {
+                    if (v is VBox)
+                        box.Set(v as VBox);
+                    else
+                        box.SetDirect(v);
+                }
             }
             _codepos++;
         }

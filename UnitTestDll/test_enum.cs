@@ -11,8 +11,8 @@ namespace UnitTestDll
     {
         public enum EUIPanelID
         {
-            NULL=0,
-            INT1=1,
+            NULL = 0,
+            INT1 = 1,
             INT2,
         };
 
@@ -22,7 +22,7 @@ namespace UnitTestDll
 
             bool bo = dict.ContainsKey(EUIPanelID.INT1);
         }
-        
+
         public static void UnitTest_02()
         {
             Test_02(EUIPanelID.INT1);
@@ -44,7 +44,7 @@ namespace UnitTestDll
             LinkedList<EUIPanelID> ll = new LinkedList<EUIPanelID>();
             bool b = ll.Contains(EUIPanelID.INT1);
         }
-        
+
         static void UnitTest_09()
         {
             bool[] m_IsDataReady = new bool[4] { false, false, false, false };
@@ -85,15 +85,23 @@ namespace UnitTestDll
             //tmp = m_IsDataReady[3];
 
         }
-        
+
         static void UnitTest_13()
         {
-            bool[] data = new bool[4] { true,true,true,true};
+            bool[] data = new bool[4] { true, true, true, true };
             data[0] = false;
         }
+        static void UnitTest_18()
+        {
 
+            CLScriptExt.Vector3 pos = new CLScriptExt.Vector3(2, 2, 2);
+            CLScriptExt.Vector3 post = pos;
+            post.x = -1;
+            Console.WriteLine(pos+","+post);
+
+        }
     }
 
 
-            
+
 }
