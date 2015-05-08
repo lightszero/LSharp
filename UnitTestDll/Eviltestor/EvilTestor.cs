@@ -91,5 +91,11 @@ namespace UnitTestDll.Eviltestor
         {
             Test10.TestInnerClass();
         }
+
+        public static void UnitTest_12()
+        {
+            Test12.TestOverrideObjectMethod();
+        }
+
     }
 }

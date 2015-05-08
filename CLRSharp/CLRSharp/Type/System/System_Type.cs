@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace CLRSharp
@@ -87,19 +88,13 @@ namespace CLRSharp
         }
         public IMethod[] GetAllMethods()
         {
-            List<IMethod> methods = new List<IMethod>();
+            var __methods = TypeForSystem.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+            IMethod[] methods = new IMethod[__methods.Length];
+            for (int i = 0; i < __methods.Length; i++)
             {
-                var __methods = TypeForSystem.GetMethods();
-                foreach (var m in __methods)
-                {
-                    //if (m.Name == funcname)
-                    {
-                        methods.Add(new Method_Common_System(this, m));
-                    }
-                }
+                methods[i] = new Method_Common_System(this, __methods[i]);
             }
-
-            return methods.ToArray();
+            return methods;
         }
         public object InitObj()
         {
@@ -132,7 +127,12 @@ namespace CLRSharp
         }
         public IField GetField(string name)
         {
-            return new Field_Common_System(env, TypeForSystem.GetField(name));
+            FieldInfo fi = TypeForSystem.GetField(name);
+            if (fi == null)
+            {
+                return null;
+            }
+            return new Field_Common_System(env, fi);
         }
         public bool IsInst(object obj)
         {

@@ -346,12 +346,17 @@ namespace CLRSharp
         }
         public IField GetField(string name)
         {
-            foreach (var f in type_CLRSharp.Fields)
+            var td = type_CLRSharp;
+            while (td != null && td.IsDefinition)
             {
-                if (f.Name == name)
+                foreach (var f in td.Fields)
                 {
-                    return new Field_Common_CLRSharp(this, f);
+                    if (f.Name == name)
+                    {
+                        return new Field_Common_CLRSharp(this, f);
+                    }
                 }
+                td = td.BaseType.Resolve();
             }
             return null;
         }
