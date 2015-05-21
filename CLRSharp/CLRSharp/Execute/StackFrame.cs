@@ -2395,9 +2395,13 @@ namespace CLRSharp
             {
                 pos = (indexobj as VBox).ToUInt();
             }
-            else
+            else if (indexobj is int)
             {
                 pos = (uint)(int)indexobj;
+            }
+            else
+            {
+                pos = uint.Parse(indexobj.ToString());
             }
             if (pos >= index.Length)
             {

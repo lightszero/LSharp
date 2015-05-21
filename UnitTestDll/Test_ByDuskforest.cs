@@ -9,6 +9,25 @@ namespace UnitTestDll
 {
     class Test_ByDuskforest
     {
+        public static void UnitTest_ByteCast()
+        {
+            Hashtable hash = new Hashtable();
+            byte a = 2;
+            hash.Add("state", a);
+            byte index = (byte)hash["state"];
+
+            switch (index)
+            {
+                case 1:
+                    break;
+                case 2:
+                    Console.WriteLine("a=" + a);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public static void UnitTest_Bool2Object()
         {
             TestClass.TestObjectArg(true);
@@ -30,7 +49,7 @@ namespace UnitTestDll
 
         public static void UnitTest_2DimArray()
         {
-            int[,] a = new int[1,1];
+            int[,] a = new int[1, 1];
             a[0, 0] = 4;
             Logger.Log("abc=" + a[0, 0]);
         }
