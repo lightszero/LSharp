@@ -27,7 +27,19 @@ namespace UnitTestDll
                     break;
             }
         }
+        public static void UnitTest_String()
+        {
+            Dictionary<int, string> dic = new Dictionary<int, string>()
+           {
+               {0, "今天天气不错风和日丽鸟语花香"}
+           };
 
+            string b = "123";
+
+            string test = dic[0] + "-" + b + "(" + dic[0];
+
+            Console.WriteLine(test);
+        }
         public static void UnitTest_Bool2Object()
         {
             TestClass.TestObjectArg(true);

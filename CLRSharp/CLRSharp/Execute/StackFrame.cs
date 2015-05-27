@@ -868,7 +868,6 @@ namespace CLRSharp
                 VBox box = slotVar[pos] as VBox;
                 if (box == null)
                 {
-
                     slotVar[pos] = v;
                 }
                 else

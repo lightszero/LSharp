@@ -257,11 +257,19 @@ namespace CLRSharp
             if (this.Name == "Concat" && this.DeclaringType.TypeForSystem == typeof(string))
             {//这里有一个IL2CPP的问题
 
+
                 if (_params.Length == 1)
                 {
                     if (_params[0] == null)
                         return "null";
-                    return _params[0].ToString();
+                    if (_params[0] is string[])
+                    {
+                        return string.Concat(_params[0] as string[]);
+                    }
+                    else
+                    {
+                        return _params[0].ToString();
+                    }
                 }
                 else
                 {
