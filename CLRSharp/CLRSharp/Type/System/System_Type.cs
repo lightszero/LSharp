@@ -266,6 +266,10 @@ namespace CLRSharp
                     {
                         return string.Concat(_params[0] as string[]);
                     }
+                    else if (_params[0] is object[])
+                    {
+                        return string.Concat(_params[0] as object[]);
+                    }
                     else
                     {
                         return _params[0].ToString();

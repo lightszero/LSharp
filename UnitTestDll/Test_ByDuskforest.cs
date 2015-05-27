@@ -34,11 +34,22 @@ namespace UnitTestDll
                {0, "今天天气不错风和日丽鸟语花香"}
            };
 
-            string b = "123";
+            int a = 5;
+            float b = 5.01f;
+            byte c = 5;
+            string d = "5s";
 
             string test = dic[0] + "-" + b + "(" + dic[0];
+            string test1 = dic[0] + "-" + a + "(" + dic[0];
+            string test2 = dic[0] + "-" + b + "(" + dic[0];
+            string test3 = dic[0] + "-" + c + "(" + dic[0];
+            string test4 = dic[0] + "-" + d + "(" + dic[0];
 
             Console.WriteLine(test);
+            Console.WriteLine(test1);
+            Console.WriteLine(test2);
+            Console.WriteLine(test3);
+            Console.WriteLine(test4);
         }
         public static void UnitTest_Bool2Object()
         {
