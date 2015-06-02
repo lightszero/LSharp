@@ -1747,6 +1747,10 @@ namespace CLRSharp
             {
                 (array as sbyte[])[index] = (sbyte)value;
             }
+            else if (array is byte[])
+            {
+                (array as byte[])[index] = (byte)value;
+            }
             else if (array is bool[])
             {
                 (array as bool[])[index] = value > 0;
