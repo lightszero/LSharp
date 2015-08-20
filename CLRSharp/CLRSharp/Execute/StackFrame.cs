@@ -541,6 +541,18 @@ namespace CLRSharp
         }
         public void Unbox_Any()
         {
+            object obj = stackCalc.Pop();
+            var box = ValueOnStack.MakeVBox(obj.GetType());
+            if (box != null)
+            {
+                box.SetDirect(obj);
+                stackCalc.Push(box);
+            }
+            else
+            {
+                stackCalc.Push(obj);
+            }
+
             _codepos++;
         }
         public void Br(int addr_index)

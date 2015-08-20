@@ -9,6 +9,16 @@ namespace UnitTestDll
 {
     class Test_ByDuskforest
     {
+        public static void UnitTest_Whilefloat()
+        {
+            System.Object a = 5.0f;
+
+            while ((float)a > 0)
+            {
+                Console.WriteLine(a);
+                break;
+            }
+        }
         public static void UnitTest_ByteCast()
         {
             Hashtable hash = new Hashtable();
