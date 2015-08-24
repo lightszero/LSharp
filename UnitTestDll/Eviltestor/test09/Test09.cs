@@ -24,6 +24,7 @@ class TSave
     public Love love;
     public List<Like> like;
     public List<string> strs;
+    public Dictionary<string, string> sths;
 }
 class Test09
 {
@@ -32,12 +33,13 @@ class Test09
     public static void Test()
     {
         MyJson.JsonNode_Object objst = MyJson.Parse
-            ("{\"love\":{\"id\":12345}\"name\":\"aname\",\"age\":123,\"like\":[{\"name\":\"aaa\",\"desc\":\"aaaaaa\"},{\"name\":\"bbb\",\"desc\":\"bbbbbb\"}],\"strs\":[\"aa\",\"bb\"]}")
+            ("{\"sths\":{\"a\":\"001\",\"b\":\"002\"},\"love\":{\"id\":12345}\"name\":\"aname\",\"age\":123,\"like\":[{\"name\":\"aaa\",\"desc\":\"aaaaaa\"},{\"name\":\"bbb\",\"desc\":\"bbbbbb\"}],\"strs\":[\"aa\",\"bb\"]}")
                 as MyJson.JsonNode_Object;
 
         //throw new NotImplementedException("仍然未改写");
         TSave read = LSharpConvert.FromJson(typeof(TSave), objst) as TSave;
 
+        Logger.Log("read.sths[\"a\"]=" + read.sths["a"]);
         Logger.Log("read.name=" + read.name);
         Logger.Log("read.like[0].name=" + read.like[0].name);
         Like l = read.like[0];

@@ -96,6 +96,18 @@ namespace CSEvilTestor.testfunc
                             list.Add(item);
                         }
                     }
+                    else if ((Type)field.FieldType.TypeForSystem == typeof(Dictionary<string, string>))
+                    {
+                        //处理dict
+                        var _dict = data[m].asDict();
+                        Dictionary<string, string> dict = new Dictionary<string, string>();
+                        s.Fields[m] = dict;
+
+                        foreach (var item in _dict)
+                        {
+                            dict.Add(item.Key, item.Value.ToString());
+                        }
+                    }
                     else if (field.FieldType.TypeForSystem == typeof(CLRSharp.CLRSharp_Instance))//其他嵌套脚本类型
                     {
                         s.Fields[m] = FromJson(field.FieldType, data[m] as MyJson.JsonNode_Object);
@@ -199,6 +211,18 @@ namespace CSEvilTestor.testfunc
                     foreach (var item in slist)
                     {
                         list.Add(new MyJson.JsonNode_ValueNumber(item));
+                    }
+                }
+                else if ((Type)field.FieldType.TypeForSystem == typeof(Dictionary<string, string>))
+                {
+                    var dict = new MyJson.JsonNode_Object();
+                    obj[m] = dict;
+
+                    Dictionary<string, string> slist = sobj.Fields[m] as Dictionary<string, string>;
+
+                    foreach (var item in slist)
+                    {
+                        dict.Add(item.Key, new MyJson.JsonNode_ValueString(item.Value));
                     }
                 }
                 else if (field.FieldType is CLRSharp.ICLRType_Sharp)
