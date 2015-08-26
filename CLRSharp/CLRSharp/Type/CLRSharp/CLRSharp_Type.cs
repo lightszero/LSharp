@@ -365,6 +365,18 @@ namespace CLRSharp
                     return true;
                 }
                 //这里还要实现继承关系
+                if(ins.type is ICLRType_Sharp)
+                {
+                    Type_Common_CLRSharp sharps =ins.type as Type_Common_CLRSharp;
+                    if(sharps._Interfaces.Count>0)
+                    {
+                        foreach(var i in sharps._Interfaces)
+                        {
+                            if (i == this)
+                                return true;
+                        }
+                    }
+                }
             }
             return false;
 

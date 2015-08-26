@@ -1035,10 +1035,25 @@ namespace CLRSharp
             if (n1 == null || n2 == null)
             //if (obj1 == null || obj2 == null)
             {
-                if (obj1 != null)
-                    beq = obj1.Equals(obj2);
+                if(n1!=null)
+                {
+                   n2 = ValueOnStack.MakeVBox(obj2.GetType());
+                   n2.SetDirect(obj2);
+                   beq = n1.logic_eq(n2);
+                }
+                else if (n2 != null)
+                {
+                    n1 = ValueOnStack.MakeVBox(obj1.GetType());
+                    n1.SetDirect(obj1);
+                    beq = n1.logic_eq(n2);
+                }
                 else
-                    beq = (obj1 == obj2);
+                {
+                    if (obj1 != null)
+                        beq = obj1.Equals(obj2);
+                    else
+                        beq = (obj1 == obj2);
+                }
             }
             else
             {
