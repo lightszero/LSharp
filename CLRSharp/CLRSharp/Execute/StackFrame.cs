@@ -1407,8 +1407,7 @@ namespace CLRSharp
                 if (num1.GetType() == typeof(double))
                 {
                     //Modify by hjx
-                    float tempFloat = float.Parse(num1.ToString());
-                    stackCalc.Push(tempFloat);
+                    stackCalc.Push((float)(double)num1);
                 }
                 else
                 {
