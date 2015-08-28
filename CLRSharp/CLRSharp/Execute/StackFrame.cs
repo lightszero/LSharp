@@ -1035,11 +1035,11 @@ namespace CLRSharp
             if (n1 == null || n2 == null)
             //if (obj1 == null || obj2 == null)
             {
-                if(n1!=null)
+                if (n1 != null)
                 {
-                   n2 = ValueOnStack.MakeVBox(obj2.GetType());
-                   n2.SetDirect(obj2);
-                   beq = n1.logic_eq(n2);
+                    n2 = ValueOnStack.MakeVBox(obj2.GetType());
+                    n2.SetDirect(obj2);
+                    beq = n1.logic_eq(n2);
                 }
                 else if (n2 != null)
                 {
@@ -1114,7 +1114,7 @@ namespace CLRSharp
         //算术操作
         public void Add()
         {
-            VBox n2 = stackCalc.Pop() as VBox;
+            VBox n2 = GetVBox(stackCalc.Pop());
             object n1 = stackCalc.Pop();
             if (n1 is VBox)
             {
@@ -1124,13 +1124,38 @@ namespace CLRSharp
             }
             else
             {
-                VBox n_1 = ValueOnStack.MakeVBox(n1.GetType());
-                n_1.SetDirect(n1);
+                VBox n_1 = GetVBox(n1);
                 n_1.Add(n2);
                 stackCalc.Push(n_1.BoxDefine());
             }
             _codepos++;
         }
+
+        //Modify by hjx
+        public VBox GetVBox(object obj)
+        {
+            VBox box = null;
+            if (obj is VBox)
+            {
+                box = obj as VBox;
+            }
+            else
+            {
+                box = ValueOnStack.MakeVBox(obj.GetType());
+                box.SetDirect(obj);
+            }
+            return box;
+        }
+
+
+
+
+
+
+
+
+
+
         public void Sub()
         {
             VBox n2 = stackCalc.Pop() as VBox;
@@ -1379,7 +1404,16 @@ namespace CLRSharp
             }
             else
             {
-                stackCalc.Push((float)num1);
+                if (num1.GetType() == typeof(double))
+                {
+                    //Modify by hjx
+                    float tempFloat = float.Parse(num1.ToString());
+                    stackCalc.Push(tempFloat);
+                }
+                else
+                {
+                    stackCalc.Push((float)num1);
+                }
             }
             _codepos++;
         }

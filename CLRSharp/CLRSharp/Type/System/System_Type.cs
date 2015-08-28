@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CLRSharp
 {
-    class Type_Common_System : ICLRType_System
+    public class Type_Common_System : ICLRType_System
     {
         public System.Type TypeForSystem
         {
@@ -49,7 +49,7 @@ namespace CLRSharp
             //    return aname.Substring(0, i);
             //}
         }
-        public IMethod GetMethod(string funcname, MethodParamList types)
+        public virtual IMethod GetMethod(string funcname, MethodParamList types)
         {
             if (funcname == ".ctor")
             {
@@ -59,7 +59,7 @@ namespace CLRSharp
             var method = TypeForSystem.GetMethod(funcname, types.ToArraySystem());
             return new Method_Common_System(this, method);
         }
-        public IMethod[] GetMethods(string funcname)
+        public virtual IMethod[] GetMethods(string funcname)
         {
             List<IMethod> methods = new List<IMethod>();
             if (funcname == ".ctor")
@@ -85,7 +85,7 @@ namespace CLRSharp
 
             return methods.ToArray();
         }
-        public IMethod[] GetAllMethods()
+        public virtual IMethod[] GetAllMethods()
         {
             List<IMethod> methods = new List<IMethod>();
             {
@@ -105,7 +105,7 @@ namespace CLRSharp
         {
             return Activator.CreateInstance(TypeForSystem);
         }
-        public IMethod GetMethodT(string funcname, MethodParamList ttypes, MethodParamList types)
+        public virtual IMethod GetMethodT(string funcname, MethodParamList ttypes, MethodParamList types)
         {
             //这个实现还不完全
             //有个别重构下，判定比这个要复杂
@@ -130,7 +130,7 @@ namespace CLRSharp
 
             return new Method_Common_System(this, _method.MakeGenericMethod(ttypes.ToArraySystem()));
         }
-        public IField GetField(string name)
+        public virtual IField GetField(string name)
         {
             return new Field_Common_System(env, TypeForSystem.GetField(name));
         }
