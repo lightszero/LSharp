@@ -7,8 +7,8 @@
     <ProjectGuid>{86F36240-E07C-4840-9C8B-9CD94C03EC62}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mono.Cecil_Mdb</RootNamespace>
-    <AssemblyName>Mono.Cecil,Mdb</AssemblyName>
+    <RootNamespace>Mono.Cecil.Mdb</RootNamespace>
+    <AssemblyName>Mono.Cecil.Mdb</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
