@@ -600,7 +600,7 @@ namespace CLRSharp
                         stack.Bgt_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Bgt_Un_S:
-                        stack.Bge_Un(_code.tokenAddr_Index);
+                        stack.Bgt_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Ble:
                         stack.Ble(_code.tokenAddr_Index);
@@ -624,7 +624,7 @@ namespace CLRSharp
                         stack.Blt_Un(_code.tokenAddr_Index);
                         break;
                     case CodeEx.Blt_Un_S:
-                        stack.Ble_Un(_code.tokenAddr_Index);
+                        stack.Blt_Un(_code.tokenAddr_Index);
                         break;
                     //逻辑计算
                     case CodeEx.Ceq:
