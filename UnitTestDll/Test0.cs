@@ -8,6 +8,60 @@ namespace UnitTestDll
 {
     public class UlngTest
     {
+        public static void UnitTest_testSwith()
+        {
+            for (uint i = 0; i < 61; i++)
+            {
+                Logger.Log("i=" + i);
+                switch (i)
+                {
+                    case 1:     //有玩家点击准备
+                        Logger.Log(i.ToString());
+                        break;
+                    //case 3:
+                    //    Logger.Log(i.ToString());
+                    //    break;
+                    //case 4:
+                    //    Logger.Log(i.ToString());
+                    //    break;
+                    //case 9:
+                    //    Logger.Log(i.ToString());
+                    //    break;
+                    //case 10:
+                    //    Logger.Log(i.ToString());
+                    //    break;
+                    //case 11:
+                    //    Logger.Log(i.ToString());
+                    //    break;
+                    //case 13:
+                    //    Logger.Log(i.ToString());
+                    //    break;
+                    //case 20:
+                    //    Logger.Log(i.ToString());
+                    //    break;
+                    //case 21:
+                    //    Logger.Log(i.ToString());
+                    //    break;
+                    //case 22:
+                    //    Logger.Log(i.ToString());
+                    //    break;
+                    case 40:
+                        Logger.Log(i.ToString());
+                        break;
+                    case 49:
+                        Logger.Log(i.ToString());
+                        break;
+                    case 50:
+                        Logger.Log(i.ToString());
+                        break;
+                    //case 60:
+                    //    Logger.Log(i.ToString());
+                    //    break;
+                    default:
+                        break;
+                }
+            }
+        }
         public ulong aaa = 15645613;
 
         public static void UnitTest_TestThread()

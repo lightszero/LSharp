@@ -35,8 +35,16 @@ namespace UnitTest
             }
             catch (Exception err)
             {
-                this.Log_Error(err.ToString());
-                this.Log_Error("模块未加载完成，请检查错误");
+                try
+                {
+                    env.LoadModule(ms, null, null);
+                    Log_Error("符号文件无法识别");
+                }
+                catch
+                {
+                    this.Log_Error(err.ToString());
+                    this.Log_Error("模块未加载完成，请检查错误");
+                }
             }
             var types = env.GetAllTypes();
             foreach (var t in types)

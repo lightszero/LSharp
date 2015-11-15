@@ -215,6 +215,8 @@ namespace CLRSharp
         }
         void FillArray(object array, byte[] bytes)
         {
+            if (bytes == null)
+                return;
             if (array is byte[])
             {
                 byte[] arr = array as byte[];
@@ -253,6 +255,7 @@ namespace CLRSharp
             {
                 int step = 2;
                 char[] arr = array as char[];
+                   
                 for (int i = 0; i < Math.Min(bytes.Length / step, arr.Length); i++)
                 {
                     arr[i] = (char)BitConverter.ToUInt16(bytes, i * step);
@@ -262,6 +265,7 @@ namespace CLRSharp
             {
                 int step = 4;
                 int[] arr = array as int[];
+              
                 for (int i = 0; i < bytes.Length / step; i++)
                 {
                     arr[i] = BitConverter.ToInt32(bytes, i * step);
@@ -1076,11 +1080,21 @@ namespace CLRSharp
         }
         public void Cgt_Un()
         {
-            VBox n2 = stackCalc.Pop() as VBox;
-            VBox n1 = stackCalc.Pop() as VBox;
+            object _n2 = stackCalc.Pop();
+            object _n1 = stackCalc.Pop();
+            if (_n2 == null)
+            {
+                stackCalc.Push(ValueOnStack.MakeVBoxBool(_n1!=null));
+                _codepos++;
+            }
+            else
+            {
+                VBox n2 = GetVBox(_n2);
+                VBox n1 = GetVBox(_n1);
 
-            stackCalc.Push(ValueOnStack.MakeVBoxBool(n1.logic_gt_Un(n2)));
-            _codepos++;
+                stackCalc.Push(ValueOnStack.MakeVBoxBool(n1.logic_gt_Un(n2)));
+                _codepos++;
+            }
         }
         public void Clt()
         {
