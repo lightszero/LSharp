@@ -404,7 +404,13 @@ namespace CLRSharp
             }
             if (_clrmethod.DeclaringType.FullName.Contains("System.Runtime.CompilerServices.RuntimeHelpers") && _clrmethod.Name.Contains("InitializeArray"))
             {
-                FillArray(_pp[0], _pp[1] as byte[]);
+                
+                byte[] bb = _pp[1] as byte[];
+                if(bb==null&&_pp[1] is CLRSharp.Field_Common_CLRSharp)
+                {
+                    bb = (_pp[1] as CLRSharp.Field_Common_CLRSharp).field.InitialValue;
+                }
+                FillArray(_pp[0], bb);
                 _codepos++;
                 return;
             }
@@ -1763,8 +1769,9 @@ namespace CLRSharp
             {
                 index = (int)indexobj;
             }
-            Object[] array = stackCalc.Pop() as Object[];
-            stackCalc.Push(array[index]);
+            Array array = stackCalc.Pop() as Array;
+            
+            stackCalc.Push(array.GetValue(index));
             _codepos++;
         }
         public void Stelem_I()
@@ -2021,9 +2028,15 @@ namespace CLRSharp
         public void Stelem_Any()
         {
             var value = stackCalc.Pop();
-            var index = (int)stackCalc.Pop();
-            var array = stackCalc.Pop() as Object[];
-            array[index] = value;
+            var obj = stackCalc.Pop();
+            int index = 0;
+            if(obj is VBox)
+            {
+                index = (obj as VBox).ToInt();
+            }
+            else index = (int)obj;
+            var array = stackCalc.Pop() as Array;
+            array.SetValue(value, index);
             _codepos++;
         }
 
@@ -2217,6 +2230,7 @@ namespace CLRSharp
             //string tfname = obj.FieldType.FullName;
             //var _type = context.environment.GetType(obj.DeclaringType.FullName, obj.Module);
             //var field = _type.GetField(obj.Name);
+
             stackCalc.Push(token);
             _codepos++;
         }
