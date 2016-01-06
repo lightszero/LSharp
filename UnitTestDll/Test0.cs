@@ -8,6 +8,17 @@ namespace UnitTestDll
 {
     public class UlngTest
     {
+        public static void UnitTest_ConvertCallParam()
+        {
+            int i = 0;
+            ulong i2 = (ulong)i;
+            Logger.test(i2);
+           
+        }
+        static void dod(ulong abc)
+        {
+            Logger.Log("dod=" + abc);
+        }
         public static void UnitTest_testSwith()
         {
             for (uint i = 0; i < 61; i++)
@@ -165,8 +176,8 @@ namespace UnitTestDll
         }
         public enum EUIPanelID
         {
-            NULL=0,
-            INT1=1,
+            NULL = 0,
+            INT1 = 1,
             INT2,
         };
         public static void UnitTest_Out()
@@ -182,12 +193,12 @@ namespace UnitTestDll
         }
         public static void UnitTest_Arr()
         {
-            var vectors = new Vector3[] { 
+            var vectors = new Vector3[] {
                 new Vector3(335, 253, 0),
-                new Vector3(335, 2533, 0), 
+                new Vector3(335, 2533, 0),
                 new Vector3(335, 25332, 0)};
 
-            foreach(var v in vectors)
+            foreach (var v in vectors)
             {
                 Logger.Log("v=" + v.y);
             }
@@ -214,7 +225,7 @@ namespace UnitTestDll
                 {
                     return r - l;
                 });
-            foreach(var i in a)
+            foreach (var i in a)
             {
                 Logger.Log("i=" + i);
             }
@@ -228,7 +239,7 @@ namespace UnitTestDll
             Test02 t = new Test02();
             t.LogOut2(0, 1, 2, 333, 444, 5);
         }
-        
+
         public static void UnitTest_ListInit()
         {
             List<int> lst = new List<int>();

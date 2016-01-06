@@ -10,6 +10,9 @@ namespace UnitTest
         {
             Form1.g_this.Log(str);
         }
+        public static void test(ulong dod)
+        {
 
+        }
     }
 }
