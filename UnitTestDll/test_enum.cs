@@ -100,6 +100,16 @@ namespace UnitTestDll
             Console.WriteLine(pos+","+post);
 
         }
+        static void Test(object obj)
+        {
+            if(obj == null)
+                ;
+        }
+        static void UnitTest_19()
+        {
+            object obj = 1;
+            Test(obj);
+        }
     }
 
 
