@@ -255,7 +255,7 @@ namespace CLRSharp
             {
                 int step = 2;
                 char[] arr = array as char[];
-                   
+
                 for (int i = 0; i < Math.Min(bytes.Length / step, arr.Length); i++)
                 {
                     arr[i] = (char)BitConverter.ToUInt16(bytes, i * step);
@@ -265,7 +265,7 @@ namespace CLRSharp
             {
                 int step = 4;
                 int[] arr = array as int[];
-              
+
                 for (int i = 0; i < bytes.Length / step; i++)
                 {
                     arr[i] = BitConverter.ToInt32(bytes, i * step);
@@ -404,9 +404,9 @@ namespace CLRSharp
             }
             if (_clrmethod.DeclaringType.FullName.Contains("System.Runtime.CompilerServices.RuntimeHelpers") && _clrmethod.Name.Contains("InitializeArray"))
             {
-                
+
                 byte[] bb = _pp[1] as byte[];
-                if(bb==null&&_pp[1] is CLRSharp.Field_Common_CLRSharp)
+                if (bb == null && _pp[1] is CLRSharp.Field_Common_CLRSharp)
                 {
                     bb = (_pp[1] as CLRSharp.Field_Common_CLRSharp).field.InitialValue;
                 }
@@ -1042,8 +1042,12 @@ namespace CLRSharp
             VBox n2 = obj2 as VBox;
             VBox n1 = obj1 as VBox;
             bool beq = false;
-            if (n1 == null || n2 == null)
-            //if (obj1 == null || obj2 == null)
+            if (obj1 == null || obj2 == null)
+            {
+                beq = obj1 == obj2;
+            }
+            else if (n1 == null || n2 == null)
+          
             {
                 if (n1 != null)
                 {
@@ -1090,7 +1094,7 @@ namespace CLRSharp
             object _n1 = stackCalc.Pop();
             if (_n2 == null)
             {
-                stackCalc.Push(ValueOnStack.MakeVBoxBool(_n1!=null));
+                stackCalc.Push(ValueOnStack.MakeVBoxBool(_n1 != null));
                 _codepos++;
             }
             else
@@ -1770,7 +1774,7 @@ namespace CLRSharp
                 index = (int)indexobj;
             }
             Array array = stackCalc.Pop() as Array;
-            
+
             stackCalc.Push(array.GetValue(index));
             _codepos++;
         }
@@ -2030,7 +2034,7 @@ namespace CLRSharp
             var value = stackCalc.Pop();
             var obj = stackCalc.Pop();
             int index = 0;
-            if(obj is VBox)
+            if (obj is VBox)
             {
                 index = (obj as VBox).ToInt();
             }
