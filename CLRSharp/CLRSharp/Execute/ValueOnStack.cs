@@ -230,7 +230,7 @@ namespace CLRSharp
         //public static Queue<IBox> unusedInt32 = new Queue<IBox>();
         //public static Queue<IBox> unusedInt64 = new Queue<IBox>();
         //public static Queue<IBox> unusedIntFL = new Queue<IBox>();
-
+        [ThreadStatic]
         public static Queue<VBox> unusedVBox = new Queue<VBox>();
         public static void UnUse(VBox box)
         {
