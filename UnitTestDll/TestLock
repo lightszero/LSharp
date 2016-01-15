@@ -1,0 +1,10 @@
+public class TestLock
+{
+	public object MyObj;
+	public void Start1()
+	{
+		MyObj = new object ();
+		lock (MyObj) {
+		}
+	}
+}
