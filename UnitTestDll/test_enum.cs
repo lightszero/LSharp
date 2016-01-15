@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using UnitTest;
 using System.Reflection;
+using System.IO;
 
 namespace UnitTestDll
 {
@@ -109,6 +110,13 @@ namespace UnitTestDll
         {
             object obj = 1;
             Test(obj);
+        }
+        
+        static void UnitTest_20()
+        {
+            uint ui = 1;
+			MemoryStream str = new MemoryStream ();
+			str.Write (new byte[]{0}, 0, (int)ui);
         }
     }
 
