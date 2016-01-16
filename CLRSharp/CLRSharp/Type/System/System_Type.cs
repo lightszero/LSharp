@@ -413,9 +413,17 @@ namespace CLRSharp
                             {
                                 _outp[i] = (UInt64)(Int64)_params[i];
                             }
+                            else if (_paramsdef[i].ParameterType == typeof(Int64) && _params[i] is UInt64)
+                            {
+                                _outp[i] = (Int64)(UInt64)_params[i];
+                            }
                             else if (_paramsdef[i].ParameterType == typeof(UInt32) && _params[i] is Int32)
                             {
                                 _outp[i] = (UInt32)(Int32)_params[i];
+                            }
+                            else if (_paramsdef[i].ParameterType == typeof(Int32) && _params[i] is UInt32)
+                            {
+                                _outp[i] = (Int32)(UInt32)_params[i];
                             }
                             else
                             {
