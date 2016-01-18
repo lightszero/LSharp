@@ -2134,7 +2134,10 @@ namespace CLRSharp
         public void Ldflda(ThreadContext context, IField field)
         {
             var obj = stackCalc.Pop();
-
+            if(obj is RefObj)
+            {
+                obj = (obj as RefObj).Get();
+            }
             // var type = context.environment.GetType(field.DeclaringType.FullName, field.Module);
             //var ff = type.GetField(field.Name);
 
