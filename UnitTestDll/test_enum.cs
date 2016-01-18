@@ -118,8 +118,18 @@ namespace UnitTestDll
 			MemoryStream str = new MemoryStream ();
 			str.Write (new byte[]{0}, 0, (int)ui);
         }
+        
+        static void UnitTest_21()
+        {
+        	testStruct ts = new testStruct ();
+		ts.TestInt = 1;
+		string str = ts.TestInt.ToString ();
+        ｝
     }
 
-
+	public struct testStruct
+	{
+		public int TestInt;
+	}	
 
 }
