@@ -98,12 +98,12 @@ namespace UnitTestDll
             CLScriptExt.Vector3 pos = new CLScriptExt.Vector3(2, 2, 2);
             CLScriptExt.Vector3 post = pos;
             post.x = -1;
-            Console.WriteLine(pos+","+post);
+            Console.WriteLine(pos + "," + post);
 
         }
         static void Test(object obj)
         {
-            if(obj == null)
+            if (obj == null)
                 ;
         }
         static void UnitTest_19()
@@ -111,25 +111,25 @@ namespace UnitTestDll
             object obj = 1;
             Test(obj);
         }
-        
+
         static void UnitTest_20()
         {
             uint ui = 1;
-			MemoryStream str = new MemoryStream ();
-			str.Write (new byte[]{0}, 0, (int)ui);
+            MemoryStream str = new MemoryStream();
+            str.Write(new byte[] { 0 }, 0, (int)ui);
         }
-        
+
         static void UnitTest_21()
         {
-        	testStruct ts = new testStruct ();
-		ts.TestInt = 1;
-		string str = ts.TestInt.ToString ();
-        ｝
+            testStruct ts = new testStruct();
+            ts.TestInt = 1;
+            string str = ts.TestInt.ToString();
+        }
     }
 
-	public struct testStruct
-	{
-		public int TestInt;
-	}	
+    public struct testStruct
+    {
+        public int TestInt;
+    }
 
 }
