@@ -824,9 +824,9 @@ namespace CLRSharp
             switch (typeStack)
             {
                 case NumberOnStack.Int32:
-                    return v32 > 0;
+                    return v32 != 0;
                 case NumberOnStack.Int64:
-                    return v64 > 0;
+                    return v64 != 0;
                 default:
                     return false;
             }

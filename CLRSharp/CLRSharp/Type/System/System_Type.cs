@@ -351,7 +351,10 @@ namespace CLRSharp
                     for (int i = 0; i < _params.Length; i++)
                     {
                         if (_params[i] == null)
+                        {
                             _outp[i] = null;
+                            continue;
+                        }
                         Type tsrc = _params[i].GetType();
                         Type ttarget = _paramsdef[i].ParameterType;
                         if (tsrc == ttarget)
