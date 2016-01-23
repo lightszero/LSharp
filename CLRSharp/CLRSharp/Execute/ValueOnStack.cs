@@ -232,10 +232,16 @@ namespace CLRSharp
         //public static Queue<IBox> unusedInt32 = new Queue<IBox>();
         //public static Queue<IBox> unusedInt64 = new Queue<IBox>();
         //public static Queue<IBox> unusedIntFL = new Queue<IBox>();
+
+        //[ThreadStatic]
+        //public static Queue<VBox> unusedVBox = new Queue<VBox>();//引以为戒，这个初始化对tlb没用，其他线程还是null
+
         [ThreadStatic]
-        public static Queue<VBox> unusedVBox = new Queue<VBox>();
+        public static Queue<VBox> unusedVBox = null;
         public static void UnUse(VBox box)
         {
+            if (unusedVBox == null)
+                unusedVBox = new Queue<VBox>();
             box.refcount = 0;
             unusedVBox.Enqueue(box);
         }
