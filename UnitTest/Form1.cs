@@ -376,5 +376,35 @@ namespace UnitTest
                 Log_Error(err.ToString());
             }
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            var types = env.GetAllTypes();
+            foreach (var t in types)
+            {
+                CLRSharp.ICLRType_Sharp type = env.GetType(t) as CLRSharp.ICLRType_Sharp;
+                if (type != null)
+                    type.ResetStaticInstace();
+            }
+            System.Threading.ThreadPool.QueueUserWorkItem((s) =>
+            {
+                Mono.Cecil.MethodDefinition d = this.treeView2.Tag as Mono.Cecil.MethodDefinition;
+                try
+                {
+                    object obj = RunTest(d);
+                    Log("----RunOK----" + obj);
+                }
+                catch (Exception err)
+                {
+                    Log("----RunErr----");
+                    Log_Error(err.ToString());
+                    MessageBox.Show(
+                        "=DumpInfo FirstLine Is Error Pos.=\n" +
+                        CLRSharp.ThreadContext.activeContext.Dump()
+                        + "================err===============\n" + err.Message);
+                }
+            });
+
+        }
     }
 }

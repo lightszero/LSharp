@@ -123,6 +123,8 @@ namespace CLRSharp
         public static VBox MakeVBox(NumberType code)
         {
 
+            if (unusedVBox == null)
+                unusedVBox = new Queue<VBox>();
             switch (code)
             {
                 case NumberType.BOOL:

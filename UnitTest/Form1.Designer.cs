@@ -33,20 +33,21 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.treeView2 = new System.Windows.Forms.TreeView();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.treeViewCode = new System.Windows.Forms.TreeView();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.button1 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.treeViewCode = new System.Windows.Forms.TreeView();
-            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -57,14 +58,14 @@
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -140,6 +141,23 @@
             this.splitContainer3.SplitterDistance = 310;
             this.splitContainer3.TabIndex = 0;
             // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.groupBox2);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.groupBox5);
+            this.splitContainer4.Size = new System.Drawing.Size(720, 310);
+            this.splitContainer4.SplitterDistance = 359;
+            this.splitContainer4.TabIndex = 2;
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.treeView2);
@@ -160,6 +178,26 @@
             this.treeView2.TabIndex = 0;
             this.treeView2.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView2_AfterSelect);
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.treeViewCode);
+            this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox5.Location = new System.Drawing.Point(0, 0);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(357, 310);
+            this.groupBox5.TabIndex = 0;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "代码文件";
+            // 
+            // treeViewCode
+            // 
+            this.treeViewCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewCode.Location = new System.Drawing.Point(3, 17);
+            this.treeViewCode.Name = "treeViewCode";
+            this.treeViewCode.Size = new System.Drawing.Size(351, 290);
+            this.treeViewCode.TabIndex = 1;
+            this.treeViewCode.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewCode_AfterSelect);
+            // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.flowLayoutPanel1);
@@ -178,6 +216,7 @@
             this.flowLayoutPanel1.Controls.Add(this.button2);
             this.flowLayoutPanel1.Controls.Add(this.button3);
             this.flowLayoutPanel1.Controls.Add(this.button5);
+            this.flowLayoutPanel1.Controls.Add(this.button6);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 17);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -224,6 +263,16 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(434, 3);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(166, 23);
+            this.button5.TabIndex = 4;
+            this.button5.Text = "ExecuteSelect(LogAll)";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.listBox1);
@@ -245,52 +294,15 @@
             this.listBox1.Size = new System.Drawing.Size(714, 171);
             this.listBox1.TabIndex = 0;
             // 
-            // splitContainer4
+            // button6
             // 
-            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer4.Name = "splitContainer4";
-            // 
-            // splitContainer4.Panel1
-            // 
-            this.splitContainer4.Panel1.Controls.Add(this.groupBox2);
-            // 
-            // splitContainer4.Panel2
-            // 
-            this.splitContainer4.Panel2.Controls.Add(this.groupBox5);
-            this.splitContainer4.Size = new System.Drawing.Size(720, 310);
-            this.splitContainer4.SplitterDistance = 359;
-            this.splitContainer4.TabIndex = 2;
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.treeViewCode);
-            this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox5.Location = new System.Drawing.Point(0, 0);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(357, 310);
-            this.groupBox5.TabIndex = 0;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "代码文件";
-            // 
-            // treeViewCode
-            // 
-            this.treeViewCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeViewCode.Location = new System.Drawing.Point(3, 17);
-            this.treeViewCode.Name = "treeViewCode";
-            this.treeViewCode.Size = new System.Drawing.Size(351, 290);
-            this.treeViewCode.TabIndex = 1;
-            this.treeViewCode.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewCode_AfterSelect);
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(434, 3);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(166, 23);
-            this.button5.TabIndex = 4;
-            this.button5.Text = "ExecuteSelect(LogAll)";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.button6.Location = new System.Drawing.Point(3, 32);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(188, 23);
+            this.button6.TabIndex = 5;
+            this.button6.Text = "ExecuteSelectNewThread";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // Form1
             // 
@@ -311,14 +323,14 @@
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel2.ResumeLayout(false);
             this.splitContainer3.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel2.ResumeLayout(false);
             this.splitContainer4.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -344,6 +356,7 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.TreeView treeViewCode;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
     }
 }
 
