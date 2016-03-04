@@ -9,6 +9,10 @@ namespace UnitTestDll
     {
         public static void UnitTest_Break()
         {
+            for(int i=0;i<10000;i++)
+            {
+
+            }
             //release模式下运行会崩
             //System.Diagnostics.Debugger.Break();
             //那是因为release模式下不可调用

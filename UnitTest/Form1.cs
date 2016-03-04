@@ -241,6 +241,7 @@ namespace UnitTest
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            CLRSharp.VBox.newcount = 0;
             var types = env.GetAllTypes();
             foreach (var t in types)
             {
@@ -254,6 +255,7 @@ namespace UnitTest
             {
                 object obj = RunTest(d);
                 Log("----RunOK----" + obj);
+                Log("Vbox new:" + CLRSharp.VBox.newcount);
             }
             catch (Exception err)
             {

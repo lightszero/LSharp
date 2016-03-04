@@ -141,6 +141,7 @@ namespace CLRSharp
                         var b = unusedVBox.Dequeue();
                         b.typeStack = NumberOnStack.Int32;
                         b.type = code;
+                        b.unuse = false;
                         return b;
                     }
                     return new VBox(NumberOnStack.Int32, code);
@@ -151,6 +152,7 @@ namespace CLRSharp
                         var b = unusedVBox.Dequeue();
                         b.typeStack = NumberOnStack.Int64;
                         b.type = code;
+                        b.unuse = false;
                         return b;
                     }
                     return new VBox(NumberOnStack.Int64, code);
@@ -161,6 +163,7 @@ namespace CLRSharp
                         var b = unusedVBox.Dequeue();
                         b.typeStack = NumberOnStack.Double;
                         b.type = code;
+                        b.unuse = false;
                         return b;
                     }
                     return new VBox(NumberOnStack.Double, code);
@@ -240,9 +243,13 @@ namespace CLRSharp
         public static Queue<VBox> unusedVBox = null;
         public static void UnUse(VBox box)
         {
+            if (box == null) return;
+            if (box.unuse)
+                return;
+            box.unuse = true;
             if (unusedVBox == null)
                 unusedVBox = new Queue<VBox>();
-            box.refcount = 0;
+            //box.refcount = 0;
             unusedVBox.Enqueue(box);
         }
         //public static void UnUse(IBox box)
@@ -289,10 +296,14 @@ namespace CLRSharp
     }
     public class VBox
     {
+        public bool unuse = false;
+
+        public static int newcount=0;
         public VBox(NumberOnStack typeStack, NumberType thistype)
         {
             this.typeStack = typeStack;
             this.type = thistype;
+            newcount++;
         }
         public VBox Clone()
         {
@@ -313,7 +324,7 @@ namespace CLRSharp
 
             return b;
         }
-        public int refcount = 0;
+        //public int refcount = 0;
         public NumberOnStack typeStack;
         public NumberType type;
         public Int32 v32;
