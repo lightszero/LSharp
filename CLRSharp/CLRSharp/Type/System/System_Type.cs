@@ -189,7 +189,19 @@ namespace CLRSharp
         }
         public void Set(object _this, object value)
         {
-            info.SetValue(_this, value);
+            
+            Type t1 = info.FieldType;
+            Type t2 = value.GetType();
+
+            if (t1==typeof(bool) &&t2==typeof(int))
+            {
+                int temp = (int)value;
+                bool tb = (temp == 0 ? false : true);
+                info.SetValue(_this, tb);
+            }else
+            {
+                info.SetValue(_this, value);
+            }
         }
 
         public object Get(object _this)
