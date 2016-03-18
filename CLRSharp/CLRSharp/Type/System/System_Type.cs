@@ -189,6 +189,8 @@ namespace CLRSharp
         }
         public void Set(object _this, object value)
         {
+            if (info.FieldType == typeof(bool))
+                value = (bool)((int)value != 0);
             info.SetValue(_this, value);
         }
 

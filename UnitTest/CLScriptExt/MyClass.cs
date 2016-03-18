@@ -8,7 +8,7 @@ using System.Text;
 
 public class MyClass2
 {
-
+    public static bool b;
 }
 public class config
 {

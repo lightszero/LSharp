@@ -8,6 +8,10 @@ namespace UnitTestDll
 {
     public class UlngTest
     {
+        public static void UnitTest_sb()
+        {
+            MyClass2.b = false;
+        }
         public static void UnitTest_ConvertCallParam()
         {
             int i = 0;
