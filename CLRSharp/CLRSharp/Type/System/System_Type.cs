@@ -189,8 +189,41 @@ namespace CLRSharp
         }
         public void Set(object _this, object value)
         {
-            if (info.FieldType == typeof(bool))
-                value = (bool)((int)value != 0);
+            if(value!=null&&(value.GetType()==typeof(int)|| value.GetType() == typeof(Int64)))
+            {
+                if (info.FieldType == typeof(bool))
+                    value = (bool)((int)value != 0);
+                else if(info.FieldType==typeof(char))
+                {
+                    value = (char)((int)value);
+                }
+                else if (info.FieldType == typeof(byte))
+                {
+                    value = (byte)((int)value);
+                }
+                else if (info.FieldType == typeof(sbyte))
+                {
+                    value = (sbyte)((int)value);
+                }
+                else if (info.FieldType == typeof(UInt16))
+                {
+                    value = (UInt16)((int)value);
+                }
+                else if (info.FieldType == typeof(Int16))
+                {
+                    value = (Int16)((int)value);
+                }
+                else if (info.FieldType == typeof(UInt32))
+                {
+                    value = (UInt32)((int)value);
+                }
+                else if (info.FieldType == typeof(UInt64))
+                {
+                    value = (UInt64)((Int64)value);
+                }
+
+            }
+         
             info.SetValue(_this, value);
         }
 

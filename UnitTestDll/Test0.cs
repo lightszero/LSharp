@@ -11,13 +11,22 @@ namespace UnitTestDll
         public static void UnitTest_sb()
         {
             MyClass2.b = false;
+            MyClass2.bc = (char)1;
+            MyClass2.bb = 2;
+            MyClass2.bsb = 3;
+            MyClass2.bu16 = 4;
+            MyClass2.bi16 = 5;
+            MyClass2.bu32 = 6;
+            MyClass2.bi32 = 7;
+            MyClass2.bu64 = 8;
+            MyClass2.bi64 = 9;
         }
         public static void UnitTest_ConvertCallParam()
         {
             int i = 0;
             ulong i2 = (ulong)i;
             Logger.test(i2);
-           
+
         }
         static void dod(ulong abc)
         {
