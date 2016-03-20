@@ -6,8 +6,17 @@ using UnitTest;
 using UnityEngine;
 namespace UnitTestDll
 {
+    class funcc
+    {
+        public uint a = 3345294836u;
+    }
     public class UlngTest
     {
+        public static void UnitTest_big()
+        {
+            funcc c = new funcc();
+            Logger.Log("a=" + c.a);
+        }
         public static void UnitTest_sb()
         {
             MyClass2.b = false;
