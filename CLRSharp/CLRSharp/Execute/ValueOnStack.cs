@@ -623,13 +623,29 @@ namespace CLRSharp
                     {
                         v32 = (int)value;
                     }
+                    else if(value is uint)
+                    {
+                        v32 = (int)(uint)value;
+                    }
                     else if (value is short)
                     {
                         v32 = (short)value;
                     }
+                    else if (value is UInt16)
+                    {
+                        v32 = (UInt16)value;
+                    }
                     else if(value is char)
                     {
                         v32 = (char)value;
+                    }
+                    else if (value is byte)
+                    {
+                        v32 = (byte)value;
+                    }
+                    else if (value is sbyte)
+                    {
+                        v32 = (sbyte)value;
                     }
                     else
                     {
