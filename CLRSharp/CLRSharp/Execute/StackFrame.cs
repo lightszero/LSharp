@@ -208,12 +208,19 @@ namespace CLRSharp
         }
         public object Return()
         {
-
+            if (_params != null)
+            {
+                foreach (var i in _params)
+                {
+                    VBox box = i as VBox;
+                    if (box != null)
+                        ValueOnStack.UnUse(box);
+                }
+            }
             this.slotVar.ClearVBox();
             if (this.stackCalc.Count == 0) return null;
             object ret = stackCalc.Pop();
             this.stackCalc.ClearVBox();
-
             return ret;
         }
         void FillArray(object array, byte[] bytes)
@@ -1013,7 +1020,16 @@ namespace CLRSharp
             {
                 if (type == RefType.arg)
                 {
-                    frame._params[pos] = obj;
+                    var p = frame._params[pos];
+                    if (p is VBox)
+                    {
+                        if (obj is VBox)
+                            ((VBox)p).Set((VBox)obj);
+                        else
+                            ((VBox)p).SetDirect(obj);
+                    }
+                    else
+                        frame._params[pos] = obj;
                 }
                 else if (type == RefType.loc)
                 {
@@ -1021,7 +1037,16 @@ namespace CLRSharp
                     {
                         frame.slotVar.Add(null);
                     }
-                    frame.slotVar[pos] = obj;
+                    var loc = frame.slotVar[pos];
+                    if (loc is VBox)
+                    {
+                        if (obj is VBox)
+                            ((VBox)loc).Set((VBox)obj);
+                        else 
+                            ((VBox)loc).SetDirect(obj);
+                    }
+                    else
+                        frame.slotVar[pos] = obj;
                 }
                 else if (type == RefType.field)
                 {
@@ -1242,15 +1267,22 @@ namespace CLRSharp
             }
             return box;
         }
-
-
-
-
-
-
-
-
-
+        
+        public VBox GetVBoxCloned(object obj)
+        {
+            VBox box = null;
+            if (obj is VBox)
+            {
+                box = obj as VBox;
+                box = box.Clone();
+            }
+            else
+            {
+                box = ValueOnStack.MakeVBox(obj.GetType());
+                box.SetDirect(obj);
+            }
+            return box;
+        }
 
         public void Sub()
         {
@@ -2678,6 +2710,7 @@ namespace CLRSharp
                 //_pos = poss[pos];
             }
         }
+        
         public void Ldind_I1()
         {
             object obje = stackCalc.Pop();
@@ -2685,15 +2718,14 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBoxCloned(value));         
                 _codepos++;
                 return;
             }
             throw new Exception("not impl Ldind_I1:");
             //_codepos++;
         }
+
         public void Ldind_U1()
         {
             object obje = stackCalc.Pop();
@@ -2701,9 +2733,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBoxCloned(value));
                 _codepos++;
                 return;
             }
@@ -2717,9 +2747,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBoxCloned(value));
                 _codepos++;
                 return;
             }
@@ -2733,9 +2761,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBoxCloned(value));
                 _codepos++;
                 return;
             }
@@ -2749,9 +2775,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBoxCloned(value));
                 _codepos++;
                 return;
             }
@@ -2765,9 +2789,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBoxCloned(value));
                 _codepos++;
                 return;
             }
@@ -2781,9 +2803,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBoxCloned(value));
                 _codepos++;
                 return;
             }
@@ -2797,9 +2817,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBoxCloned(value));
                 _codepos++;
                 return;
             }
@@ -2813,9 +2831,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBoxCloned(value));
                 _codepos++;
                 return;
             }
@@ -2829,9 +2845,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBoxCloned(value));
                 _codepos++;
                 return;
             }
