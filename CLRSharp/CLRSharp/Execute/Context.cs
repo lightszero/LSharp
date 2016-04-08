@@ -87,13 +87,13 @@ namespace CLRSharp
                     str += "    ===Params(" + s._params.Length + ")===\n";
                     for (int i = 0; i < s._params.Length; i++)
                     {
-                        str += "        param" + i.ToString("D04") + s._params[i] + "\n";
+                        str += "        " + s.codebody.Parameters[i].Name + " = " + s._params[i] + "\n";
                     }
                 }
                 str += "    ===VarSlots(" + s.slotVar.Count + ")===\n";
                 for (int i = 0; i < s.slotVar.Count; i++)
                 {
-                    str += "        var" + i.ToString("D04") + s.slotVar[i] + "\n";
+                    str += "        var " + s.codebody.bodyNative.Variables[i].Name + " = " + s.slotVar[i] + "\n";
                 }
             }
             return str;

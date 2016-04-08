@@ -61,6 +61,7 @@
     <Compile Include="Test0.cs" />
     <Compile Include="LightTestor\ExpTest_10.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test_Byliiir1985.cs" />
     <Compile Include="Test_ByLynn.cs" />
     <Compile Include="Test_ByDuskforest.cs" />
     <Compile Include="test_enum.cs" />

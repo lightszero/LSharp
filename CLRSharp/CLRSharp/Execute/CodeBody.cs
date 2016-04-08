@@ -246,6 +246,14 @@ namespace CLRSharp
                 return method.Body;
             }
         }
+
+        public Mono.Collections.Generic.Collection<Mono.Cecil.ParameterDefinition> Parameters
+        {
+            get
+            {
+                return method.Parameters;
+            }
+        }
         bool bInited = false;
         public void Init(CLRSharp.ICLRSharp_Environment env)
         {

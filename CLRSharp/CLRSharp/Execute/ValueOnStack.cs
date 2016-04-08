@@ -305,6 +305,12 @@ namespace CLRSharp
             this.type = thistype;
             newcount++;
         }
+
+        public override string ToString()
+        {
+            var res = BoxDefine();
+            return res != null ? res.ToString() : "null";
+        }
         public VBox Clone()
         {
             VBox b = ValueOnStack.MakeVBox(this.type);
