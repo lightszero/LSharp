@@ -2678,6 +2678,7 @@ namespace CLRSharp
                 //_pos = poss[pos];
             }
         }
+        
         public void Ldind_I1()
         {
             object obje = stackCalc.Pop();
@@ -2685,15 +2686,14 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBox(value));         
                 _codepos++;
                 return;
             }
             throw new Exception("not impl Ldind_I1:");
             //_codepos++;
         }
+
         public void Ldind_U1()
         {
             object obje = stackCalc.Pop();
@@ -2701,9 +2701,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBox(value));
                 _codepos++;
                 return;
             }
@@ -2717,9 +2715,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBox(value));
                 _codepos++;
                 return;
             }
@@ -2733,9 +2729,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBox(value));
                 _codepos++;
                 return;
             }
@@ -2749,9 +2743,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBox(value));
                 _codepos++;
                 return;
             }
@@ -2765,9 +2757,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBox(value));
                 _codepos++;
                 return;
             }
@@ -2781,9 +2771,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBox(value));
                 _codepos++;
                 return;
             }
@@ -2796,10 +2784,8 @@ namespace CLRSharp
             if (obje is RefObj)
             {
                 RefObj _ref = obje as RefObj;
-                object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                object value = _ref.Get(); 
+                stackCalc.Push(GetVBox(value));
                 _codepos++;
                 return;
             }
@@ -2813,9 +2799,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBox(value));
                 _codepos++;
                 return;
             }
@@ -2829,9 +2813,7 @@ namespace CLRSharp
             {
                 RefObj _ref = obje as RefObj;
                 object value = _ref.Get();
-                VBox box = ValueOnStack.MakeVBox(value.GetType());
-                box.SetDirect(value);
-                stackCalc.Push(box);
+                stackCalc.Push(GetVBox(value));
                 _codepos++;
                 return;
             }
