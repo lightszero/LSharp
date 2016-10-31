@@ -6,12 +6,41 @@ using UnitTest;
 using UnityEngine;
 namespace UnitTestDll
 {
+
     class funcc
     {
         public uint a = 3345294836u;
     }
     public class UlngTest
     {
+        public static void UnitTest_DictInt0()
+        {
+            Dictionary<uint, uint> t1 = new Dictionary<uint, uint>();
+            uint c = 0;
+            uint mt = 910;
+            var b = t1.TryGetValue(mt, out c);
+            var b2 = t1.TryGetValue(mt, out c);
+
+
+
+        }
+        public static void UnitTest_DictInt()
+        {
+            Dictionary<uint, uint> t1 = new Dictionary<uint, uint>();
+
+            for (int j = 0; j < 100; j++)
+            {
+                uint c = 0;
+                uint mt = 910;
+                var b = t1.TryGetValue(mt, out c);
+                if (b)
+                {
+                    int a = 1;
+                    a += 1;
+                }
+            }
+
+        }
         public static void UnitTest_big()
         {
             funcc c = new funcc();

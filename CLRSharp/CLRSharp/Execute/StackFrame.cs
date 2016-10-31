@@ -1021,7 +1021,14 @@ namespace CLRSharp
                     {
                         frame.slotVar.Add(null);
                     }
-                    frame.slotVar[pos] = obj;
+                    if (frame.slotVar[pos] is VBox)
+                    {
+                        (frame.slotVar[pos] as VBox).SetDirect(obj);
+                    }
+                    else
+                    {
+                        frame.slotVar[pos] = obj;
+                    }
                 }
                 else if (type == RefType.field)
                 {
