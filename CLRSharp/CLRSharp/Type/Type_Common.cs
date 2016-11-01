@@ -94,6 +94,10 @@ namespace CLRSharp
         {
             get;
         }
+        bool isPublic
+        {
+            get;
+        }
         string Name
         {
             get;
@@ -132,6 +136,10 @@ namespace CLRSharp
         void Set(object _this, object value);
         object Get(object _this);
         bool isStatic
+        {
+            get;
+        }
+        bool isPublic
         {
             get;
         }

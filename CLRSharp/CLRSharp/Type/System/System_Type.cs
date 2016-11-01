@@ -236,6 +236,10 @@ namespace CLRSharp
         {
             get { return info.IsStatic; }
         }
+        public bool isPublic
+        {
+            get { return info.IsPublic; }
+        }
     }
 
     class Method_Common_System : IMethod_System
@@ -257,6 +261,10 @@ namespace CLRSharp
         public bool isStatic
         {
             get { return method_System.IsStatic; }
+        }
+        public bool isPublic
+        {
+            get { return method_System.IsPublic; }
         }
         public string Name
         {

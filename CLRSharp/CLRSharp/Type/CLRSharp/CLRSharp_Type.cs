@@ -467,6 +467,13 @@ namespace CLRSharp
                 return method_CLRSharp.IsStatic;
             }
         }
+        public bool isPublic
+        {
+            get
+            {
+                return method_CLRSharp.IsPublic;
+            }
+        }
         public ICLRType DeclaringType
         {
             get
@@ -625,6 +632,10 @@ namespace CLRSharp
         public bool isStatic
         {
             get { return this.field.IsStatic; }
+        }
+        public bool isPublic
+        {
+            get { return this.field.IsPublic; }
         }
     }
 }
