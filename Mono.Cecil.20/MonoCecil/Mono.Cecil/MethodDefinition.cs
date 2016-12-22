@@ -37,6 +37,10 @@ namespace Mono.Cecil
     public sealed class MethodDefinition : MethodReference, IMemberDefinition, ISecurityDeclarationProvider
     {
 
+        public override int GetHashCode()
+        {
+            return this.FullName.GetHashCode();
+        }
         ushort attributes;
         ushort impl_attributes;
         internal volatile bool sem_attrs_ready;

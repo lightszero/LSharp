@@ -742,6 +742,8 @@ namespace CLRSharp
                         break;
                     //呼叫函数
                     case CodeEx.Call:
+                        var name = _code.tokenMethod.DeclaringType.Name;
+                        var m = _code.tokenMethod.Name;
                         stack.Call(this, _code.tokenMethod, false);
                         break;
                     case CodeEx.Callvirt:

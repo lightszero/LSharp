@@ -38,6 +38,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Eviltestor\DataTableUtil.cs" />
+    <Compile Include="Eviltestor\DataTable_AutoGen.cs" />
     <Compile Include="Eviltestor\EvilTestor.cs" />
     <Compile Include="Eviltestor\test01\Test01.cs" />
     <Compile Include="Eviltestor\test02\Test02.cs" />

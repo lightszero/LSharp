@@ -6,6 +6,8 @@ using System.Text;
 using UnitTest;
 using UnityEngine;
 
+
+
 class Test02
 {
     public void LogOut(GameObject obj, GameObject obj2, int p0, int p1, int p2, int p3, int p4, int p5)
@@ -28,14 +30,14 @@ class Test02
     }
     public Action<int> testdele;
     public static void Run()
-    
+
     {
 
         Action<int> t = (int a) =>
         {
             //Debug.Log("a=" + a);
         };
-        
+
         TestDele.instance.onUpdateD = Test;
         Action<int> deleTest = Test2;
 
@@ -60,7 +62,7 @@ class Test02
         //函数作为参数的用法
         TestDele.instance.AddDele(Test2);
         //Action<int> abc = Test2;
-        TestDele.instance.AddDeleT3<int,string>(Test4);
+        TestDele.instance.AddDeleT3<int, string>(Test4);
 
 
         TestDele.instance.AddDele(null);
@@ -93,7 +95,7 @@ class Test02
     {
         v(1234);
     }
-    Action<int> deleTest3; 
+    Action<int> deleTest3;
     static void Test()
     {
 
@@ -103,7 +105,7 @@ class Test02
         Logger.Log("Test2 i=" + v);
         i--;
     }
-    static void Test4(int v,string str)
+    static void Test4(int v, string str)
     {
         Logger.Log("Test4 i=" + v + ", s=" + str);
         i--;

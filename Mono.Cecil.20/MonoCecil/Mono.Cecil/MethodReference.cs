@@ -36,6 +36,10 @@ namespace Mono.Cecil
 
     public class MethodReference : MemberReference, IMethodSignature, IGenericParameterProvider, IGenericContext
     {
+        public override int GetHashCode()
+        {
+            return this.FullName.GetHashCode();
+        }
 
         internal ParameterDefinitionCollection parameters;
         MethodReturnType return_type;
