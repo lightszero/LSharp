@@ -15,6 +15,12 @@ namespace UnitTestDll
     {
         public static void UnitTest_DictInt0()
         {
+            Dictionary<string, string> abc = new Dictionary<string, string>();
+            abc["aa"] = "1";
+            if((string)abc["aa"]=="1")
+            {
+
+            }
             Dictionary<uint, uint> t1 = new Dictionary<uint, uint>();
             uint c = 0;
             uint mt = 910;

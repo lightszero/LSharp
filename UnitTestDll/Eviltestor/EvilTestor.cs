@@ -10,7 +10,6 @@ namespace UnitTestDll.Eviltestor
         public static void UnitTest_01()
         {
             //这个测试完成Helloworld.
-            DataTableUtil.LoadAll();
 
             Script_TestConstructor tc = new Script_TestConstructor();
         }
